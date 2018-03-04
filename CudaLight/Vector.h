@@ -3,11 +3,10 @@
 #include <vector>
 #include <string>
 
-#include <DeviceManager.h>
+#include <memory>
 #include <IBuffer.h>
-#include <Exception.h>
 #include <Types.h>
-#include <type_traits>
+
 
 namespace cl
 {
@@ -31,14 +30,7 @@ namespace cl
 		template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 		Vector& operator=(Vector<ms, md>&& rhs) = delete;
 
-		std::vector<double> Get() const override;
-
 		void Print(const std::string& label = "") const override;
-
-		template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-		bool operator==(const Vector<ms, md>& rhs) const;
-		template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-		bool operator!=(const Vector<ms, md>& rhs) const { return !(*this == rhs); }
 
 		#pragma region Linear Algebra
 
@@ -49,25 +41,44 @@ namespace cl
 
 		#pragma endregion
 
+	#pragma region Enalbe shared ptr contruction
+
+	private:
+		struct EnableSharedPtr {};
+	public:
+		explicit Vector(EnableSharedPtr, const MemoryBuffer& buffer)
+			: Vector(buffer)
+		{
+			
+		}
+		static std::shared_ptr<Vector> make_shared(const MemoryBuffer& buffer) {
+			return std::make_shared<Vector>(EnableSharedPtr(), buffer);
+		}
+
+	#pragma endregion
+
+		const MemoryBuffer& GetBuffer() const noexcept override { return buffer; }
 	protected:
 		using IBuffer<Vector, memorySpace, mathDomain>::IBuffer;
 
-		const MemoryBuffer& GetBuffer() const noexcept override { return buffer; }
+		explicit Vector(const MemoryBuffer& buffer);
+	private:
+		
 
-		MemoryBuffer buffer = MemoryBuffer();
+		MemoryBuffer buffer;
 	};
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	Vector<ms, md> Copy(const Vector<ms, md>& source);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Vector<ms, md> LinSpace(const double x0, const double x1, const unsigned size = 100);
+	Vector<ms, md> LinSpace(const double x0, const double x1, const unsigned size);
 	
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Vector<ms, md> RandomUniform(const unsigned size = 100, const unsigned seed = 1234);
+	Vector<ms, md> RandomUniform(const unsigned size, const unsigned seed = 1234);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Vector<ms, md> RandomGaussian(const unsigned size = 100, const unsigned seed = 1234);
+	Vector<ms, md> RandomGaussian(const unsigned size, const unsigned seed = 1234);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	void Print(const Vector<ms, md>& vec, const std::string& label = "");

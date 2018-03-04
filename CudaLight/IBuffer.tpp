@@ -45,7 +45,7 @@ namespace cl
 		if (!buffer.pointer)
 			throw BufferNotInitialisedException("Buffer needs to be initialised first!");
 
-		dm::detail::AutoCopy(buffer, rhs.buffer);
+		dm::detail::AutoCopy(buffer, static_cast<const bi*>(&rhs)->buffer);
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
@@ -67,6 +67,26 @@ namespace cl
 	{
 		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
 		dm::detail::RandNormal(buffer, seed);
+	}
+
+	template<typename bi, MemorySpace ms, MathDomain md>
+	std::vector<double> IBuffer<bi, ms, md>::Get() const
+	{
+		dm::detail::ThreadSynchronize();
+
+		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		MemoryBuffer newBuf(buffer);
+		newBuf.memorySpace = MemorySpace::Host;
+
+		dm::detail::AllocHost(newBuf);
+		dm::detail::AutoCopy(newBuf, buffer);
+
+		std::vector<double> ret(buffer.size, -123);
+		detail::Fill(ret, newBuf);
+
+		dm::detail::FreeHost(newBuf);
+
+		return ret;
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
@@ -94,6 +114,26 @@ namespace cl
 		default:
 			throw NotSupportedException();
 		}
+	}
+
+	template<typename bi, MemorySpace ms, MathDomain md>
+	template<typename biRhs, MemorySpace msRhs, MathDomain mdRhs>
+	bool IBuffer<bi, ms, md>::operator==(const IBuffer<biRhs, msRhs, mdRhs>& rhs) const
+	{
+		const auto& thisBuffer = Get();
+		const auto& thatBuffer = rhs.Get();
+
+		if (thisBuffer.size() != thatBuffer.size())
+			return false;
+
+		constexpr double tolerance = GetTolerance();
+		for (size_t i = 0; i < thisBuffer.size(); ++i)
+		{
+			if (fabs(thisBuffer[i] - thatBuffer[i]) > tolerance)
+				return false;
+		}
+
+		return true;
 	}
 
 	#pragma region Linear Algebra

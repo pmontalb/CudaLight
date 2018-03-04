@@ -22,6 +22,12 @@
     <Filter Include="Source Files\DeviceManager">
       <UniqueIdentifier>{0bf936bc-5599-4797-aef2-b6482ae2006c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\IBuffer">
+      <UniqueIdentifier>{fbce7b9b-0268-40ec-ab5f-a5be355eb3a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Matrix">
+      <UniqueIdentifier>{86a51adf-639e-4f56-a851-4ceedf89dfaf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Exception.h">
@@ -36,11 +42,11 @@
     <ClInclude Include="Vector.h">
       <Filter>Header Files\Vector</Filter>
     </ClInclude>
-    <ClInclude Include="Matrix.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IBuffer.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\IBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="ColumnWiseMatrix.h">
+      <Filter>Header Files\Matrix</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -50,16 +56,16 @@
     <ClCompile Include="DeviceManagerHelper.cpp">
       <Filter>Source Files\DeviceManager</Filter>
     </ClCompile>
-    <ClCompile Include="Matrix.hpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Vector.tpp">
       <Filter>Header Files\Vector</Filter>
     </None>
     <None Include="IBuffer.tpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\IBuffer</Filter>
+    </None>
+    <None Include="ColumnWiseMatrix.tpp">
+      <Filter>Header Files\Matrix</Filter>
     </None>
   </ItemGroup>
 </Project>

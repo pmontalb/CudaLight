@@ -54,11 +54,16 @@ namespace cl
 
 		void RandomGaussian(const unsigned seed = 1234) const;
 
-		virtual std::vector<double> Get() const = 0;
+		std::vector<double> Get() const;
 
 		virtual void Print(const std::string& label = "") const = 0;
 
-		virtual unsigned size() const noexcept { return GetBuffer().size; };
+		template<typename bi, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+		bool operator==(const IBuffer<bi, ms, md>& rhs) const;
+		template<typename bi, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+		bool operator!=(const IBuffer<bi, ms, md>& rhs) const { return !(*this == rhs); }
+
+		unsigned size() const noexcept { return GetBuffer().size; };
 
 		virtual ~IBuffer();
 
@@ -73,9 +78,9 @@ namespace cl
 
 		#pragma endregion
 
+		virtual const MemoryBuffer& GetBuffer() const noexcept = 0;
 	protected:
 		explicit IBuffer(const bool isOwner = true);
-		virtual const MemoryBuffer& GetBuffer() const noexcept = 0;
 
 		static constexpr double GetTolerance()
 		{
@@ -110,6 +115,33 @@ namespace cl
 		}
 
 		inline void Fill(std::vector<double>& dest, const MemoryBuffer& source)
+		{
+			switch (source.mathDomain)
+			{
+			case MathDomain::Int:
+				FillImpl<int>(dest, source);
+				break;
+			case MathDomain::Float:
+				FillImpl<float>(dest, source);
+				break;
+			case MathDomain::Double:
+				FillImpl<double>(dest, source);
+				break;
+			default:
+				throw NotSupportedException();
+			}
+		}
+
+		template<typename T>
+		void FillImpl(std::vector<double>& dest, const MemoryTile& source)
+		{
+			const T* const ptr = reinterpret_cast<const T* const>(source.pointer);
+			for (size_t j = 0; j < source.nCols; j++)
+				for (size_t i = 0; i < source.nRows; i++)
+					dest[i + source.nRows * j] = ptr[i + source.nRows * j];
+		}
+
+		inline void Fill(std::vector<double>& dest, const MemoryTile& source)
 		{
 			switch (source.mathDomain)
 			{

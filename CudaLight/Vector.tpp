@@ -1,13 +1,19 @@
 #pragma once
 
 #include <iostream>
+#include <type_traits>
+
 #include <Types.h>
+#include <Exception.h>
+#include <DeviceManager.h>
+
+#include <Vector.h>
 
 namespace cl
 {
 	template<MemorySpace ms, MathDomain md>
 	Vector<ms, md>::Vector(const unsigned size)
-		: buffer(MemoryBuffer(0, size, ms, md)), IBuffer(true)
+		: IBuffer(true), buffer(MemoryBuffer(0, size, ms, md))
 	{
 		ctor(buffer);
 	}
@@ -27,22 +33,10 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	std::vector<double> Vector<ms, md>::Get() const
+	Vector<ms, md>::Vector(const MemoryBuffer& buffer)
+		: IBuffer(false), buffer(buffer)
 	{
-		dm::detail::ThreadSynchronize();
 
-		MemoryBuffer newBuf(buffer);
-		newBuf.memorySpace = MemorySpace::Host;
-
-		dm::detail::AllocHost(newBuf);
-		dm::detail::AutoCopy(newBuf, buffer);
-
-		std::vector<double> ret(buffer.size, -123);
-		detail::Fill(ret, newBuf);
-
-		dm::detail::FreeHost(newBuf);
-
-		return ret;
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -54,25 +48,6 @@ namespace cl
 		for (size_t i = 0; i < vec.size(); i++)
 			std::cout << "\tv[" << i << "] \t=\t " << vec[i] << std::endl;
 		std::cout << "**********************" << std::endl;
-	}
-
-	template<MemorySpace ms, MathDomain md>
-	template<MemorySpace msRhs, MathDomain mdRhs>
-	bool Vector<ms, md>::operator==(const Vector<msRhs, mdRhs>& rhs) const
-	{
-		const auto& thisVector = Get();
-		const auto& thatVector = rhs.Get();
-
-		if (thisVector.size() != thatVector.size())
-			return false;
-		constexpr double tolerance = GetTolerance();
-		for (size_t i = 0; i < thisVector.size(); ++i)
-		{
-			if (fabs(thisVector[i] - thatVector[i]) > tolerance)
-				return false;
-		}
-
-		return true;
 	}
 
 	#pragma region Linear Algebra

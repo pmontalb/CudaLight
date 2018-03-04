@@ -121,15 +121,15 @@
     <ClInclude Include="DeviceManagerHelper.h" />
     <ClInclude Include="Exception.h" />
     <ClInclude Include="IBuffer.h" />
-    <ClInclude Include="Matrix.h" />
+    <ClInclude Include="ColumnWiseMatrix.h" />
     <ClInclude Include="Vector.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DeviceManager.cpp" />
     <ClCompile Include="DeviceManagerHelper.cpp" />
-    <ClCompile Include="Matrix.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ColumnWiseMatrix.tpp" />
     <None Include="IBuffer.tpp" />
     <None Include="Vector.tpp" />
   </ItemGroup>
