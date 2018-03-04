@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <Types.h>
+#include <assert.h>
 
 namespace cl
 {
@@ -21,6 +22,7 @@ namespace cl
 				throw BufferNotInitialisedException("Pointer must be allocated first!");
 			return;
 		}
+		assert(buffer.size > 0);
 
 		switch (ms)
 		{
@@ -70,11 +72,17 @@ namespace cl
 	template<typename bi, MemorySpace ms, MathDomain md>
 	IBuffer<bi, ms, md>::~IBuffer()
 	{
+		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
+		dtor(buffer);
+	}
+
+	template<typename bi, MemorySpace ms, MathDomain md>
+	void IBuffer<bi, ms, md>::dtor(MemoryBuffer buffer)
+	{
 		// if this is not the owner of the buffer, it must not free it
 		if (!isOwner)
 			return;
 
-		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
 		switch (buffer.memorySpace)
 		{
 		case MemorySpace::Device:
@@ -93,14 +101,16 @@ namespace cl
 	template<typename bi, MemorySpace ms, MathDomain md>
 	IBuffer<bi, ms, md>& IBuffer<bi, ms, md>::operator +=(const IBuffer& rhs)
 	{
+		assert(size() == rhs.size());
 		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
-		dm::detail::AddEqual(buffer, static_cast<bi>(rhs).buffer, 1.0);
+		dm::detail::AddEqual(buffer, static_cast<const bi*>(&rhs)->buffer, 1.0);
 		return *this;
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
 	IBuffer<bi, ms, md>& IBuffer<bi, ms, md>::operator -=(const IBuffer& rhs)
 	{
+		assert(size() == rhs.size());
 		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
 		dm::detail::AddEqual(buffer, static_cast<bi>(rhs).buffer, -1.0);
 		return *this;
@@ -109,17 +119,26 @@ namespace cl
 	template<typename bi, MemorySpace ms, MathDomain md>
 	IBuffer<bi, ms, md>& IBuffer<bi, ms, md>::operator %=(const IBuffer& rhs)
 	{
-		const IBuffer tmp(*this);
+		assert(size() == rhs.size());
 		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
-		dm::detail::ElementwiseProduct(buffer, static_cast<bi>(tmp).buffer, static_cast<bi>(rhs).buffer, 1.0);
+
+		MemoryBuffer tmp(0, buffer.size, ms, md);
+		ctor(tmp);
+		dm::detail::AutoCopy(tmp, buffer);
+
+		dm::detail::ElementwiseProduct(buffer, tmp, static_cast<const bi*>(&rhs)->buffer, 1.0);
+
+		dtor(tmp);
+
 		return *this;
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
 	IBuffer<bi, ms, md>& IBuffer<bi, ms, md>::AddEqual(const IBuffer& rhs, const double alpha)
 	{
+		assert(size() == rhs.size());
 		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
-		dm::detail::AddEqual(buffer, static_cast<bi>(rhs).buffer, alpha);
+		dm::detail::AddEqual(buffer, static_cast<const bi*>(&rhs)->buffer, alpha);
 		return *this;
 	}
 

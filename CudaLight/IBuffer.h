@@ -95,6 +95,8 @@ namespace cl
 		void ctor(MemoryBuffer& buffer);
 	private:
 		const bool isOwner = true;
+
+		void dtor(MemoryBuffer buffer);
 	};
 
 	namespace detail
@@ -107,7 +109,7 @@ namespace cl
 				dest[i] = ptr[i];
 		}
 
-		void Fill(std::vector<double>& dest, const MemoryBuffer& source)
+		inline void Fill(std::vector<double>& dest, const MemoryBuffer& source)
 		{
 			switch (source.mathDomain)
 			{

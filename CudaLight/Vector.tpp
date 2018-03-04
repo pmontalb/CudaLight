@@ -81,7 +81,7 @@ namespace cl
 	Vector<ms, md> Vector<ms, md>::operator +(const Vector& rhs) const
 	{
 		Vector ret(*this);
-		dm::detail::AddEqual(ret.buffer, rhs.buffer, 1.0);
+		ret += rhs;
 
 		return ret;
 	}
@@ -90,7 +90,7 @@ namespace cl
 	Vector<ms, md> Vector<ms, md>::operator -(const Vector& rhs) const
 	{
 		Vector ret(*this);
-		dm::detail::AddEqual(ret.buffer, rhs.buffer, -1.0);
+		ret -= rhs;
 
 		return ret;
 	}
@@ -99,7 +99,7 @@ namespace cl
 	Vector<ms, md> Vector<ms, md>::operator %(const Vector& rhs) const
 	{
 		Vector ret(*this);
-		dm::detail::ElementwiseProduct(ret.buffer, buffer, rhs.buffer, 1.0);
+		ret %= rhs;
 
 		return ret;
 	}
@@ -108,12 +108,12 @@ namespace cl
 	Vector<ms, md> Vector<ms, md>::Add(const Vector& rhs, const double alpha) const
 	{
 		Vector ret(*this);
-		dm::detail::AddEqual(ret.buffer, rhs.buffer, alpha);
+		ret.AddEqual(rhs, alpha);
 
 		return ret;
 	}
 
-#pragma endregion
+	#pragma endregion
 
 	template<MemorySpace ms, MathDomain md>
 	Vector<ms, md> Copy(const Vector<ms, md>& source)
