@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\DeviceManager">
+      <UniqueIdentifier>{e36158d5-1545-486e-b4e2-a16c316206bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Vector">
+      <UniqueIdentifier>{346f8e6f-6757-4992-9de7-9be8d03156c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DeviceManager">
+      <UniqueIdentifier>{0bf936bc-5599-4797-aef2-b6482ae2006c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Exception.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DeviceManager.h">
+      <Filter>Header Files\DeviceManager</Filter>
+    </ClInclude>
+    <ClInclude Include="DeviceManagerHelper.h">
+      <Filter>Header Files\DeviceManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector.h">
+      <Filter>Header Files\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DeviceManager.cpp">
+      <Filter>Source Files\DeviceManager</Filter>
+    </ClCompile>
+    <ClCompile Include="DeviceManagerHelper.cpp">
+      <Filter>Source Files\DeviceManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Matrix.hpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Vector.tpp">
+      <Filter>Header Files\Vector</Filter>
+    </None>
+    <None Include="IBuffer.tpp">
+      <Filter>Header Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>
