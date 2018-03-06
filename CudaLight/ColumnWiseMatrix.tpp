@@ -148,6 +148,22 @@ namespace cl
 		return ret;
 	}
 
+	template<MemorySpace ms, MathDomain md>
+	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::Multiply(const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation, const MatrixOperation rhsOperation, const double alpha) const
+	{
+		ColumnWiseMatrix ret(*this);
+		dm::detail::Multiply(ret.buffer, this->buffer, rhs.buffer, this->nRows(), rhs.nRows());
+
+		return ret;
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	Vector<ms, md> ColumnWiseMatrix<ms, md>::Dot(const Vector<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha) const
+	{
+		Vector<ms, md> ret(rhs.size());
+		dm::detail::Dot(ret.GetBuffer(), this->buffer, rhs.GetBuffer(), lhsOperation, alpha);
+	}
+
 	#pragma endregion
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
