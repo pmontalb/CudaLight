@@ -78,8 +78,8 @@ namespace cl
 
 		#pragma endregion
 
-		virtual const MemoryBuffer& GetBuffer() const noexcept = 0;
 	protected:
+		virtual const MemoryBuffer& GetBuffer() const noexcept = 0;
 		explicit IBuffer(const bool isOwner = true);
 
 		static constexpr double GetTolerance()

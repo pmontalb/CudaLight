@@ -11,10 +11,14 @@
 namespace cl
 {
 	template<MemorySpace memorySpace = MemorySpace::Device, MathDomain mathDomain = MathDomain::Float>
+	class ColumnWiseMatrix;
+
+	template<MemorySpace memorySpace = MemorySpace::Device, MathDomain mathDomain = MathDomain::Float>
 	class Vector : public IBuffer<Vector<memorySpace, mathDomain>, memorySpace, mathDomain>
 	{
 	public:
 		friend class IBuffer<Vector<memorySpace, mathDomain>, memorySpace, mathDomain>;
+		friend class IBuffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>;
 
 		explicit Vector(const unsigned size);
 
@@ -41,21 +45,21 @@ namespace cl
 
 		#pragma endregion
 
-	#pragma region Enalbe shared ptr contruction
+		#pragma region Enable shared ptr contruction
 
-	private:
-		struct EnableSharedPtr {};
-	public:
-		explicit Vector(EnableSharedPtr, const MemoryBuffer& buffer)
-			: Vector(buffer)
-		{
+		private:
+			struct EnableSharedPtr {};
+		public:
+			explicit Vector(EnableSharedPtr, const MemoryBuffer& buffer)
+				: Vector(buffer)
+			{
 			
-		}
-		static std::shared_ptr<Vector> make_shared(const MemoryBuffer& buffer) {
-			return std::make_shared<Vector>(EnableSharedPtr(), buffer);
-		}
+			}
+			static std::shared_ptr<Vector> make_shared(const MemoryBuffer& buffer) {
+				return std::make_shared<Vector>(EnableSharedPtr(), buffer);
+			}
 
-	#pragma endregion
+		#pragma endregion
 
 		const MemoryBuffer& GetBuffer() const noexcept override { return buffer; }
 	protected:

@@ -1,0 +1,112 @@
+#pragma once
+
+#include <vector>
+#include <string>
+#include <memory>
+#include <iostream>
+#include <fstream>
+
+#include <DeviceManager.h>
+#include <Types.h>
+#include <ColumnWiseMatrix.h>
+
+namespace cl
+{
+	template<MemorySpace memorySpace = MemorySpace::Device, MathDomain mathDomain = MathDomain::Float>
+	class Tensor : public IBuffer<Tensor<memorySpace, mathDomain>, memorySpace, mathDomain>
+	{
+	public:
+		friend class IBuffer<Tensor<memorySpace, mathDomain>, memorySpace, mathDomain>;
+
+		Tensor(const unsigned nRows, const unsigned nCols, const unsigned nMatrices);
+
+		Tensor(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, double value);
+
+		Tensor(const unsigned nRows, const unsigned nMatrices);
+
+		Tensor(const Tensor& rhs);
+
+		Tensor(const ColumnWiseMatrix<memorySpace, mathDomain>& rhs);
+
+		Tensor(const Vector<memorySpace, mathDomain>& rhs);
+
+		void ReadFrom(const ColumnWiseMatrix<memorySpace, mathDomain>& rhs);
+		void ReadFrom(const Vector<memorySpace, mathDomain>& rhs);
+
+		using IBuffer<Tensor, memorySpace, mathDomain>::Get;
+		std::vector<double> Get(const unsigned matrix) const;
+		std::vector<double> Get(const unsigned matrix, const unsigned column) const;
+
+		void Set(const ColumnWiseMatrix<memorySpace, mathDomain>& matrixBuffer, const unsigned matrix);
+		void Set(const Vector<memorySpace, mathDomain>& columnVector, const unsigned column, const unsigned matrix);
+
+		void Print(const std::string& label = "") const override;
+
+		virtual ~Tensor() = default;
+
+		const unsigned nRows() const noexcept { return buffer.nRows; }
+		const unsigned nCols() const noexcept { return buffer.nCols; }
+		const unsigned nMatrices() const noexcept { return buffer.nCubes; }
+
+		std::vector<std::shared_ptr<ColumnWiseMatrix<memorySpace, mathDomain>>> matrices;
+	
+		#pragma region Linear Algebra
+
+		Tensor operator +(const Tensor& rhs) const;
+		Tensor operator -(const Tensor& rhs) const;
+		Tensor operator %(const Tensor& rhs) const;
+
+		Tensor Add(const Tensor& rhs, const double alpha = 1.0) const;
+
+		#pragma endregion
+
+		const MemoryBuffer& GetBuffer() const noexcept override { return buffer; }
+	protected:
+
+		explicit Tensor(const MemoryCube& buffer);
+
+		MemoryCube buffer;
+
+	};
+
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	Tensor<ms, md> Copy(const Tensor<ms, md>& source);
+
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	Tensor<ms, md> LinSpace(const double x0, const double x1, const unsigned nRows, const unsigned nCols, const unsigned nMatrices);
+
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	Tensor<ms, md> RandomUniform(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const unsigned seed = 1234);
+
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	Tensor<ms, md> RandomGaussian(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const unsigned seed = 1234);
+
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	void Print(const Tensor<ms, md>& vec, const std::string& label = "");
+
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	Tensor<ms, md> Add(const Tensor<ms, md>& lhs, const Tensor<ms, md>& rhs, const double alpha = 1.0);
+
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	void Scale(Tensor<ms, md>& lhs, const double alpha);
+
+	#pragma region Type aliases
+
+	typedef Tensor<MemorySpace::Device, MathDomain::Int> GpuIntegerTensor;
+	typedef Tensor<MemorySpace::Device, MathDomain::Float> GpuSingleTensor;
+	typedef GpuSingleTensor GpuFloatTensor;
+	typedef Tensor<MemorySpace::Device, MathDomain::Double> GpuDoubleTensor;
+
+	typedef Tensor<MemorySpace::Host, MathDomain::Int> CpuIntegerTensor;
+	typedef Tensor<MemorySpace::Host, MathDomain::Float> CpuSingleTensor;
+	typedef CpuSingleTensor CpuFloatTensor;
+	typedef Tensor<MemorySpace::Host, MathDomain::Double> CpuDoubleTensor;
+
+	typedef GpuSingleTensor ten;
+	typedef GpuDoubleTensor dten;
+	typedef GpuIntegerTensor iten;
+
+	#pragma endregion
+}
+
+#include <Tensor.tpp>

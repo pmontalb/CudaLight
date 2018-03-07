@@ -122,6 +122,7 @@
     <ClInclude Include="Exception.h" />
     <ClInclude Include="IBuffer.h" />
     <ClInclude Include="ColumnWiseMatrix.h" />
+    <ClInclude Include="Tensor.h" />
     <ClInclude Include="Vector.h" />
   </ItemGroup>
   <ItemGroup>
@@ -131,6 +132,7 @@
   <ItemGroup>
     <None Include="ColumnWiseMatrix.tpp" />
     <None Include="IBuffer.tpp" />
+    <None Include="Tensor.tpp" />
     <None Include="Vector.tpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

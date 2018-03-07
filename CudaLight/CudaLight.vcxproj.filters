@@ -28,6 +28,9 @@
     <Filter Include="Header Files\Matrix">
       <UniqueIdentifier>{86a51adf-639e-4f56-a851-4ceedf89dfaf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Tensor">
+      <UniqueIdentifier>{4d792eb9-1221-4ecd-9ff3-d93a570b357a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Exception.h">
@@ -48,6 +51,9 @@
     <ClInclude Include="ColumnWiseMatrix.h">
       <Filter>Header Files\Matrix</Filter>
     </ClInclude>
+    <ClInclude Include="Tensor.h">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DeviceManager.cpp">
@@ -66,6 +72,9 @@
     </None>
     <None Include="ColumnWiseMatrix.tpp">
       <Filter>Header Files\Matrix</Filter>
+    </None>
+    <None Include="Tensor.tpp">
+      <Filter>Header Files\Tensor</Filter>
     </None>
   </ItemGroup>
 </Project>

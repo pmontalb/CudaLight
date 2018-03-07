@@ -43,13 +43,13 @@ namespace UnitTests
 
 			Assert::IsTrue(m3 == m4);
 
-			cl::GpuIntegerMatrix v5(10, 5, 10);
+			cl::GpuIntegerMatrix m5(10, 5, 10);
 			dm::DeviceManager::CheckDeviceSanity();
 
-			cl::GpuIntegerMatrix v6(v5);
+			cl::GpuIntegerMatrix m6(m5);
 			dm::DeviceManager::CheckDeviceSanity();
 
-			Assert::IsTrue(v5 == v6);
+			Assert::IsTrue(m5 == m6);
 		}
 
 		TEST_METHOD(Linspace)
@@ -84,7 +84,7 @@ namespace UnitTests
 			cl::mat m1(10, 5, 1.2345);
 			dm::DeviceManager::CheckDeviceSanity();
 
-			for (size_t j = 0; j < m1.nCols(); ++j)
+			for (unsigned j = 0; j < m1.nCols(); ++j)
 			{
 				auto col = m1.Get(j);
 				dm::DeviceManager::CheckDeviceSanity();
@@ -107,7 +107,7 @@ namespace UnitTests
 			auto _v1 = v1.Get();
 			m1.Set(v1, 3);
 
-			for (size_t j = 0; j < m1.nCols(); ++j)
+			for (unsigned j = 0; j < m1.nCols(); ++j)
 			{
 				auto col = m1.Get(j);
 				dm::DeviceManager::CheckDeviceSanity();

@@ -41,14 +41,22 @@ namespace cl
 	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const Vector<ms, md>& rhs)
 		: ColumnWiseMatrix(rhs.size(), 1)
 	{
-		dm::detail::AutoCopy(static_cast<MemoryBuffer>(columns[0]->buffer), rhs.buffer);
+		dm::detail::AutoCopy(columns[0]->buffer, rhs.buffer);
 	}
+
+	template<MemorySpace ms, MathDomain md>
+	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const MemoryTile& buffer)
+		: IBuffer(false), buffer(buffer)
+	{
+
+	}
+
 
 	template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::ReadFrom(const Vector<ms, md>& rhs)
 	{
 		if (!buffer.pointer)
-			throw std::exception("Buffer needs to be initialised first!");
+			throw BufferNotInitialisedException();
 
 		dm::detail::AutoCopy(columns[0]->buffer, rhs.buffer);
 	}
@@ -76,7 +84,7 @@ namespace cl
 		{
 			std::cout << "\t";
 			for (size_t i = 0; i < nRows(); i++)
-				std::cout << " v[" << i << "][" << j << "] = " << mat[i + nRows() * j];
+				std::cout << " m[" << i << "][" << j << "] = " << mat[i + nRows() * j];
 			std::cout << std::endl;
 		}
 		std::cout << "**********************" << std::endl;
@@ -166,14 +174,14 @@ namespace cl
 
 	#pragma endregion
 
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md> Copy(const ColumnWiseMatrix<ms, md>& source)
 	{
 		ColumnWiseMatrix<ms, md> ret(source);
 		return ret;
 	}
 
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md> LinSpace(const double x0, const double x1, const unsigned nRows, const unsigned nCols)
 	{
 		ColumnWiseMatrix<ms, md> ret(nRows, nCols);
@@ -182,7 +190,7 @@ namespace cl
 		return ret;
 	}
 
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md> RandomUniform(const unsigned nRows, const unsigned nCols, const unsigned seed)
 	{
 		ColumnWiseMatrix<ms, md> ret(nRows, nCols);
@@ -191,7 +199,7 @@ namespace cl
 		return ret;
 	}
 
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md> RandomGaussian(const unsigned nRows, const unsigned nCols, const unsigned seed)
 	{
 		ColumnWiseMatrix<ms, md> ret(nRows, nCols);

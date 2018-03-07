@@ -10,7 +10,7 @@
 
 namespace cl
 {
-	template<MemorySpace memorySpace = MemorySpace::Device, MathDomain mathDomain = MathDomain::Float>
+	template<MemorySpace memorySpace, MathDomain mathDomain>
 	class ColumnWiseMatrix : public IBuffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>
 	{
 	public:
@@ -29,7 +29,7 @@ namespace cl
 		void ReadFrom(const Vector<memorySpace, mathDomain>& rhs);
 
 		using IBuffer<ColumnWiseMatrix, memorySpace, mathDomain>::Get;
-		std::vector<double> Get(unsigned column) const;
+		std::vector<double> Get(const unsigned column) const;
 
 		void Set(const Vector<memorySpace, mathDomain>& columnVector, const unsigned column);
 
@@ -60,9 +60,25 @@ namespace cl
 
 		#pragma endregion
 
+		#pragma region Enable shared ptr contruction
+
+	private:
+		struct EnableSharedPtr {};
+	public:
+		explicit ColumnWiseMatrix(EnableSharedPtr, const MemoryTile& buffer)
+			: ColumnWiseMatrix(buffer)
+		{
+
+		}
+		static std::shared_ptr<ColumnWiseMatrix> make_shared(const MemoryTile& buffer) {
+			return std::make_shared<ColumnWiseMatrix>(EnableSharedPtr(), buffer);
+		}
+
+		#pragma endregion
+
 		const MemoryBuffer& GetBuffer() const noexcept override { return buffer; }
 	protected:
-		//explicit ColumnWiseMatrix(const MemoryTile buffer, const bool isOwner = true);
+		explicit ColumnWiseMatrix(const MemoryTile& buffer);
 		
 
 		MemoryTile buffer;
