@@ -13,13 +13,13 @@ namespace UnitTests
 
 		TEST_METHOD(Allocation)
 		{
-			cl::GpuSingleVector v1(10, 1.2345);
+			cl::GpuSingleVector v1(10, 1.2345f);
 			dm::DeviceManager::CheckDeviceSanity();
 
 			cl::GpuDoubleVector v2(10, 1.2345);
 			dm::DeviceManager::CheckDeviceSanity();
 
-			cl::CpuSingleVector v3(10, 1.2345);
+			cl::CpuSingleVector v3(10, 1.2345f);
 			dm::DeviceManager::CheckDeviceSanity();
 
 			cl::CpuDoubleVector v4(10, 1.2345);
@@ -28,7 +28,7 @@ namespace UnitTests
 
 		TEST_METHOD(Copy)
 		{
-			cl::GpuSingleVector v1(10, 1.2345);
+			cl::GpuSingleVector v1(10, 1.2345f);
 			dm::DeviceManager::CheckDeviceSanity();
 
 			cl::GpuSingleVector v2(v1);

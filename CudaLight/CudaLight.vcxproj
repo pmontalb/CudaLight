@@ -139,6 +139,7 @@
   <ItemGroup>
     <None Include="ColumnWiseMatrix.tpp" />
     <None Include="IBuffer.tpp" />
+    <None Include="SparseVector.tpp" />
     <None Include="Tensor.tpp" />
     <None Include="Vector.tpp" />
   </ItemGroup>

@@ -28,7 +28,7 @@ namespace UnitTests
 
 		TEST_METHOD(Copy)
 		{
-			cl::GpuSingleMatrix m1(10, 5, 1.2345);
+			cl::GpuSingleMatrix m1(10, 5, 1.2345f);
 			dm::DeviceManager::CheckDeviceSanity();
 
 			cl::GpuSingleMatrix m2(m1);
@@ -82,7 +82,7 @@ namespace UnitTests
 
 		TEST_METHOD(GetColumn)
 		{
-			cl::mat m1(10, 5, 1.2345);
+			cl::mat m1(10, 5, 1.2345f);
 			dm::DeviceManager::CheckDeviceSanity();
 
 			for (unsigned j = 0; j < m1.nCols(); ++j)
@@ -90,7 +90,7 @@ namespace UnitTests
 				auto col = m1.Get(j);
 				dm::DeviceManager::CheckDeviceSanity();
 				
-				Assert::AreEqual((unsigned)(col.size()), m1.nRows());
+				Assert::AreEqual(static_cast<unsigned>(col.size()), m1.nRows());
 				for (size_t i = 0; i < col.size(); ++i)
 					Assert::IsTrue(fabs(col[i] - 1.2345) <= 1e-7);
 			}
@@ -99,11 +99,11 @@ namespace UnitTests
 
 		TEST_METHOD(SetColumn)
 		{
-			cl::mat m1(10, 5, 1.2345);
+			cl::mat m1(10, 5, 1.2345f);
 			dm::DeviceManager::CheckDeviceSanity();
 			auto _m1 = m1.Get();
 
-			const cl::vec v1(10, 2.3456);
+			const cl::vec v1(10, 2.3456f);
 			dm::DeviceManager::CheckDeviceSanity();
 			auto _v1 = v1.Get();
 			m1.Set(v1, 3);
@@ -113,7 +113,7 @@ namespace UnitTests
 				auto col = m1.Get(j);
 				dm::DeviceManager::CheckDeviceSanity();
 
-				Assert::AreEqual((unsigned)(col.size()), m1.nRows());
+				Assert::AreEqual(static_cast<unsigned>(col.size()), m1.nRows());
 
 				if (j != 3)
 				{

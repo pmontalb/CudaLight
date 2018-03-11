@@ -93,11 +93,11 @@ namespace UnitTests
 
 		TEST_METHOD(Multiply)
 		{
-			cl::mat m1(10, 10, 1.2345);
+			cl::mat m1(10, 10, 1.2345f);
 			dm::DeviceManager::CheckDeviceSanity();
 			auto _m1 = m1.Get();
 
-			cl::mat m2(10, 10, 9.8765);
+			cl::mat m2(10, 10, 9.8765f);
 			dm::DeviceManager::CheckDeviceSanity();
 			auto _m2 = m2.Get();
 
@@ -119,11 +119,11 @@ namespace UnitTests
 
 		TEST_METHOD(Dot)
 		{
-			cl::mat m1(10, 10, 1.2345);
+			cl::mat m1(10, 10, 1.2345f);
 			dm::DeviceManager::CheckDeviceSanity();
 			auto _m1 = m1.Get();
 
-			cl::vec v1(10, 9.8765);
+			cl::vec v1(10, 9.8765f);
 			dm::DeviceManager::CheckDeviceSanity();
 			auto _v1 = v1.Get();
 

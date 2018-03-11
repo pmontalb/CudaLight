@@ -13,7 +13,7 @@ namespace UnitTests
 		
 		TEST_METHOD(DeviceInitialization)
 		{
-			for (int i = 0; i < dm::DeviceManager::GetDeviceCount(); ++i)
+			for (unsigned i = 0; i < dm::DeviceManager::GetDeviceCount(); ++i)
 			{
 				dm::DeviceManager::SetDevice(i);
 				dm::DeviceManager::CheckDeviceSanity();

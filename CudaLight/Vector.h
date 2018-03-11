@@ -8,7 +8,7 @@
 
 namespace cl
 {
-	template<MemorySpace memorySpace = MemorySpace::Device, MathDomain mathDomain = MathDomain::Float>
+	template<MemorySpace memorySpace, MathDomain mathDomain>
 	class SparseVector;
 
 	template<MemorySpace memorySpace = MemorySpace::Device, MathDomain mathDomain = MathDomain::Float>

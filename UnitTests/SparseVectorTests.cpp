@@ -14,18 +14,18 @@ namespace UnitTests
 		TEST_METHOD(Allocation)
 		{
 			std::vector<int> indices = { 0, 5 };
-			cl::ivec gpuIndices((unsigned)indices.size());
+			cl::ivec gpuIndices(static_cast<unsigned>(indices.size()));
 			gpuIndices.ReadFrom(indices);
 
-			cl::GpuSingleSparseVector v1(10, gpuIndices, 1.2345);
+			cl::GpuSingleSparseVector v1(10, gpuIndices, 1.2345f);
 			dm::DeviceManager::CheckDeviceSanity();
 
 			cl::GpuDoubleSparseVector v2(10, gpuIndices, 1.2345);
 			dm::DeviceManager::CheckDeviceSanity();
 
-			cl::CpuIntegerVector cpuIndices((unsigned)indices.size());
+			cl::CpuIntegerVector cpuIndices(static_cast<unsigned>(indices.size()));
 			cpuIndices.ReadFrom(indices);
-			cl::CpuSingleSparseVector v3(10, cpuIndices, 1.2345);
+			cl::CpuSingleSparseVector v3(10, cpuIndices, 1.2345f);
 			dm::DeviceManager::CheckDeviceSanity();
 
 			cl::CpuDoubleSparseVector v4(10, cpuIndices, 1.2345);
@@ -35,10 +35,10 @@ namespace UnitTests
 		TEST_METHOD(Copy)
 		{
 			std::vector<int> indices = { 0, 5 };
-			cl::ivec gpuIndices((unsigned)indices.size());
+			cl::ivec gpuIndices(static_cast<unsigned>(indices.size()));
 			gpuIndices.ReadFrom(indices);
 
-			cl::GpuSingleSparseVector v1(10, gpuIndices, 1.2345);
+			cl::GpuSingleSparseVector v1(10, gpuIndices, 1.2345f);
 			dm::DeviceManager::CheckDeviceSanity();
 
 			cl::GpuSingleSparseVector v2(v1);
@@ -66,9 +66,9 @@ namespace UnitTests
 		TEST_METHOD(ReadFromDense)
 		{
 			std::vector<float> denseVector(50);
-			denseVector[10] = 2.7182;
-			denseVector[20] = 3.1415;
-			denseVector[30] = 1.6180;
+			denseVector[10] = 2.7182f;
+			denseVector[20] = 3.1415f;
+			denseVector[30] = 1.6180f;
 
 			cl::vec dv(denseVector);
 			cl::svec sv(dv);

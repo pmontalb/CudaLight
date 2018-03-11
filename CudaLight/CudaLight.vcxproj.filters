@@ -79,5 +79,8 @@
     <None Include="Tensor.tpp">
       <Filter>Header Files\Tensor</Filter>
     </None>
+    <None Include="SparseVector.tpp">
+      <Filter>Header Files\Vector</Filter>
+    </None>
   </ItemGroup>
 </Project>
