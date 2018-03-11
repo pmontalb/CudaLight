@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <memory>
 
 #include <IBuffer.h>
 #include <Types.h>
@@ -76,7 +75,7 @@ namespace cl
 
 	typedef SparseVector<MemorySpace::Device, MathDomain::Int> GpuIntegerSparseVector;
 	typedef SparseVector<MemorySpace::Device, MathDomain::Float> GpuSingleSparseVector;
-	typedef GpuSingleVector GpuFloatSparseVector;
+	typedef GpuSingleSparseVector GpuFloatSparseVector;
 	typedef SparseVector<MemorySpace::Device, MathDomain::Double> GpuDoubleSparseVector;
 
 	typedef SparseVector<MemorySpace::Host, MathDomain::Int> CpuIntegerSparseVector;

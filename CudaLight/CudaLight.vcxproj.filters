@@ -57,6 +57,9 @@
     <ClInclude Include="SparseVector.h">
       <Filter>Header Files\Vector</Filter>
     </ClInclude>
+    <ClInclude Include="CompressedSparseRowMatrix.h">
+      <Filter>Header Files\Matrix</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DeviceManager.cpp">

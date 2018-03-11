@@ -10,6 +10,8 @@ namespace cl
 {
 	template<MemorySpace memorySpace, MathDomain mathDomain>
 	class SparseVector;
+	template<MemorySpace memorySpace, MathDomain mathDomain>
+	class CompressedSparseRowMatrix;
 
 	template<MemorySpace memorySpace = MemorySpace::Device, MathDomain mathDomain = MathDomain::Float>
 	class Vector : public IBuffer<Vector<memorySpace, mathDomain>, memorySpace, mathDomain>
@@ -20,6 +22,8 @@ namespace cl
 		friend class IBuffer<Vector<memorySpace, mathDomain>, memorySpace, mathDomain>;
 		template<MemorySpace ms, MathDomain md>
 		friend class SparseVector;
+		template<MemorySpace ms, MathDomain md>
+		friend class CompressedSparseRowMatrix;
 
 		explicit Vector(const unsigned size);
 

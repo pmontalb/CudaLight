@@ -167,6 +167,7 @@
     <ClCompile Include="CuBlasTests.cpp" />
     <ClCompile Include="CuSparseTests.cpp" />
     <ClCompile Include="MatrixTests.cpp" />
+    <ClCompile Include="SparseMatrixTests.cpp" />
     <ClCompile Include="SparseVectorTests.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

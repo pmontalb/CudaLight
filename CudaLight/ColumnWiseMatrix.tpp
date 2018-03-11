@@ -38,8 +38,7 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	template<typename T>
-	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const std::vector<T>& rhs, const unsigned nRows, const unsigned nCols)
+	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const std::vector<typename Traits<md>::stdType>& rhs, const unsigned nRows, const unsigned nCols)
 		: ColumnWiseMatrix(nRows, nCols)
 	{
 		assert(rhs.size() == nRows * nCols);

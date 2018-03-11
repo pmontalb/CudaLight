@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CompressedSparseRowMatrix.h" />
     <ClInclude Include="DeviceManager.h" />
     <ClInclude Include="DeviceManagerHelper.h" />
     <ClInclude Include="Exception.h" />

@@ -25,8 +25,7 @@ namespace cl
 
 		ColumnWiseMatrix(const ColumnWiseMatrix& rhs);
 
-		template<typename T>
-		ColumnWiseMatrix(const std::vector<T>& rhs, const unsigned nRows, const unsigned nCols);
+		ColumnWiseMatrix(const std::vector<stdType>& rhs, const unsigned nRows, const unsigned nCols);
 
 		ColumnWiseMatrix(const Vector<memorySpace, mathDomain>& rhs);		
 
