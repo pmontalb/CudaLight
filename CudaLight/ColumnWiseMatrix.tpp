@@ -18,7 +18,7 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const unsigned nRows, const unsigned nCols, const double value)
+	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const unsigned nRows, const unsigned nCols, const typename Traits<md>::stdType value)
 		: ColumnWiseMatrix(nRows, nCols)
 	{
 		dm::detail::Initialize(static_cast<MemoryBuffer>(buffer), value);
@@ -34,7 +34,16 @@ namespace cl
 	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const ColumnWiseMatrix& rhs)
 		: ColumnWiseMatrix(rhs.nRows(), rhs.nCols())
 	{
-		dm::detail::AutoCopy(static_cast<MemoryBuffer>(buffer), static_cast<MemoryBuffer>(rhs.buffer));
+		ReadFrom(rhs);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	template<typename T>
+	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const std::vector<T>& rhs, const unsigned nRows, const unsigned nCols)
+		: ColumnWiseMatrix(nRows, nCols)
+	{
+		assert(rhs.size() == nRows * nCols);
+		ReadFrom(rhs);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -55,15 +64,17 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::ReadFrom(const Vector<ms, md>& rhs)
 	{
-		if (!buffer.pointer)
-			throw BufferNotInitialisedException();
+		assert(rhs.size > 0);
+		assert(rhs.buffer.pointer != 0);
+		assert(buffer.pointer != 0);
 
 		dm::detail::AutoCopy(columns[0]->buffer, rhs.buffer);
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	std::vector<double> ColumnWiseMatrix<ms, md>::Get(const unsigned column) const
+	std::vector<typename Traits<md>::stdType> ColumnWiseMatrix<ms, md>::Get(const unsigned column) const
 	{
+		assert(column < nCols());
 		return columns[column]->Get();
 	}
 
@@ -78,16 +89,7 @@ namespace cl
 	void ColumnWiseMatrix<ms, md>::Print(const std::string& label) const
 	{
 		auto mat = Get();
-
-		std::cout << "********* " << label << " ***********" << std::endl;
-		for (size_t j = 0; j < nCols(); j++)
-		{
-			std::cout << "\t";
-			for (size_t i = 0; i < nRows(); i++)
-				std::cout << " m[" << i << "][" << j << "] = " << mat[i + nRows() * j];
-			std::cout << std::endl;
-		}
-		std::cout << "**********************" << std::endl;
+		cl::Print(mat, nRows(), nCols());
 	}
 
 	#pragma region Linear Algebra
@@ -182,7 +184,7 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	ColumnWiseMatrix<ms, md> LinSpace(const double x0, const double x1, const unsigned nRows, const unsigned nCols)
+	ColumnWiseMatrix<ms, md> LinSpace(const typename Traits<md>::stdType x0, const typename Traits<md>::stdType x1, const unsigned nRows, const unsigned nCols)
 	{
 		ColumnWiseMatrix<ms, md> ret(nRows, nCols);
 		ret.LinSpace(x0, x1);

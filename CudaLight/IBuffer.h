@@ -4,11 +4,60 @@
 #include <string>
 
 #include <DeviceManager.h>
+#include <DeviceManagerHelper.h>
 #include <Exception.h>
 #include <Types.h>
 
 namespace cl
 {
+	#pragma region Type mapping from MathDomain to C++ type
+
+	template <MathDomain mathDomain>
+	struct Traits {
+		using stdType = void;
+	};
+
+	template <>
+	struct Traits<MathDomain::Double> {
+		using stdType = double;
+	};
+
+	template <>
+	struct Traits<MathDomain::Float> {
+		using stdType = float;
+	};
+
+	template <>
+	struct Traits<MathDomain::Int> {
+		using stdType = int;
+	};
+
+	#pragma endregion 
+
+	#pragma region Type mapping from C++ type to MathDomain
+
+	template <typename T>
+	struct _Traits {
+		static constexpr MathDomain clType = MathDomain::Null;
+	};
+
+	template <>
+	struct _Traits<double> {
+		static constexpr MathDomain clType = MathDomain::Double;
+	};
+
+	template <>
+	struct _Traits<float> {
+		static constexpr MathDomain clType = MathDomain::Float;
+	};
+
+	template <>
+	struct _Traits<int> {
+		static constexpr MathDomain clType = MathDomain::Int;
+	};
+
+	#pragma endregion 
+
 	/*
 	 * CRTP implementation
 	 */
@@ -16,6 +65,8 @@ namespace cl
 	class IBuffer
 	{
 	public:
+		using stdType = typename Traits<mathDomain>::stdType;
+
 		// For avoiding unnecessary checks and overheads, it's not possible to use operator=
 		template<typename bi, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 		IBuffer& operator=(const IBuffer<BufferImpl, ms, md>& rhs) = delete;
@@ -24,37 +75,18 @@ namespace cl
 
 		template<typename bi, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 		void ReadFrom(const IBuffer<bi, ms, md>& rhs);
-
 		template<typename T>
-		void ReadFrom(const std::vector<T>& rhs)
-		{
-			if (!buffer.pointer)
-				throw std::exception("Buffer needs to be initialised first!");
+		void ReadFrom(const std::vector<T>& rhs);
 
-			MemoryBuffer rhsBuf;
-			if (std::is_same<double, T>::value)
-				rhsBuf = MemoryBuffer(static_cast<ptr_t>(rhs.data()), rhs.size(), MemorySpace::Host, MathDomain::Double);
-			else if (std::is_same<float, T>::value)
-				rhsBuf = MemoryBuffer(static_cast<ptr_t>(rhs.data()), rhs.size(), MemorySpace::Host, MathDomain::Float);
-			else if (std::is_same<int, T>::value)
-				rhsBuf = MemoryBuffer(static_cast<ptr_t>(rhs.data()), rhs.size(), MemorySpace::Host, MathDomain::Int);
-			else
-				throw NotSupportedException();
-			dm::detail::AutoCopy(buffer, rhsBuf);
-		}
+		void Set(const stdType value) const;
 
-		void Set(const double value) const
-		{
-			dm::detail::Initialize(buffer, value);
-		}
-
-		void LinSpace(const double x0, const double x1) const;
+		void LinSpace(const stdType x0, const stdType x1) const;
 
 		void RandomUniform(const unsigned seed = 1234) const;
 
 		void RandomGaussian(const unsigned seed = 1234) const;
 
-		std::vector<double> Get() const;
+		virtual std::vector<stdType> Get() const;
 
 		virtual void Print(const std::string& label = "") const = 0;
 
@@ -77,10 +109,10 @@ namespace cl
 		IBuffer& Scale(const double alpha);
 
 		#pragma endregion
-
-	protected:
+		
+		protected:
 		virtual const MemoryBuffer& GetBuffer() const noexcept = 0;
-		explicit IBuffer(const bool isOwner = true);
+		explicit IBuffer(const bool isOwner);
 
 		static constexpr double GetTolerance()
 		{
@@ -98,70 +130,44 @@ namespace cl
 		}
 
 		void ctor(MemoryBuffer& buffer);
-	private:
-		const bool isOwner = true;
-
 		void dtor(MemoryBuffer buffer);
+
+		void Alloc(MemoryBuffer& buffer);
+
+		const bool isOwner;
 	};
 
 	namespace detail
 	{
-		template<typename T>
-		void FillImpl(std::vector<double>& dest, const MemoryBuffer& source)
+
+		template<MathDomain md>
+		void Fill(std::vector<typename Traits<md>::stdType>& dest, const MemoryBuffer& source)
 		{
-			const T* const ptr = reinterpret_cast<const T* const>(source.pointer);
+			using stdType = typename Traits<md>::stdType;
+			const stdType* const ptr = reinterpret_cast<const stdType* const>(source.pointer);
 			for (size_t i = 0; i < dest.size(); i++)
 				dest[i] = ptr[i];
 		}
 
-		inline void Fill(std::vector<double>& dest, const MemoryBuffer& source)
+		template<MathDomain md>
+		void Fill(std::vector<typename Traits<md>::stdType>& dest, const MemoryTile& source)
 		{
-			switch (source.mathDomain)
-			{
-			case MathDomain::Int:
-				FillImpl<int>(dest, source);
-				break;
-			case MathDomain::Float:
-				FillImpl<float>(dest, source);
-				break;
-			case MathDomain::Double:
-				FillImpl<double>(dest, source);
-				break;
-			default:
-				throw NotSupportedException();
-			}
-		}
-
-		template<typename T>
-		void FillImpl(std::vector<double>& dest, const MemoryTile& source)
-		{
-			const T* const ptr = reinterpret_cast<const T* const>(source.pointer);
+			using stdType = typename Traits<md>::stdType;
+			const stdType* const ptr = reinterpret_cast<const stdType* const>(source.pointer);
 			for (size_t j = 0; j < source.nCols; j++)
 				for (size_t i = 0; i < source.nRows; i++)
 					dest[i + source.nRows * j] = ptr[i + source.nRows * j];
-		}
-
-		inline void Fill(std::vector<double>& dest, const MemoryTile& source)
-		{
-			switch (source.mathDomain)
-			{
-			case MathDomain::Int:
-				FillImpl<int>(dest, source);
-				break;
-			case MathDomain::Float:
-				FillImpl<float>(dest, source);
-				break;
-			case MathDomain::Double:
-				FillImpl<double>(dest, source);
-				break;
-			default:
-				throw NotSupportedException();
-			}
 		}
 	}
 
 	template<typename BufferImpl, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	void Print(const IBuffer<BufferImpl, ms, md>& vec, const std::string& label = "");
+
+	template<typename T>
+	static void Print(const std::vector<T>& vec, const std::string& label = "");
+
+	template<typename T>
+	static void Print(const std::vector<T>& mat, const unsigned nRows, const unsigned nCols, const std::string& label = "");
 
 	template<typename BufferImpl, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	void Scale(IBuffer<BufferImpl, ms, md>& lhs, const double alpha);

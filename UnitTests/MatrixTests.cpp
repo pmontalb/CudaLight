@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
+
 #include <ColumnWiseMatrix.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -12,13 +13,13 @@ namespace UnitTests
 
 		TEST_METHOD(Allocation)
 		{
-			cl::GpuSingleMatrix m1(10, 5, 1.2345);
+			cl::GpuSingleMatrix m1(10, 5, 1.2345f);
 			dm::DeviceManager::CheckDeviceSanity();
 
 			cl::GpuDoubleMatrix m2(10, 5, 1.2345);
 			dm::DeviceManager::CheckDeviceSanity();
 
-			cl::CpuSingleMatrix m3(10, 5, 1.2345);
+			cl::CpuSingleMatrix m3(10, 5, 1.2345f);
 			dm::DeviceManager::CheckDeviceSanity();
 
 			cl::CpuDoubleMatrix m4(10, 5, 1.2345);
@@ -54,7 +55,7 @@ namespace UnitTests
 
 		TEST_METHOD(Linspace)
 		{
-			cl::mat v = cl::LinSpace(0.0, 1.0, 10, 10);
+			cl::mat v = cl::LinSpace(0.0f, 1.0f, 10, 10);
 			dm::DeviceManager::CheckDeviceSanity();
 			auto _v = v.Get();
 			Assert::IsTrue(fabs(_v[0] - 0.0) <= 1e-7);

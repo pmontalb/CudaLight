@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
+
 #include <Vector.h>
 #include <ColumnWiseMatrix.h>
 
@@ -37,7 +38,7 @@ namespace UnitTests
 
 		TEST_METHOD(AddMatrix)
 		{
-			cl::mat m1 = cl::LinSpace(-1.0, 1.0, 100, 100);
+			cl::mat m1 = cl::LinSpace(-1.0f, 1.0f, 100, 100);
 			dm::DeviceManager::CheckDeviceSanity();
 			auto _m1 = m1.Get();
 

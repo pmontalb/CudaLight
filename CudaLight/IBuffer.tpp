@@ -1,8 +1,9 @@
 #pragma once
 
 #include <iostream>
-#include <Types.h>
 #include <assert.h>
+
+#include <Types.h>
 
 namespace cl
 {
@@ -18,12 +19,17 @@ namespace cl
 		// if is not the owner it has already been allocated!
 		if (!isOwner)
 		{
-			if (!buffer.pointer)
-				throw BufferNotInitialisedException("Pointer must be allocated first!");
+			assert(buffer.pointer != 0);
 			return;
 		}
 		assert(buffer.size > 0);
 
+		Alloc(buffer);
+	}
+
+	template<typename bi, MemorySpace ms, MathDomain md>
+	void IBuffer<bi, ms, md>::Alloc(MemoryBuffer& buffer)
+	{
 		switch (ms)
 		{
 		case MemorySpace::Device:
@@ -42,16 +48,40 @@ namespace cl
 	void IBuffer<bi, ms, md>::ReadFrom(const IBuffer<biRhs, msRhs, mdRhs>& rhs)
 	{
 		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
-		if (!buffer.pointer)
-			throw BufferNotInitialisedException("Buffer needs to be initialised first!");
-
+		assert(buffer.pointer != 0);
 		dm::detail::AutoCopy(buffer, static_cast<const bi*>(&rhs)->buffer);
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
-	void IBuffer<bi, ms, md>::LinSpace(const double x0, const double x1) const
+	template<typename T>
+	void IBuffer<bi, ms, md>::ReadFrom(const std::vector<T>& rhs)
+	{
+		static_assert((std::is_same<T, double>::value && md == MathDomain::Double)
+						||
+					  (std::is_same<T, float>::value && md == MathDomain::Float)
+						||
+					  (std::is_same<T, int>::value && md == MathDomain::Int));
+		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
+		assert(buffer.pointer != 0);
+
+		MemoryBuffer rhsBuf;
+		ptr_t pointer = (ptr_t)(rhs.data());
+		rhsBuf = MemoryBuffer(pointer, (unsigned)rhs.size(), MemorySpace::Host, _Traits<T>::clType);
+
+		dm::detail::AutoCopy(buffer, rhsBuf);
+	}
+
+	template<typename bi, MemorySpace ms, MathDomain md>
+	void IBuffer<bi, ms, md>::Set(const stdType value) const
+	{
+		dm::detail::Initialize(buffer, value);
+	}
+
+	template<typename bi, MemorySpace ms, MathDomain md>
+	void IBuffer<bi, ms, md>::LinSpace(const stdType x0, const stdType x1) const
 	{
 		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		assert(buffer.pointer != 0);
 		dm::detail::LinSpace(buffer, x0, x1);
 	}
 
@@ -59,6 +89,7 @@ namespace cl
 	void IBuffer<bi, ms, md>::RandomUniform(const unsigned seed) const
 	{
 		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		assert(buffer.pointer != 0);
 		dm::detail::RandUniform(buffer, seed);
 	}
 
@@ -66,23 +97,26 @@ namespace cl
 	void IBuffer<bi, ms, md>::RandomGaussian(const unsigned seed) const
 	{
 		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		assert(buffer.pointer != 0);
 		dm::detail::RandNormal(buffer, seed);
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
-	std::vector<double> IBuffer<bi, ms, md>::Get() const
+	std::vector<typename Traits<md>::stdType> IBuffer<bi, ms, md>::Get() const
 	{
 		dm::detail::ThreadSynchronize();
 
 		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		assert(buffer.pointer != 0);
+
 		MemoryBuffer newBuf(buffer);
 		newBuf.memorySpace = MemorySpace::Host;
 
 		dm::detail::AllocHost(newBuf);
 		dm::detail::AutoCopy(newBuf, buffer);
 
-		std::vector<double> ret(buffer.size, -123);
-		detail::Fill(ret, newBuf);
+		std::vector<typename Traits<md>::stdType> ret(buffer.size);
+		detail::Fill<md>(ret, newBuf);
 
 		dm::detail::FreeHost(newBuf);
 
@@ -102,6 +136,7 @@ namespace cl
 		// if this is not the owner of the buffer, it must not free it
 		if (!isOwner)
 			return;
+		assert(buffer.pointer != 0);
 
 		switch (buffer.memorySpace)
 		{
@@ -142,7 +177,11 @@ namespace cl
 	IBuffer<bi, ms, md>& IBuffer<bi, ms, md>::operator +=(const IBuffer& rhs)
 	{
 		assert(size() == rhs.size());
+		assert(rhs.GetBuffer().pointer != 0);
+
 		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
+		assert(buffer.pointer != 0);
+
 		dm::detail::AddEqual(buffer, static_cast<const bi*>(&rhs)->buffer, 1.0);
 		return *this;
 	}
@@ -151,7 +190,11 @@ namespace cl
 	IBuffer<bi, ms, md>& IBuffer<bi, ms, md>::operator -=(const IBuffer& rhs)
 	{
 		assert(size() == rhs.size());
+		assert(rhs.pointer != 0);
+
 		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
+		assert(buffer.pointer != 0);
+
 		dm::detail::AddEqual(buffer, static_cast<bi>(rhs).buffer, -1.0);
 		return *this;
 	}
@@ -160,7 +203,10 @@ namespace cl
 	IBuffer<bi, ms, md>& IBuffer<bi, ms, md>::operator %=(const IBuffer& rhs)
 	{
 		assert(size() == rhs.size());
+		assert(rhs.GetBuffer().pointer != 0);
+
 		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
+		assert(buffer.pointer != 0);
 
 		MemoryBuffer tmp(0, buffer.size, ms, md);
 		ctor(tmp);
@@ -177,7 +223,11 @@ namespace cl
 	IBuffer<bi, ms, md>& IBuffer<bi, ms, md>::AddEqual(const IBuffer& rhs, const double alpha)
 	{
 		assert(size() == rhs.size());
+		assert(rhs.GetBuffer().pointer != 0);
+
 		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
+		assert(buffer.pointer != 0);
+
 		dm::detail::AddEqual(buffer, static_cast<const bi*>(&rhs)->buffer, alpha);
 		return *this;
 	}
@@ -186,6 +236,8 @@ namespace cl
 	IBuffer<bi, ms, md>& IBuffer<bi, ms, md>::Scale(const double alpha)
 	{
 		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
+		assert(buffer.pointer != 0);
+
 		dm::detail::Scale(buffer, alpha);
 		return *this;
 	}
@@ -196,6 +248,29 @@ namespace cl
 	void Print(const IBuffer<bi, ms, md>& buf, const std::string& label)
 	{
 		buf.Print(label);
+	}
+
+	template<typename T>
+	static void Print(const std::vector<T>& vec, const std::string& label)
+	{
+		std::cout << "********* " << label << " ***********" << std::endl;
+		for (size_t i = 0; i < vec.size(); i++)
+			std::cout << "\tv[" << i << "] \t=\t " << vec[i] << std::endl;
+		std::cout << "**********************" << std::endl;
+	}
+
+	template<typename T>
+	static void Print(const std::vector<T>& mat, const unsigned nRows, const unsigned nCols, const std::string& label)
+	{
+		std::cout << "********* " << label << " ***********" << std::endl;
+		for (size_t j = 0; j < nCols; j++)
+		{
+			std::cout << "\t";
+			for (size_t i = 0; i < nRows; i++)
+				std::cout << " m[" << i << "][" << j << "] = " << mat[i + nRows * j];
+			std::cout << std::endl;
+		}
+		std::cout << "**********************" << std::endl;
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>

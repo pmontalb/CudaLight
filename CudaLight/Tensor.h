@@ -3,10 +3,7 @@
 #include <vector>
 #include <string>
 #include <memory>
-#include <iostream>
-#include <fstream>
 
-#include <DeviceManager.h>
 #include <Types.h>
 #include <ColumnWiseMatrix.h>
 
@@ -16,26 +13,30 @@ namespace cl
 	class Tensor : public IBuffer<Tensor<memorySpace, mathDomain>, memorySpace, mathDomain>
 	{
 	public:
+		using stdType = typename Traits<mathDomain>::stdType;
 		friend class IBuffer<Tensor<memorySpace, mathDomain>, memorySpace, mathDomain>;
 
 		Tensor(const unsigned nRows, const unsigned nCols, const unsigned nMatrices);
 
-		Tensor(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, double value);
+		Tensor(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, stdType value);
 
 		Tensor(const unsigned nRows, const unsigned nMatrices);
 
 		Tensor(const Tensor& rhs);
-
+		template<typename T>
+		Tensor(const std::vector<T>& rhs, const unsigned nRows, const unsigned nCols, const unsigned nMatrices);
+		
 		Tensor(const ColumnWiseMatrix<memorySpace, mathDomain>& rhs);
 
 		Tensor(const Vector<memorySpace, mathDomain>& rhs);
 
+		using IBuffer<Tensor, memorySpace, mathDomain>::ReadFrom;
 		void ReadFrom(const ColumnWiseMatrix<memorySpace, mathDomain>& rhs);
 		void ReadFrom(const Vector<memorySpace, mathDomain>& rhs);
 
 		using IBuffer<Tensor, memorySpace, mathDomain>::Get;
-		std::vector<double> Get(const unsigned matrix) const;
-		std::vector<double> Get(const unsigned matrix, const unsigned column) const;
+		std::vector<typename Traits<mathDomain>::stdType> Get(const unsigned matrix) const;
+		std::vector<typename Traits<mathDomain>::stdType> Get(const unsigned matrix, const unsigned column) const;
 
 		void Set(const ColumnWiseMatrix<memorySpace, mathDomain>& matrixBuffer, const unsigned matrix);
 		void Set(const Vector<memorySpace, mathDomain>& columnVector, const unsigned column, const unsigned matrix);
@@ -73,7 +74,7 @@ namespace cl
 	Tensor<ms, md> Copy(const Tensor<ms, md>& source);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Tensor<ms, md> LinSpace(const double x0, const double x1, const unsigned nRows, const unsigned nCols, const unsigned nMatrices);
+	Tensor<ms, md> LinSpace(const typename Traits<md>::stdType x0, const typename Traits<md>::stdType x1, const unsigned nRows, const unsigned nCols, const unsigned nMatrices);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	Tensor<ms, md> RandomUniform(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const unsigned seed = 1234);

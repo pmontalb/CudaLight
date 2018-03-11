@@ -14,22 +14,27 @@ namespace cl
 	class ColumnWiseMatrix : public IBuffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>
 	{
 	public:
+		using stdType = typename Traits<mathDomain>::stdType;
 		friend class IBuffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>;
 		 
 		ColumnWiseMatrix(const unsigned nRows, const unsigned nCols);
 
-		ColumnWiseMatrix(const unsigned nRows, const unsigned nCols, const double value);
+		ColumnWiseMatrix(const unsigned nRows, const unsigned nCols, const stdType value);
 
 		ColumnWiseMatrix(const unsigned nRows);
 
 		ColumnWiseMatrix(const ColumnWiseMatrix& rhs);
 
+		template<typename T>
+		ColumnWiseMatrix(const std::vector<T>& rhs, const unsigned nRows, const unsigned nCols);
+
 		ColumnWiseMatrix(const Vector<memorySpace, mathDomain>& rhs);		
 
+		using IBuffer<ColumnWiseMatrix, memorySpace, mathDomain>::ReadFrom;
 		void ReadFrom(const Vector<memorySpace, mathDomain>& rhs);
 
 		using IBuffer<ColumnWiseMatrix, memorySpace, mathDomain>::Get;
-		std::vector<double> Get(const unsigned column) const;
+		std::vector<typename Traits<mathDomain>::stdType> Get(const unsigned column) const;
 
 		void Set(const Vector<memorySpace, mathDomain>& columnVector, const unsigned column);
 
@@ -88,7 +93,7 @@ namespace cl
 	ColumnWiseMatrix<ms, md> Copy(const ColumnWiseMatrix<ms, md>& source);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	ColumnWiseMatrix<ms, md> LinSpace(const double x0, const double x1, const unsigned nRows, const unsigned nCols);
+	ColumnWiseMatrix<ms, md> LinSpace(const typename Traits<md>::stdType x0, const typename Traits<md>::stdType x1, const unsigned nRows, const unsigned nCols);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	ColumnWiseMatrix<ms, md> RandomUniform(const unsigned nRows, const unsigned nCols, const unsigned seed = 1234);

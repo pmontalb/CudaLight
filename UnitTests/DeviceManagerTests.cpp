@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include <DeviceManager.h>
+
 #include <DeviceManager.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

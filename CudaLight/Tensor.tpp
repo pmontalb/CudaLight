@@ -1,5 +1,7 @@
 #pragma once
 
+#include <DeviceManager.h>
+
 namespace cl
 {
 	template<MemorySpace ms, MathDomain md>
@@ -18,7 +20,7 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	Tensor<ms, md>::Tensor(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const double value)
+	Tensor<ms, md>::Tensor(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const typename Traits<md>::stdType value)
 		: Tensor(nRows, nCols, nMatrices)
 	{
 		dm::detail::Initialize(static_cast<MemoryBuffer>(buffer), value);
@@ -34,7 +36,16 @@ namespace cl
 	Tensor<ms, md>::Tensor(const Tensor& rhs)
 		: Tensor(rhs.nRows(), rhs.nCols(), rhs.nMatrices())
 	{
-		dm::detail::AutoCopy(static_cast<MemoryBuffer>(buffer), static_cast<MemoryBuffer>(rhs.buffer));
+		ReadFrom(rhs);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	template<typename T>
+	Tensor<ms, md>::Tensor(const std::vector<T>& rhs, const unsigned nRows, const unsigned nCols, const unsigned nMatrices)
+		: Tensor(nRows, nCols, nMatrices)
+	{
+		assert(rhs.size() == nRows * nCols * nMatrices);
+		ReadFrom(rhs);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -61,8 +72,9 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void Tensor<ms, md>::ReadFrom(const ColumnWiseMatrix<ms, md>& rhs)
 	{
-		if (!buffer.pointer)
-			throw BufferNotInitialisedException();
+		assert(buffer.pointer != 0);
+		assert(rhs.buffer.pointer != 0);
+		assert(rhs.size() != 0);
 
 		dm::detail::AutoCopy(static_cast<MemoryBuffer>(matrices[0]->buffer), rhs.buffer);
 	}
@@ -70,21 +82,25 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void Tensor<ms, md>::ReadFrom(const Vector<ms, md>& rhs)
 	{
-		if (!buffer.pointer)
-			throw BufferNotInitialisedException();
+		assert(buffer.pointer != 0);
+		assert(rhs.buffer.pointer != 0);
+		assert(rhs.size() != 0);
 
 		dm::detail::AutoCopy(matrices[0]->columns[0]->buffer, rhs.buffer);
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	std::vector<double> Tensor<ms, md>::Get(const unsigned matrix) const
+	std::vector<typename Traits<md>::stdType> Tensor<ms, md>::Get(const unsigned matrix) const
 	{
+		assert(matrix < nMatrices());
 		return matrices[matrix]->Get();
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	std::vector<double> Tensor<ms, md>::Get(const unsigned matrix, const unsigned column) const
+	std::vector<typename Traits<md>::stdType> Tensor<ms, md>::Get(const unsigned matrix, const unsigned column) const
 	{
+		assert(matrix < nMatrices());
+		assert(column < nCols());
 		return matrices[matrix]->columns[column]->Get();
 	}
 
@@ -92,6 +108,7 @@ namespace cl
 	void Tensor<ms, md>::Set(const ColumnWiseMatrix<ms, md>& matrixBuffer, const unsigned matrix)
 	{
 		assert(matrix < nMatrices());
+		assert(matrixBuffer.buffer.pointer != 0);
 		matrices[matrix]->ReadFrom(matrixBuffer);
 	}
 
@@ -100,6 +117,7 @@ namespace cl
 	{
 		assert(matrix < nMatrices());
 		assert(column < nCols());
+		assert(columnVector.buffer.pointer != 0);
 		matrices[matrix]->columns[column]->ReadFrom(columnVector);
 	}
 
@@ -163,15 +181,15 @@ namespace cl
 
 	#pragma endregion
 
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	template<MemorySpace ms, MathDomain md>
 	Tensor<ms, md> Copy(const Tensor<ms, md>& source)
 	{
 		Tensor<ms, md> ret(source);
 		return ret;
 	}
 
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Tensor<ms, md> LinSpace(const double x0, const double x1, const unsigned nRows, const unsigned nCols, const unsigned nMatrices)
+	template<MemorySpace ms, MathDomain md>
+	Tensor<ms, md> LinSpace(const typename Traits<md>::stdType x0, const typename Traits<md>::stdType x1, const unsigned nRows, const unsigned nCols, const unsigned nMatrices)
 	{
 		Tensor<ms, md> ret(nRows, nCols, nMatrices);
 		ret.LinSpace(x0, x1);
@@ -179,7 +197,7 @@ namespace cl
 		return ret;
 	}
 
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	template<MemorySpace ms, MathDomain md>
 	Tensor<ms, md> RandomUniform(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const unsigned seed)
 	{
 		Tensor<ms, md> ret(nRows, nCols, nMatrices);
@@ -188,7 +206,7 @@ namespace cl
 		return ret;
 	}
 
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	template<MemorySpace ms, MathDomain md>
 	Tensor<ms, md> RandomGaussian(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const unsigned seed)
 	{
 		Tensor<ms, md> ret(nRows, nCols, nMatrices);

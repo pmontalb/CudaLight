@@ -54,6 +54,9 @@
     <ClInclude Include="Tensor.h">
       <Filter>Header Files\Tensor</Filter>
     </ClInclude>
+    <ClInclude Include="SparseVector.h">
+      <Filter>Header Files\Vector</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DeviceManager.cpp">

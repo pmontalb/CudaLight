@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
+
 #include <Tensor.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -12,22 +13,22 @@ namespace UnitTests
 
 		TEST_METHOD(Allocation)
 		{
-			cl::GpuSingleTensor t1(10, 5, 1.2345);
+			cl::GpuSingleTensor t1(10, 5, 5, 1.2345f);
 			dm::DeviceManager::CheckDeviceSanity();
 
-			cl::GpuDoubleTensor t2(10, 5, 1.2345);
+			cl::GpuDoubleTensor t2(10, 5, 5, 1.2345);
 			dm::DeviceManager::CheckDeviceSanity();
 
-			cl::CpuSingleTensor t3(10, 5, 1.2345);
+			cl::CpuSingleTensor t3(10, 5, 5, 1.2345f);
 			dm::DeviceManager::CheckDeviceSanity();
 
-			cl::CpuDoubleTensor t4(10, 5, 1.2345);
+			cl::CpuDoubleTensor t4(10, 5, 5, 1.2345);
 			dm::DeviceManager::CheckDeviceSanity();
 		}
 
 		TEST_METHOD(Copy)
 		{
-			cl::GpuSingleTensor t1(10, 5, 1.2345);
+			cl::GpuSingleTensor t1(10, 5, 5, 1.2345f);
 			dm::DeviceManager::CheckDeviceSanity();
 
 			cl::GpuSingleTensor t2(t1);
@@ -35,7 +36,7 @@ namespace UnitTests
 
 			Assert::IsTrue(t1 == t2);
 
-			cl::GpuDoubleTensor t3(10, 5, 1.2345);
+			cl::GpuDoubleTensor t3(10, 5, 5, 1.2345);
 			dm::DeviceManager::CheckDeviceSanity();
 
 			cl::GpuDoubleTensor t4(t3);
@@ -43,7 +44,7 @@ namespace UnitTests
 
 			Assert::IsTrue(t3 == t4);
 
-			cl::GpuIntegerTensor v5(10, 5, 10);
+			cl::GpuIntegerTensor v5(10, 5, 5, 10);
 			dm::DeviceManager::CheckDeviceSanity();
 
 			cl::GpuIntegerTensor v6(v5);
@@ -54,7 +55,7 @@ namespace UnitTests
 
 		TEST_METHOD(Linspace)
 		{
-			cl::ten v = cl::LinSpace(0.0, 1.0, 10, 10);
+			cl::ten v = cl::LinSpace(0.0f, 1.0f, 10, 10, 10);
 			dm::DeviceManager::CheckDeviceSanity();
 			auto _v = v.Get();
 			Assert::IsTrue(fabs(_v[0] - 0.0) <= 1e-7);

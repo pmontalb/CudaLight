@@ -1,7 +1,5 @@
 #pragma once
 
-#include <DeviceManagerHelper.h>
-
 namespace dm
 {
 	class DeviceManager 

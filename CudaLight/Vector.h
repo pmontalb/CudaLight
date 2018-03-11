@@ -1,30 +1,32 @@
 #pragma once
 
-#include <vector>
 #include <string>
-
 #include <memory>
+
 #include <IBuffer.h>
 #include <Types.h>
-
 
 namespace cl
 {
 	template<MemorySpace memorySpace = MemorySpace::Device, MathDomain mathDomain = MathDomain::Float>
-	class ColumnWiseMatrix;
+	class SparseVector;
 
 	template<MemorySpace memorySpace = MemorySpace::Device, MathDomain mathDomain = MathDomain::Float>
 	class Vector : public IBuffer<Vector<memorySpace, mathDomain>, memorySpace, mathDomain>
 	{
 	public:
+		using stdType = typename Traits<mathDomain>::stdType;
+
 		friend class IBuffer<Vector<memorySpace, mathDomain>, memorySpace, mathDomain>;
-		friend class IBuffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>;
+		template<MemorySpace ms, MathDomain md>
+		friend class SparseVector;
 
 		explicit Vector(const unsigned size);
 
-		Vector(const unsigned size, const double value);
+		Vector(const unsigned size, const stdType value);
 
 		Vector(const Vector& rhs);
+		Vector(const std::vector<stdType>& rhs);
 
 		virtual ~Vector() = default;
 
@@ -65,6 +67,7 @@ namespace cl
 	protected:
 		using IBuffer<Vector, memorySpace, mathDomain>::IBuffer;
 
+		Vector() : IBuffer(true) {};
 		explicit Vector(const MemoryBuffer& buffer);
 	private:
 		
@@ -76,7 +79,7 @@ namespace cl
 	Vector<ms, md> Copy(const Vector<ms, md>& source);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Vector<ms, md> LinSpace(const double x0, const double x1, const unsigned size);
+	Vector<ms, md> LinSpace(const typename Traits<md>::stdType x0, const typename Traits<md>::stdType x1, const unsigned size);
 	
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	Vector<ms, md> RandomUniform(const unsigned size, const unsigned seed = 1234);

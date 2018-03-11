@@ -5,7 +5,6 @@
 
 #include <Types.h>
 #include <Exception.h>
-#include <DeviceManager.h>
 
 #include <Vector.h>
 
@@ -19,7 +18,7 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	Vector<ms, md>::Vector(const unsigned size, const double value)
+	Vector<ms, md>::Vector(const unsigned size, const typename Traits<md>::stdType value)
 		: Vector(size)
 	{
 		dm::detail::Initialize(buffer, value);
@@ -29,7 +28,14 @@ namespace cl
 	Vector<ms, md>::Vector(const Vector& rhs)
 		: Vector(rhs.size())
 	{		
-		dm::detail::AutoCopy(buffer, rhs.buffer);
+		ReadFrom(rhs);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	Vector<ms, md>::Vector(const std::vector<typename Traits<md>::stdType>& rhs)
+		: Vector(static_cast<unsigned>(rhs.size()))
+	{
+		ReadFrom(rhs);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -43,11 +49,7 @@ namespace cl
 	void Vector<ms, md>::Print(const std::string& label) const
 	{
 		auto vec = Get();
-
-		std::cout << "********* " << label << " ***********" << std::endl;
-		for (size_t i = 0; i < vec.size(); i++)
-			std::cout << "\tv[" << i << "] \t=\t " << vec[i] << std::endl;
-		std::cout << "**********************" << std::endl;
+		cl::Print(vec);
 	}
 
 	#pragma region Linear Algebra
@@ -98,7 +100,7 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	Vector<ms, md> LinSpace(const double x0, const double x1, const unsigned size)
+	Vector<ms, md> LinSpace(const typename Traits<md>::stdType x0, const typename Traits<md>::stdType x1, const unsigned size)
 	{
 		Vector<ms, md> ret(size);
 		ret.LinSpace(x0, x1);
