@@ -38,7 +38,18 @@ namespace cl
 
 		#pragma region Linear Algebra
 
-		// TODO
+		ColumnWiseMatrix<memorySpace, mathDomain> operator *(const ColumnWiseMatrix<memorySpace, mathDomain>& rhs) const;
+		Vector<memorySpace, mathDomain> operator *(const Vector<memorySpace, mathDomain>& rhs) const;
+		
+		ColumnWiseMatrix<memorySpace, mathDomain> Multiply(const ColumnWiseMatrix<memorySpace, mathDomain>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0) const;
+		/**
+		* Same version as above, but gives the possibility of reusing the output buffer
+		*/
+		void Multiply(ColumnWiseMatrix<memorySpace, mathDomain>& out, const ColumnWiseMatrix<memorySpace, mathDomain>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0) const;
+		
+		Vector<memorySpace, mathDomain> Dot(const Vector<memorySpace, mathDomain>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0) const;
+		void Dot(Vector<memorySpace, mathDomain>& out, const Vector<memorySpace, mathDomain>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0) const;
+
 
 		#pragma endregion 
 
@@ -77,6 +88,26 @@ namespace cl
 	typedef GpuIntegerSparseMatrix ismat;
 
 	#pragma endregion
+
+	#pragma region
+
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	ColumnWiseMatrix<ms, md> Multiply(const ColumnWiseMatrix<ms, md>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0);
+	/**
+	* Same version as above, but gives the possibility of reusing the output buffer
+	*/
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	void Multiply(ColumnWiseMatrix<ms, md>& out, const ColumnWiseMatrix<ms, md>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0);
+
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	Vector<ms, md> Dot(const Vector<ms, md>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0);
+	/**
+	* Same version as above, but gives the possibility of reusing the output buffer
+	*/
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	Vector<ms, md> Dot(Vector<ms, md>& out, const Vector<ms, md>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0);
+
+	#pragma endregion 
 }
 
 namespace cl
@@ -183,5 +214,87 @@ namespace cl
 	{
 		auto mat = Get();
 		cl::Print(mat, label);
+	}
+
+	#pragma region Linear Algebra
+
+	template< MemorySpace ms, MathDomain md>
+	ColumnWiseMatrix<ms, md> CompressedSparseRowMatrix<ms, md>::operator *(const ColumnWiseMatrix<ms, md>& rhs) const
+	{
+		assert(nCols() == rhs.nRows());
+
+		ColumnWiseMatrix<ms, md> ret(nRows(), rhs.nCols());
+		dm::detail::SparseMultiply(ret.buffer, this->buffer, rhs.buffer, this->nRows(), rhs.nRows());
+
+		return ret;
+	}
+
+	template< MemorySpace ms, MathDomain md>
+	Vector<ms, md> CompressedSparseRowMatrix<ms, md>::operator *(const Vector<ms, md>& rhs) const
+	{
+		assert(nRows() == rhs.size());
+
+		Vector<ms, md> ret(rhs.size());
+		dm::detail::SparseDot(ret.buffer, this->buffer, rhs.buffer);
+
+		return ret;
+	}
+
+	template< MemorySpace ms, MathDomain md>
+	ColumnWiseMatrix<ms, md> CompressedSparseRowMatrix<ms, md>::Multiply(const ColumnWiseMatrix<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha) const
+	{
+		ColumnWiseMatrix<ms, md> ret(nRows(), rhs.nCols());
+		Multiply(ret, rhs, lhsOperation, alpha);
+
+		return ret;
+	}
+
+	template< MemorySpace ms, MathDomain md>
+	void CompressedSparseRowMatrix<ms, md>::Multiply(ColumnWiseMatrix<ms, md>& out, const ColumnWiseMatrix<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha) const
+	{
+		assert(nCols() == rhs.nRows());
+		dm::detail::SparseMultiply(out.buffer, this->buffer, rhs.buffer, this->nRows(), rhs.nRows(), lhsOperation, alpha);
+	}
+
+	template< MemorySpace ms, MathDomain md>
+	Vector<ms, md> CompressedSparseRowMatrix<ms, md>::Dot(const Vector<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha) const
+	{
+		Vector<ms, md> ret(rhs.size());
+		Dot(ret, rhs, lhsOperation, alpha);
+
+		return ret;
+	}
+
+	template< MemorySpace ms, MathDomain md>
+	void CompressedSparseRowMatrix<ms, md>::Dot(Vector<ms, md>& out, const Vector<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha) const
+	{
+		assert(nRows() == rhs.size());
+		dm::detail::SparseDot(out.buffer, this->buffer, rhs.buffer, lhsOperation, 1.0);
+	}
+
+	#pragma endregion 
+
+	template<MemorySpace ms, MathDomain md>
+	ColumnWiseMatrix<ms, md> Multiply(const CompressedSparseRowMatrix<ms, md>& lhs, const ColumnWiseMatrix<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha)
+	{
+		return lhs.Multiply(rhs, lhsOperation, alpha);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	void Multiply(ColumnWiseMatrix<ms, md>&out, const CompressedSparseRowMatrix<ms, md>& lhs, const ColumnWiseMatrix<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha)
+	{
+		lhs.Multiply(out, rhs, lhsOperation, alpha);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	Vector<ms, md> Dot(const CompressedSparseRowMatrix<ms, md>& lhs, const Vector<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha)
+	{
+		return lhs.Dot(rhs, lhsOperation, alpha);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	void Dot(Vector<ms, md>& out, const CompressedSparseRowMatrix<ms, md>& lhs, const Vector<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha)
+	{
+		lhs.Dot(out, rhs, lhsOperation, alpha);
 	}
 }

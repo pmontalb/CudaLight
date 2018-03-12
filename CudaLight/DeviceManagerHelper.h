@@ -127,8 +127,8 @@ __CREATE_FUNCTION_2_ARG(Invert, MemoryTile, A, const MatrixOperation, aOperation
 //CuSparseWrappers
 __CREATE_FUNCTION_4_ARG(SparseAdd, MemoryBuffer, z, const SparseMemoryBuffer, x, const MemoryBuffer, y, const double, alpha = 1.0);
 __CREATE_FUNCTION_3_ARG(SparseSubtract, MemoryBuffer, z, const SparseMemoryBuffer, x, const MemoryBuffer, y);
-__CREATE_FUNCTION_4_ARG(SparseDot, MemoryBuffer, y, const SparseMemoryTile, A, const MemoryBuffer, x, const double, alpha = 1.0);
-__CREATE_FUNCTION_6_ARG(SparseMultiply, MemoryTile, A, const SparseMemoryTile, B, const MemoryTile, C, const unsigned, leadingDimensionB, const unsigned, leadingDimensionC, const double, alpha = 1.0);
+__CREATE_FUNCTION_5_ARG(SparseDot, MemoryBuffer, y, const SparseMemoryTile, A, const MemoryBuffer, x, const MatrixOperation, aOperation = MatrixOperation::None, const double, alpha = 1.0);
+__CREATE_FUNCTION_7_ARG(SparseMultiply, MemoryTile, A, const SparseMemoryTile, B, const MemoryTile, C, const unsigned, leadingDimensionB, const unsigned, leadingDimensionC, const MatrixOperation, bOperation = MatrixOperation::None, const double, alpha = 1.0);
 
 #pragma region Undef macros
 

@@ -132,7 +132,7 @@ namespace cl
 		void ctor(MemoryBuffer& buffer);
 		void dtor(MemoryBuffer buffer);
 
-		void Alloc(MemoryBuffer& buffer);
+		static void Alloc(MemoryBuffer& buffer);
 
 		const bool isOwner;
 	};

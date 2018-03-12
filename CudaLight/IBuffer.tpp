@@ -66,7 +66,7 @@ namespace cl
 
 		MemoryBuffer rhsBuf;
 		ptr_t pointer = (ptr_t)(rhs.data());
-		rhsBuf = MemoryBuffer(pointer, (unsigned)rhs.size(), MemorySpace::Host, _Traits<T>::clType);
+		rhsBuf = MemoryBuffer(pointer, static_cast<unsigned>(rhs.size()), MemorySpace::Host, _Traits<T>::clType);
 
 		dm::detail::AutoCopy(buffer, rhsBuf);
 	}

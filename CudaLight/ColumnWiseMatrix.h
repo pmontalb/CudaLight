@@ -11,11 +11,16 @@
 namespace cl
 {
 	template<MemorySpace memorySpace, MathDomain mathDomain>
+	class CompressedSparseRowMatrix;
+
+	template<MemorySpace memorySpace, MathDomain mathDomain>
 	class ColumnWiseMatrix : public IBuffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>
 	{
 	public:
 		using stdType = typename Traits<mathDomain>::stdType;
 		friend class IBuffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>;
+		template<MemorySpace ms, MathDomain md>
+		friend class CompressedSparseRowMatrix;
 		 
 		ColumnWiseMatrix(const unsigned nRows, const unsigned nCols);
 
@@ -58,7 +63,16 @@ namespace cl
 		Vector<memorySpace, mathDomain> operator *(const Vector<memorySpace, mathDomain>& rhs) const;
 
 		ColumnWiseMatrix Multiply(const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const MatrixOperation rhsOperation = MatrixOperation::None, const double alpha = 1.0) const;
+		/**
+		 * Same version as above, but gives the possibility of reusing the output buffer
+		 */
+		void Multiply(ColumnWiseMatrix& out, const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const MatrixOperation rhsOperation = MatrixOperation::None, const double alpha = 1.0) const;
+		
 		Vector<memorySpace, mathDomain> Dot(const Vector<memorySpace, mathDomain>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0) const;
+		/**
+		* Same version as above, but gives the possibility of reusing the output buffer
+		*/
+		void Dot(Vector<memorySpace, mathDomain>& out, const Vector<memorySpace, mathDomain>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0) const;
 
 		ColumnWiseMatrix Add(const ColumnWiseMatrix& rhs, const double alpha = 1.0) const;
 
@@ -105,6 +119,22 @@ namespace cl
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	ColumnWiseMatrix<ms, md> Add(const ColumnWiseMatrix<ms, md>& lhs, const ColumnWiseMatrix<ms, md>& rhs, const double alpha = 1.0);
+
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	ColumnWiseMatrix<ms, md> Multiply(const ColumnWiseMatrix<ms, md>& lhs, const ColumnWiseMatrix<ms, md>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const MatrixOperation rhsOperation = MatrixOperation::None, const double alpha = 1.0);
+	/**
+	 * Same version as above, but gives the possibility of reusing the output buffer
+	 */
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	void Multiply(ColumnWiseMatrix<ms, md>& out, const ColumnWiseMatrix<ms, md>& lhs, const ColumnWiseMatrix<ms, md>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const MatrixOperation rhsOperation = MatrixOperation::None, const double alpha = 1.0);
+
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	Vector<ms, md> Dot(const ColumnWiseMatrix<ms, md>& lhs, const Vector<ms, md>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0);
+	/**
+	* Same version as above, but gives the possibility of reusing the output buffer
+	*/
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	void Dot(Vector<ms, md>& out, const ColumnWiseMatrix<ms, md>& lhs, const Vector<ms, md>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	void Scale(ColumnWiseMatrix<ms, md>& lhs, const double alpha);

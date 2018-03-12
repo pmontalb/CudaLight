@@ -96,6 +96,9 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::operator +(const ColumnWiseMatrix& rhs) const
 	{
+		assert(nRows() == rhs.nRows());
+		assert(nCols() == rhs.nCols());
+
 		ColumnWiseMatrix ret(*this);
 		ret += rhs;
 
@@ -105,6 +108,9 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::operator -(const ColumnWiseMatrix& rhs) const
 	{
+		assert(nRows() == rhs.nRows());
+		assert(nCols() == rhs.nCols());
+
 		ColumnWiseMatrix ret(*this);
 		ret -= rhs;
 
@@ -114,6 +120,9 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::operator %(const ColumnWiseMatrix& rhs) const
 	{
+		assert(nRows() == rhs.nRows());
+		assert(nCols() == rhs.nCols());
+
 		ColumnWiseMatrix ret(*this);
 		ret %= rhs;
 
@@ -123,6 +132,9 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::Add(const ColumnWiseMatrix& rhs, const double alpha) const
 	{
+		assert(nRows() == rhs.nRows());
+		assert(nCols() == rhs.nCols());
+
 		ColumnWiseMatrix ret(*this);
 		ret.AddEqual(rhs, alpha);
 
@@ -132,7 +144,9 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::operator *(const ColumnWiseMatrix& rhs) const
 	{
-		ColumnWiseMatrix ret(*this);
+		assert(nCols() == rhs.nRows());
+
+		ColumnWiseMatrix ret(nRows(), rhs.nCols());
 		dm::detail::Multiply(ret.buffer, this->buffer, rhs.buffer, this->nRows(), rhs.nRows());
 
 		return ret;
@@ -141,7 +155,9 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::operator *=(const ColumnWiseMatrix& rhs) const
 	{
-		ColumnWiseMatrix ret(*this);
+		assert(nCols() == rhs.nRows());
+
+		ColumnWiseMatrix ret(nRows(), rhs.nCols());
 		dm::detail::Multiply(ret.buffer, this->buffer, rhs.buffer, this->nRows(), rhs.nRows());
 
 		dm::detail::AutoCopy(buffer, ret.buffer);
@@ -151,6 +167,8 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	Vector<ms, md> ColumnWiseMatrix<ms, md>::operator *(const Vector<ms, md>& rhs) const
 	{
+		assert(nRows() == rhs.size());
+
 		Vector<ms, md> ret(rhs.size());
 		dm::detail::Dot(ret.GetBuffer(), this->buffer, rhs.GetBuffer());
 
@@ -160,17 +178,32 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::Multiply(const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation, const MatrixOperation rhsOperation, const double alpha) const
 	{
-		ColumnWiseMatrix ret(*this);
-		dm::detail::Multiply(ret.buffer, this->buffer, rhs.buffer, this->nRows(), rhs.nRows());
+		ColumnWiseMatrix ret(nRows(), rhs.nCols());
+		Multiply(ret, rhs, lhsOperation, rhsOperation, alpha);
 
 		return ret;
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	void ColumnWiseMatrix<ms, md>::Multiply(ColumnWiseMatrix& out, const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation, const MatrixOperation rhsOperation, const double alpha) const
+	{
+		assert(nCols() == rhs.nRows());
+		dm::detail::Multiply(out.buffer, this->buffer, rhs.buffer, this->nRows(), rhs.nRows());
 	}
 
 	template<MemorySpace ms, MathDomain md>
 	Vector<ms, md> ColumnWiseMatrix<ms, md>::Dot(const Vector<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha) const
 	{
 		Vector<ms, md> ret(rhs.size());
-		dm::detail::Dot(ret.GetBuffer(), this->buffer, rhs.GetBuffer(), lhsOperation, alpha);
+		Dot(ret, rhs, lhsOperation, alpha);
+		return ret;
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	void ColumnWiseMatrix<ms, md>::Dot(Vector<ms, md>& out, const Vector<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha) const
+	{
+		assert(nRows() == rhs.size());
+		dm::detail::Dot(out.GetBuffer(), this->buffer, rhs.GetBuffer(), lhsOperation, alpha);
 	}
 
 	#pragma endregion
@@ -225,5 +258,29 @@ namespace cl
 	void Scale(ColumnWiseMatrix<ms, md>& lhs, const double alpha)
 	{
 		lhs.Scale(alpha);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	ColumnWiseMatrix<ms, md> Multiply(const ColumnWiseMatrix<ms, md>& lhs, const ColumnWiseMatrix<ms, md>& rhs, const MatrixOperation lhsOperation, const MatrixOperation rhsOperation, const double alpha)
+	{
+		return lhs.Multiply(rhs, lhsOperation, rhsOperation, alpha);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	void Multiply(ColumnWiseMatrix<ms, md>& out, const ColumnWiseMatrix<ms, md>& lhs, const ColumnWiseMatrix<ms, md>& rhs, const MatrixOperation lhsOperation, const MatrixOperation rhsOperation, const double alpha)
+	{
+		lhs.Multiply(out, rhs, lhsOperation, rhsOperation, alpha);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	Vector<ms, md> Dot(const ColumnWiseMatrix<ms, md>& lhs, const Vector<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha)
+	{
+		return lhs.Multiply(rhs, lhsOperation, alpha);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	void Dot(Vector<ms, md>& out, const ColumnWiseMatrix<ms, md>& lhs, const Vector<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha)
+	{
+		lhs.Multiply(out, rhs, lhsOperation, alpha);
 	}
 }
