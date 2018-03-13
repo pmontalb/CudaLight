@@ -1,26 +1,21 @@
-#include "stdafx.h"
-#include "CppUnitTest.h"
-
+#include <gtest/gtest.h>
 #include <DeviceManager.h>
 
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-
-namespace UnitTests
+namespace clt
 {		
-	TEST_CLASS(DeviceManagerTests)
+	class DeviceManagerTests : public ::testing::Test
 	{
-	public:
-		
-		TEST_METHOD(DeviceInitialization)
-		{
-			for (unsigned i = 0; i < dm::DeviceManager::GetDeviceCount(); ++i)
-			{
-				dm::DeviceManager::SetDevice(i);
-				dm::DeviceManager::CheckDeviceSanity();
-			}
+	};		
 
-			dm::DeviceManager::SetBestDevice();
+	TEST_F(DeviceManagerTests, DeviceInitialization)
+	{
+		for (unsigned i = 0; i < dm::DeviceManager::GetDeviceCount(); ++i)
+		{
+			dm::DeviceManager::SetDevice(i);
 			dm::DeviceManager::CheckDeviceSanity();
 		}
-	};
+
+		dm::DeviceManager::SetBestDevice();
+		dm::DeviceManager::CheckDeviceSanity();
+	}
 }
