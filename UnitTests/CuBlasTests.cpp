@@ -10,6 +10,18 @@ namespace clt
 	{
 	};
 
+	static cl::mat GetInvertibleMatrix(size_t nRows, const unsigned seed = 1234)
+	{
+		auto A = cl::RandomUniform(nRows, nRows, seed);
+		auto _A = A.Get();
+
+		for (size_t i = 0; i < nRows; ++i)
+			_A[i + nRows * i] += 2;
+
+		A.ReadFrom(_A);
+		return A;
+	}
+
 	TEST_F(CuBlasTests, Add)
 	{
 		cl::vec v1 = cl::LinSpace(-1.0, 1.0, 100);
@@ -136,6 +148,55 @@ namespace clt
 			for (size_t j = 0; j < m1.nCols(); ++j)
 				m1v1 += _m1[i + j * m1.nRows()] * _v1[j];
 			ASSERT_TRUE(fabs(m1v1 - _v2[i]) <= 5e-5);
+		}
+	}
+
+	TEST_F(CuBlasTests, Invert)
+	{
+		cl::mat v = GetInvertibleMatrix(128);
+		dm::DeviceManager::CheckDeviceSanity();
+
+		cl::mat vMinus1(v);
+		vMinus1.Invert();
+		dm::DeviceManager::CheckDeviceSanity();
+
+		auto eye = v.Multiply(vMinus1);
+		auto _eye = eye.Get();
+		auto _v = v.Get();
+		auto _vMinus1 = vMinus1.Get();
+
+		for (size_t i = 0; i < v.nRows(); ++i)
+		{
+			for (size_t j = 0; j < v.nRows(); ++j)
+			{
+				double expected = i == j ? 1.0 : 0.0;
+				ASSERT_TRUE(fabs(_eye[i + v.nRows() * j] - expected) <= 5e-5);
+			}
+		}
+	}
+
+	TEST_F(CuBlasTests, Solve)
+	{
+		cl::mat v = GetInvertibleMatrix(128);
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _v = v.Get();
+
+		cl::mat u = GetInvertibleMatrix(v.nRows(), 2345);
+		auto _u = u.Get();
+		v.Solve(u);
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _x = u.Get();
+
+		auto uSanity = v.Multiply(u);
+		auto _uSanity = uSanity.Get();
+
+		for (size_t i = 0; i < v.nRows(); ++i)
+		{
+			for (size_t j = 0; j < v.nRows(); ++j)
+			{
+				double expected = _u[i + v.nRows() * j];
+				ASSERT_TRUE(fabs(_uSanity[i + v.nRows() * j] - expected) <= 5e-5);
+			}
 		}
 	}
 }

@@ -40,6 +40,8 @@ namespace cl
 		using IBuffer<ColumnWiseMatrix, memorySpace, mathDomain>::Get;
 		std::vector<typename Traits<mathDomain>::stdType> Get(const unsigned column) const;
 
+		void MakeIdentity();
+
 		void Set(const Vector<memorySpace, mathDomain>& columnVector, const unsigned column);
 
 		void Print(const std::string& label = "") const override;
@@ -76,6 +78,21 @@ namespace cl
 
 		ColumnWiseMatrix Add(const ColumnWiseMatrix& rhs, const double alpha = 1.0) const;
 
+		/**
+		* Invert inplace - WARNING, use Solve for higher performance
+		*/
+		void Invert(const MatrixOperation lhsOperation = MatrixOperation::None);
+
+		/**
+		* Solve A * X = B, B is overwritten
+		*/
+		void Solve(const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation = MatrixOperation::None);
+
+		/**
+		* Solve A * x = b, b is overwritten
+		*/
+		void Solve(const Vector<memorySpace, mathDomain>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None);
+
 		#pragma endregion
 
 		#pragma region Enable shared ptr contruction
@@ -104,6 +121,9 @@ namespace cl
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	ColumnWiseMatrix<ms, md> Copy(const ColumnWiseMatrix<ms, md>& source);
+
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	ColumnWiseMatrix<ms, md> Eye(const unsigned nRows);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	ColumnWiseMatrix<ms, md> LinSpace(const typename Traits<md>::stdType x0, const typename Traits<md>::stdType x1, const unsigned nRows, const unsigned nCols);

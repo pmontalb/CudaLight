@@ -50,6 +50,15 @@ namespace clt
 		ASSERT_TRUE(m5 == m6);
 	}
 
+	TEST_F(MatrixTests, Eye)
+	{
+		cl::mat v = cl::Eye(128);
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _v = v.Get();
+		for (size_t i = 0; i < v.nRows(); ++i)
+			ASSERT_TRUE(fabs(_v[i + v.nRows() * i] - 1.0) <= 5e-16);
+	}
+
 	TEST_F(MatrixTests, Linspace)
 	{
 		cl::mat v = cl::LinSpace(0.0f, 1.0f, 10, 10);
@@ -123,6 +132,5 @@ namespace clt
 					ASSERT_TRUE(fabs(col[i] - _v1[i]) <= 1e-7);
 			}
 		}
-
 	}
 }

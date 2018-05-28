@@ -59,6 +59,13 @@ namespace cl
 
 	}
 
+	template<MemorySpace ms, MathDomain md>
+	void ColumnWiseMatrix<ms, md>::MakeIdentity()
+	{
+		assert(nRows() == nCols());
+		dm::detail::Eye(this->buffer);
+	}
+
 
 	template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::ReadFrom(const Vector<ms, md>& rhs)
@@ -206,6 +213,29 @@ namespace cl
 		dm::detail::Dot(out.GetBuffer(), this->buffer, rhs.GetBuffer(), lhsOperation, alpha);
 	}
 
+	template<MemorySpace ms, MathDomain md>
+	void ColumnWiseMatrix<ms, md>::Invert(const MatrixOperation lhsOperation)
+	{
+		dm::detail::Invert(this->buffer, lhsOperation);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	void ColumnWiseMatrix<ms, md>::Solve(const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation)
+	{
+		assert(nRows() == rhs.nRows());
+		assert(nCols() == rhs.nCols());
+		dm::detail::Solve(this->buffer, rhs.buffer, lhsOperation);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	void ColumnWiseMatrix<ms, md>::Solve(const Vector<ms, md>& rhs, const MatrixOperation lhsOperation)
+	{
+		assert(nRows() == rhs.size());
+
+		MemoryTile tmp(rhs.GetBuffer());
+		dm::detail::Solve(this->buffer, tmp, lhsOperation);
+	}
+
 	#pragma endregion
 
 	template<MemorySpace ms, MathDomain md>
@@ -213,6 +243,15 @@ namespace cl
 	{
 		ColumnWiseMatrix<ms, md> ret(source);
 		return ret;
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	ColumnWiseMatrix<ms, md> Eye(const unsigned nRows)
+	{
+		ColumnWiseMatrix<ms, md> I(nRows, nRows);
+		I.MakeIdentity();
+
+		return I;
 	}
 
 	template<MemorySpace ms, MathDomain md>

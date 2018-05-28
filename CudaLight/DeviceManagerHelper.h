@@ -121,6 +121,7 @@ __CREATE_FUNCTION_4_ARG(ElementwiseProduct, MemoryBuffer, z, const MemoryBuffer,
 __CREATE_FUNCTION_8_ARG(Multiply, MemoryTile, A, const MemoryTile, B, const MemoryTile, C, const unsigned, leadingDimensionB, const unsigned, leadingDimensionC, const MatrixOperation, bOperation = MatrixOperation::None, const MatrixOperation, cOperation = MatrixOperation::None, const double, alpha = 1.0);
 __CREATE_FUNCTION_5_ARG(Dot, MemoryBuffer, y, const MemoryTile, A, const MemoryBuffer, x, const MatrixOperation, aOperation = MatrixOperation::None, const double, alpha = 1.0);
 __CREATE_FUNCTION_1_ARG(CumulativeRowSum, MemoryTile, A);
+__CREATE_FUNCTION_1_ARG(Eye, MemoryTile, A);
 __CREATE_FUNCTION_3_ARG(Solve, const MemoryTile, A, MemoryTile, B, const MatrixOperation, aOperation = MatrixOperation::None);
 __CREATE_FUNCTION_2_ARG(Invert, MemoryTile, A, const MatrixOperation, aOperation = MatrixOperation::None);
 
