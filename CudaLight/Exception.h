@@ -24,11 +24,20 @@ protected:
 	const std::string message;
 };
 
-class CudaKernelException : public Exception
+class InternalErrorException : public Exception
 {
 public:
-	CudaKernelException(const std::string& kernelName, const int errorCode = -1)
-		: Exception(kernelName + " returned " + std::to_string(errorCode))
+	InternalErrorException(const std::string& message = "")
+		: Exception("InternalErrorException: " + message)
+	{
+	}
+};
+
+class ExpectedEvenSizeException : public Exception
+{
+public:
+	ExpectedEvenSizeException(const std::string& message = "")
+		: Exception("ExpectedEvenSizeException: " + message)
 	{
 	}
 };

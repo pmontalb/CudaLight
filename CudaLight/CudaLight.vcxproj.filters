@@ -31,11 +31,11 @@
     <Filter Include="Header Files\Tensor">
       <UniqueIdentifier>{4d792eb9-1221-4ecd-9ff3-d93a570b357a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Exception">
+      <UniqueIdentifier>{44ce9886-ab5c-4cda-8aa7-f6f2bd320568}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Exception.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DeviceManager.h">
       <Filter>Header Files\DeviceManager</Filter>
     </ClInclude>
@@ -59,6 +59,12 @@
     </ClInclude>
     <ClInclude Include="CompressedSparseRowMatrix.h">
       <Filter>Header Files\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="Exception.h">
+      <Filter>Header Files\Exception</Filter>
+    </ClInclude>
+    <ClInclude Include="CudaException.h">
+      <Filter>Header Files\Exception</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
