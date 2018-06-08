@@ -10,12 +10,20 @@ namespace cl
 	{
 		ctor(buffer);
 
-		matrices.resize(nCols);
-		for (size_t i = 0; i < nCols; i++)
+		matrices.resize(nMatrices);
+		for (size_t i = 0; i < nMatrices; i++)
 		{
 			const size_t matrixShift = i * nRows * nCols * buffer.ElementarySize();
 			MemoryTile matrixBuffer(buffer.pointer + matrixShift, buffer.nRows, buffer.nCols, ms, md);
 			matrices[i] = ColumnWiseMatrix<ms, md>::make_shared(matrixBuffer);
+
+			matrices[i]->columns.resize(nCols);
+			for (size_t j = 0; j < nCols; ++j)
+			{
+				const size_t colShift = j * nRows * buffer.ElementarySize();
+				MemoryBuffer colBuffer(buffer.pointer + colShift, buffer.nRows, ms, md);
+				matrices[i]->columns[j] = Vector<ms, md>::make_shared(colBuffer);
+			}
 		}
 	}
 
@@ -59,7 +67,7 @@ namespace cl
 	Tensor<ms, md>::Tensor(const Vector<ms, md>& rhs)
 		: Tensor(rhs.size(), 1, 1)
 	{
-		dm::detail::AutoCopy(matrices[0]->columns[0]->buffer, rhs.buffer);
+		dm::detail::AutoCopy(matrices[0]->columns[0]->GetBuffer(), rhs.GetBuffer());
 	}
 
 	template<MemorySpace ms, MathDomain md>
