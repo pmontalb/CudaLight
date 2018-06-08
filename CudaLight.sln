@@ -11,6 +11,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CudaLightKernels", "..\CudaLightKernels\CudaLightKernels.vcxproj", "{FEB675FC-E9C3-40FD-B987-CC8BF85888EC}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTests", "UnitTests\UnitTests.vcxproj", "{C8303A4E-D9F7-4821-B650-F0D26C603E3E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ACB311A5-3BB8-41F4-AA98-552FFCA078F2} = {ACB311A5-3BB8-41F4-AA98-552FFCA078F2}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
