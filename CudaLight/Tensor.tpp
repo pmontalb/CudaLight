@@ -125,7 +125,7 @@ namespace cl
 	{
 		assert(matrix < nMatrices());
 		assert(column < nCols());
-		assert(columnVector.buffer.pointer != 0);
+		assert(columnVector.GetBuffer().pointer != 0);
 		matrices[matrix]->columns[column]->ReadFrom(columnVector);
 	}
 

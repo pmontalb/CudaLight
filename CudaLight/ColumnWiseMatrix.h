@@ -112,6 +112,7 @@ namespace cl
 		#pragma endregion
 
 		const MemoryBuffer& GetBuffer() const noexcept override { return buffer; }
+		const MemoryTile& GetTile() const noexcept { return buffer; }
 	protected:
 		explicit ColumnWiseMatrix(const MemoryTile& buffer);
 		

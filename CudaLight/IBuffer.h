@@ -10,6 +10,7 @@
 
 namespace cl
 {
+	// This is required for using types defined in children classes (which are incomplete types)
 	#pragma region Type mapping from MathDomain to C++ type
 
 	template <MathDomain mathDomain>

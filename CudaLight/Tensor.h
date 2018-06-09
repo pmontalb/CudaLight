@@ -62,6 +62,7 @@ namespace cl
 		#pragma endregion
 
 		const MemoryBuffer& GetBuffer() const noexcept override { return buffer; }
+		const MemoryCube& GetCube() const noexcept { return buffer; }
 	protected:
 
 		explicit Tensor(const MemoryCube& buffer);
