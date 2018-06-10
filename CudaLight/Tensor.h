@@ -38,6 +38,7 @@ namespace cl
 		std::vector<typename Traits<mathDomain>::stdType> Get(const unsigned matrix) const;
 		std::vector<typename Traits<mathDomain>::stdType> Get(const unsigned matrix, const unsigned column) const;
 
+		using IBuffer<Tensor, memorySpace, mathDomain>::Set;
 		void Set(const ColumnWiseMatrix<memorySpace, mathDomain>& matrixBuffer, const unsigned matrix);
 		void Set(const Vector<memorySpace, mathDomain>& columnVector, const unsigned column, const unsigned matrix);
 

@@ -32,6 +32,8 @@ namespace cl
 		Vector(const Vector& rhs);
 		Vector(const std::vector<stdType>& rhs);
 
+		using IBuffer<Vector, memorySpace, mathDomain>::Set;
+
 		virtual ~Vector() = default;
 
 		// For avoiding unnecessary checks and overheads, it's not possible to use operator=

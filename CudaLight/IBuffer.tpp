@@ -74,6 +74,8 @@ namespace cl
 	template<typename bi, MemorySpace ms, MathDomain md>
 	void IBuffer<bi, ms, md>::Set(const stdType value) const
 	{
+		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		assert(buffer.pointer != 0);
 		dm::detail::Initialize(buffer, value);
 	}
 
@@ -263,10 +265,11 @@ namespace cl
 	static void Print(const std::vector<T>& mat, const unsigned nRows, const unsigned nCols, const std::string& label)
 	{
 		std::cout << "********* " << label << " ***********" << std::endl;
-		for (size_t j = 0; j < nCols; j++)
+		
+		for (size_t i = 0; i < nRows; i++)
 		{
 			std::cout << "\t";
-			for (size_t i = 0; i < nRows; i++)
+			for (size_t j = 0; j < nCols; j++)
 				std::cout << " m[" << i << "][" << j << "] = " << mat[i + nRows * j];
 			std::cout << std::endl;
 		}

@@ -42,6 +42,7 @@ namespace cl
 
 		void MakeIdentity();
 
+		using IBuffer<ColumnWiseMatrix, memorySpace, mathDomain>::Set;
 		void Set(const Vector<memorySpace, mathDomain>& columnVector, const unsigned column);
 
 		void Print(const std::string& label = "") const override;

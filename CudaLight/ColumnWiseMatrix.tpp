@@ -95,7 +95,7 @@ namespace cl
 	void ColumnWiseMatrix<ms, md>::Print(const std::string& label) const
 	{
 		auto mat = Get();
-		cl::Print(mat, nRows(), nCols());
+		cl::Print(mat, nRows(), nCols(), label);
 	}
 
 	#pragma region Linear Algebra

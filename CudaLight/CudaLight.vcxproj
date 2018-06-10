@@ -111,7 +111,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\..\CudaLightKernels;$(SolutionDir)\CudaLight;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\CudaLightKernels;$(SolutionDir)\CudaLight;$(SolutionDir)\..\CudaLight\CudaLight\;</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
