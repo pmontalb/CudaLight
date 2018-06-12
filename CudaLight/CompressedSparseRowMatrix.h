@@ -31,6 +31,7 @@ namespace cl
 
 		std::vector<typename Traits<mathDomain>::stdType> Get() const override;
 		void Print(const std::string& label = "") const override;
+		std::ostream& Serialize(std::ostream& os) const override { throw std::exception("Not Implemented"); };
 
 		unsigned denseSize() const noexcept { return nRows() * nCols(); }  // used only when converting to dense
 		unsigned nRows() const noexcept { return buffer.nRows; }

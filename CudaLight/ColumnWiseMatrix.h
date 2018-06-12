@@ -46,6 +46,9 @@ namespace cl
 		void Set(const Vector<memorySpace, mathDomain>& columnVector, const unsigned column);
 
 		void Print(const std::string& label = "") const override;
+		std::ostream& Serialize(std::ostream& os) const override;
+		template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+		friend std::ostream& operator<<(std::ostream& os, const ColumnWiseMatrix<ms, md>& buffer);
 
 		virtual ~ColumnWiseMatrix() = default;
 
@@ -137,7 +140,13 @@ namespace cl
 	ColumnWiseMatrix<ms, md> RandomGaussian(const unsigned nRows, const unsigned nCols, const unsigned seed = 1234);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	void Print(const ColumnWiseMatrix<ms, md>& vec, const std::string& label = "");
+	void Print(const ColumnWiseMatrix<ms, md>& mat, const std::string& label = "");
+
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	std::ostream& SerializeMatrix(const ColumnWiseMatrix<ms, md>& mat, std::ostream& os);
+
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	ColumnWiseMatrix<ms, md> DeserializeMatrix(std::istream& is);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	ColumnWiseMatrix<ms, md> Add(const ColumnWiseMatrix<ms, md>& lhs, const ColumnWiseMatrix<ms, md>& rhs, const double alpha = 1.0);

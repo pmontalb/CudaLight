@@ -43,6 +43,7 @@ namespace cl
 		void Set(const Vector<memorySpace, mathDomain>& columnVector, const unsigned column, const unsigned matrix);
 
 		void Print(const std::string& label = "") const override;
+		std::ostream& Serialize(std::ostream& os) const override { throw std::exception("Not Implemented"); };
 
 		virtual ~Tensor() = default;
 

@@ -49,7 +49,7 @@ namespace cl
 	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const Vector<ms, md>& rhs)
 		: ColumnWiseMatrix(rhs.size(), 1)
 	{
-		dm::detail::AutoCopy(columns[0]->buffer, rhs.buffer);
+		dm::detail::AutoCopy(columns[0]->GetBuffer(), rhs.GetBuffer());
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -96,6 +96,20 @@ namespace cl
 	{
 		auto mat = Get();
 		cl::Print(mat, nRows(), nCols(), label);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	std::ostream& ColumnWiseMatrix<ms, md>::Serialize(std::ostream& os) const
+	{
+		cl::SerializeMatrix(Get(), nRows(), nCols(), os);
+		return os;
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	std::ostream& operator<<(std::ostream& os, const ColumnWiseMatrix<ms, md>& buffer)
+	{
+		buffer.Serialize(os);
+		return os;
 	}
 
 	#pragma region Linear Algebra
@@ -285,6 +299,27 @@ namespace cl
 	void Print(const ColumnWiseMatrix<ms, md>& mat, const std::string& label)
 	{
 		mat.Print(label);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	std::ostream& SerializeMatrix(const ColumnWiseMatrix<ms, md>& mat, std::ostream& os)
+	{
+		cl::SerializeMatrix(mat.Get(), mat.nRows(), mat.nCols(), os);
+
+		return os;
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	ColumnWiseMatrix<ms, md> DeserializeMatrix(std::istream& is)
+	{
+		std::vector<ColumnWiseMatrix<ms, md>::stdType> _mat;
+		unsigned nRows = 0, nCols = 0;
+		cl::DeserializeMatrix(_mat, nRows, nCols, is);
+		
+		ColumnWiseMatrix<ms, md> mat(nRows, nCols);
+		mat.ReadFrom(_mat);
+
+		return mat;
 	}
 
 	template<MemorySpace ms, MathDomain md>

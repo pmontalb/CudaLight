@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <type_traits>
 
 #include <Types.h>
@@ -50,6 +49,26 @@ namespace cl
 	{
 		auto vec = Get();
 		cl::Print(vec);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	std::ostream& Vector<ms, md>::Serialize(std::ostream& os) const
+	{
+		cl::SerializeVector(Get(), os);
+		return os;
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	std::ostream& operator<<(std::ostream& os, const Vector<ms, md>& buffer)
+	{
+		buffer.Serialize(os);
+		return os;
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	std::istream& operator>>(std::istream& is, const Vector<ms, md>& buffer)
+	{
+		return buffer.Deserialize(is);
 	}
 
 	#pragma region Linear Algebra
@@ -130,6 +149,25 @@ namespace cl
 	void Print(const Vector<ms, md>& vec, const std::string& label)
 	{
 		vec.Print(label);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	std::ostream& SerializeVector(const Vector<ms, md>& vec, std::ostream& os)
+	{
+		os << cl::SerializeVector(vec.Get(), os);
+		return os;
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	Vector<ms, md> DeserializeVector(std::istream& is)
+	{
+		std::vector<Vector<ms, md>::stdType> _vec;
+		cl::DeserializeVector(_vec, is);
+
+		Vector<ms, md> ret(static_cast<unsigned>(_vec.size()));
+		ret.ReadFrom(_vec);
+
+		return ret;
 	}
 
 	template<MemorySpace ms, MathDomain md>

@@ -43,6 +43,10 @@ namespace cl
 		Vector& operator=(Vector<ms, md>&& rhs) = delete;
 
 		void Print(const std::string& label = "") const override;
+		std::ostream& Serialize(std::ostream& os) const override;
+
+		template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+		friend std::ostream& operator<<(std::ostream& os, const Vector<ms, md>& buffer);
 
 		#pragma region Linear Algebra
 
@@ -95,6 +99,12 @@ namespace cl
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	void Print(const Vector<ms, md>& vec, const std::string& label = "");
+
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	std::ostream& SerializeVector(const Vector<ms, md>& vec, std::ostream& os);
+
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	Vector<ms, md> DeserializeVector(std::istream& is);
 	
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	Vector<ms, md> Add(const Vector<ms, md>& lhs, const Vector<ms, md>& rhs, const double alpha = 1.0);

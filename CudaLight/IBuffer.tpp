@@ -247,6 +247,13 @@ namespace cl
 #pragma endregion
 
 	template<typename bi, MemorySpace ms, MathDomain md>
+	std::ostream& operator<<(std::ostream& os, const IBuffer<bi, ms, md>& buffer)
+	{
+		buffer.Serialize(os);
+		return os;
+	}
+
+	template<typename bi, MemorySpace ms, MathDomain md>
 	void Print(const IBuffer<bi, ms, md>& buf, const std::string& label)
 	{
 		buf.Print(label);
@@ -274,6 +281,68 @@ namespace cl
 			std::cout << std::endl;
 		}
 		std::cout << "**********************" << std::endl;
+	}
+
+	template<typename T>
+	static std::ostream& SerializeVector(const std::vector<T>& vec, std::ostream& os)
+	{
+		for (size_t i = 0; i < vec.size(); i++)
+			os << vec[i] << std::endl;
+
+		return os;
+	}
+
+	template<typename T>
+	static std::istream& DeserializeVector(std::vector<T>& vec, std::istream& is)
+	{
+		T value;
+		while (is >> value)
+			vec.push_back(value);
+
+		return is;
+	}
+
+	template<typename T>
+	static std::ostream& SerializeMatrix(const std::vector<T>& mat, const unsigned nRows, const unsigned nCols, std::ostream& os)
+	{
+		for (size_t i = 0; i < nRows; i++)
+		{
+			for (size_t j = 0; j < nCols; j++)
+				os << mat[i + nRows * j] << " ";
+			os << std::endl;
+		}
+
+		return os;
+	}
+
+	template<typename T>
+	static std::istream& DeserializeMatrix(std::vector<T>& mat, unsigned& nRows, unsigned& nCols, std::istream& is)
+	{
+		std::string line;	
+		unsigned i = 0;
+
+		// read transposed matrix
+		std::vector<T> matTranspose;
+		while (std::getline(is, line))
+		{
+			std::stringstream ss(line);
+
+			T value;
+			while (ss >> value)
+				matTranspose.push_back(value);
+			++nRows;
+		}
+		nCols = matTranspose.size() / nRows;
+
+		// transpose matrix
+		mat.resize(matTranspose.size());
+		for (size_t i = 0; i < nRows; i++)
+		{
+			for (size_t j = 0; j < nCols; j++)
+				mat[i + nRows * j] = matTranspose[j + nCols * i];
+		}
+
+		return is;
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>

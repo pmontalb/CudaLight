@@ -175,6 +175,7 @@
     <ClCompile Include="CuSparseTests.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MatrixTests.cpp" />
+    <ClCompile Include="SerializationTests.cpp" />
     <ClCompile Include="SparseMatrixTests.cpp" />
     <ClCompile Include="SparseVectorTests.cpp" />
     <ClCompile Include="DeviceManagerTests.cpp" />

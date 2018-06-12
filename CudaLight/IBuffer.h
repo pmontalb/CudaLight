@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 
 #include <DeviceManager.h>
 #include <DeviceManagerHelper.h>
@@ -91,6 +92,10 @@ namespace cl
 
 		virtual void Print(const std::string& label = "") const = 0;
 
+		virtual std::ostream& Serialize(std::ostream& os) const = 0;
+		template<typename bi, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+		friend std::ostream& operator<<(std::ostream& os, const IBuffer<bi, ms, md>& buffer);
+
 		template<typename bi, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 		bool operator==(const IBuffer<bi, ms, md>& rhs) const;
 		template<typename bi, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
@@ -169,6 +174,18 @@ namespace cl
 
 	template<typename T>
 	static void Print(const std::vector<T>& mat, const unsigned nRows, const unsigned nCols, const std::string& label = "");
+
+	template<typename T>
+	static std::ostream& SerializeVector(const std::vector<T>& vec, std::ostream& os);
+
+	template<typename T>
+	static std::istream& DeserializeVector(std::vector<T>& vec, std::istream& is);
+
+	template<typename T>
+	static std::ostream& SerializeMatrix(const std::vector<T>& vec, const unsigned nRows, const unsigned nCols, std::ostream& os);
+
+	template<typename T>
+	static std::istream& DeserializeMatrix(std::vector<T>& vec, unsigned& nRows, unsigned& nCols, std::istream& is);
 
 	template<typename BufferImpl, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	void Scale(IBuffer<BufferImpl, ms, md>& lhs, const double alpha);
