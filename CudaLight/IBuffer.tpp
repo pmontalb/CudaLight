@@ -287,7 +287,7 @@ namespace cl
 	static std::ostream& SerializeVector(const std::vector<T>& vec, std::ostream& os)
 	{
 		for (size_t i = 0; i < vec.size(); i++)
-			os << vec[i] << std::endl;
+			os << std::setprecision(16) << vec[i] << std::endl;
 
 		return os;
 	}
@@ -308,7 +308,7 @@ namespace cl
 		for (size_t i = 0; i < nRows; i++)
 		{
 			for (size_t j = 0; j < nCols; j++)
-				os << mat[i + nRows * j] << " ";
+				os << std::setprecision(16) << mat[i + nRows * j] << " ";
 			os << std::endl;
 		}
 
