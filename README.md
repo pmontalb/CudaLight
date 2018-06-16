@@ -100,4 +100,21 @@ For convenience's sake the following typedefs have been defined:
   const cl::vec y = A * x;
 ```
 
+- Serialization (compatible with numpy.loadtxt):
+```c++
+  const unsigned nRows = 10;
+  const unsigned nCols = 15;
+  std::ofstream f("matrix.cl");
+  cl::mat m(nRows, nCols);
+  m.LinSpace(0.0f, 1.0f);
+  f << m;
+```
 
+- Deserialization (compatible with numpy.savetxt):
+```c++
+  std::ofstream f1("matrix.cl");
+  cl::mat m = cl::DeserializeMatrix(f1);
+  
+  std::ofstream f2("vector.cl");
+  cl::vec v = cl::DeserializeMatrix(f2);
+```
