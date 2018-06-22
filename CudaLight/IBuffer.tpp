@@ -193,12 +193,12 @@ namespace cl
 	IBuffer<bi, ms, md>& IBuffer<bi, ms, md>::operator -=(const IBuffer& rhs)
 	{
 		assert(size() == rhs.size());
-		assert(rhs.pointer != 0);
+		assert(static_cast<const bi*>(&rhs)->buffer.pointer != 0);
 
 		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
 		assert(buffer.pointer != 0);
 
-		dm::detail::AddEqual(buffer, static_cast<bi>(rhs).buffer, -1.0);
+		dm::detail::AddEqual(buffer, static_cast<const bi&>(rhs).buffer, -1.0);
 		return *this;
 	}
 
