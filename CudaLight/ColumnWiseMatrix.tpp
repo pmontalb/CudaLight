@@ -66,6 +66,13 @@ namespace cl
 		dm::detail::Eye(this->buffer);
 	}
 
+	template<MemorySpace ms, MathDomain md>
+	Vector<ms, md> ColumnWiseMatrix<ms, md>::Flatten() const
+	{
+		Vector<ms, md> ret(size());
+		dm::detail::AutoCopy(ret.GetBuffer(), buffer);
+		return ret;
+	}
 
 	template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::ReadFrom(const Vector<ms, md>& rhs)

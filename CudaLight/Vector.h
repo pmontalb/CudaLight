@@ -80,7 +80,6 @@ namespace cl
 		Vector() : IBuffer(true) {};
 		explicit Vector(const MemoryBuffer& buffer);
 	private:
-		
 
 		MemoryBuffer buffer;
 	};

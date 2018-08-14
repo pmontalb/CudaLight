@@ -42,6 +42,8 @@ namespace cl
 
 		void MakeIdentity();
 
+		Vector<memorySpace, mathDomain> Flatten() const;
+
 		using IBuffer<ColumnWiseMatrix, memorySpace, mathDomain>::Set;
 		void Set(const Vector<memorySpace, mathDomain>& columnVector, const unsigned column);
 
@@ -120,7 +122,6 @@ namespace cl
 	protected:
 		explicit ColumnWiseMatrix(const MemoryTile& buffer);
 		
-
 		MemoryTile buffer;
 	};
 

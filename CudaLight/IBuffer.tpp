@@ -5,6 +5,7 @@
 #include <assert.h>
 
 #include <Types.h>
+#include <sstream>
 
 namespace cl
 {
