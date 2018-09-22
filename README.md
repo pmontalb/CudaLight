@@ -120,10 +120,10 @@ For convenience's sake the following typedefs have been defined:
 
 - Deserialization (compatible with numpy.savetxt):
 ```c++
-  std::ofstream f1("matrix.cl");
+  std::ifstream f1("matrix.cl");
   cl::mat m = cl::MatrixFromInputStream(f1);
   
-  std::ofstream f2("vector.cl");
+  std::ifstream f2("vector.cl");
   cl::vec v = cl::VectorFromInputStream(f2);
 ```
 
