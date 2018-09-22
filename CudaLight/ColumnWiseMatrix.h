@@ -31,6 +31,7 @@ namespace cl
 		ColumnWiseMatrix(const ColumnWiseMatrix& rhs);
 
 		ColumnWiseMatrix(const std::vector<stdType>& rhs, const unsigned nRows, const unsigned nCols);
+		ColumnWiseMatrix(const std::string& fileName, bool useMemoryMapping);
 
 		ColumnWiseMatrix(const Vector<memorySpace, mathDomain>& rhs);		
 
@@ -47,8 +48,10 @@ namespace cl
 		using IBuffer<ColumnWiseMatrix, memorySpace, mathDomain>::Set;
 		void Set(const Vector<memorySpace, mathDomain>& columnVector, const unsigned column);
 
-		void Print(const std::string& label = "") const override;
-		std::ostream& Serialize(std::ostream& os) const override;
+		void Print(const std::string& label = "") const override final;
+		std::ostream& ToOutputStream(std::ostream& os) const override final;
+		void ToBinaryFile(const std::string& fileName, const std::string mode = "w") const override final;
+
 		template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 		friend std::ostream& operator<<(std::ostream& os, const ColumnWiseMatrix<ms, md>& buffer);
 
@@ -117,7 +120,7 @@ namespace cl
 
 		#pragma endregion
 
-		const MemoryBuffer& GetBuffer() const noexcept override { return buffer; }
+		const MemoryBuffer& GetBuffer() const noexcept override final { return buffer; }
 		const MemoryTile& GetTile() const noexcept { return buffer; }
 	protected:
 		explicit ColumnWiseMatrix(const MemoryTile& buffer);
@@ -144,10 +147,16 @@ namespace cl
 	void Print(const ColumnWiseMatrix<ms, md>& mat, const std::string& label = "");
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	std::ostream& SerializeMatrix(const ColumnWiseMatrix<ms, md>& mat, std::ostream& os);
+	std::ostream& MatrixToOutputStream(const ColumnWiseMatrix<ms, md>& mat, std::ostream& os);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	ColumnWiseMatrix<ms, md> DeserializeMatrix(std::istream& is);
+	void MatrixToBinaryFile(const ColumnWiseMatrix<ms, md>& vec, const std::string& fileName, const std::string mode = "w");
+
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	ColumnWiseMatrix<ms, md> MatrixFromInputStream(std::istream& is);
+
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	ColumnWiseMatrix<ms, md> MatrixFromBinaryFile(const std::string& fileName, const bool useMemoryMapping = false);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	ColumnWiseMatrix<ms, md> Add(const ColumnWiseMatrix<ms, md>& lhs, const ColumnWiseMatrix<ms, md>& rhs, const double alpha = 1.0);

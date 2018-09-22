@@ -42,8 +42,9 @@ namespace cl
 		void Set(const ColumnWiseMatrix<memorySpace, mathDomain>& matrixBuffer, const unsigned matrix);
 		void Set(const Vector<memorySpace, mathDomain>& columnVector, const unsigned column, const unsigned matrix);
 
-		void Print(const std::string& label = "") const override;
-		std::ostream& Serialize(std::ostream& os) const override { throw std::exception("Not Implemented"); };
+		void Print(const std::string& label = "") const override final;
+		std::ostream& ToOutputStream(std::ostream& os) const override final { throw std::exception("Not Implemented"); };
+		void ToBinaryFile(const std::string& fileName, const std::string mode) const override final { throw std::exception("Not Implemented"); };
 
 		virtual ~Tensor() = default;
 
@@ -63,7 +64,7 @@ namespace cl
 
 		#pragma endregion
 
-		const MemoryBuffer& GetBuffer() const noexcept override { return buffer; }
+		const MemoryBuffer& GetBuffer() const noexcept override final { return buffer; }
 		const MemoryCube& GetCube() const noexcept { return buffer; }
 	protected:
 

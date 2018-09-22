@@ -31,6 +31,7 @@ namespace cl
 
 		Vector(const Vector& rhs);
 		Vector(const std::vector<stdType>& rhs);
+		Vector(const std::string& fileName, bool useMemoryMapping = false);
 
 		using IBuffer<Vector, memorySpace, mathDomain>::Set;
 
@@ -42,8 +43,9 @@ namespace cl
 		template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 		Vector& operator=(Vector<ms, md>&& rhs) = delete;
 
-		void Print(const std::string& label = "") const override;
-		std::ostream& Serialize(std::ostream& os) const override;
+		void Print(const std::string& label = "") const override final;
+		std::ostream& ToOutputStream(std::ostream& os) const override final;
+		virtual void ToBinaryFile(const std::string& fileName, const std::string mode = "w") const override final;
 
 		template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 		friend std::ostream& operator<<(std::ostream& os, const Vector<ms, md>& buffer);
@@ -73,7 +75,7 @@ namespace cl
 
 		#pragma endregion
 
-		const MemoryBuffer& GetBuffer() const noexcept override { return buffer; }
+		const MemoryBuffer& GetBuffer() const noexcept override final { return buffer; }
 	protected:
 		using IBuffer<Vector, memorySpace, mathDomain>::IBuffer;
 
@@ -100,10 +102,16 @@ namespace cl
 	void Print(const Vector<ms, md>& vec, const std::string& label = "");
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	std::ostream& SerializeVector(const Vector<ms, md>& vec, std::ostream& os);
+	std::ostream& VectorToOutputStream(const Vector<ms, md>& vec, std::ostream& os);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Vector<ms, md> DeserializeVector(std::istream& is);
+	void VectorToBinaryFile(const Vector<ms, md>& vec, const std::string& fileName, const std::string mode = "w");
+
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	Vector<ms, md> VectorFromInputStream(std::istream& is);
+
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	Vector<ms, md> VectorFromBinaryFile(const std::string& fileName, const bool useMemoryMapping = false);
 	
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	Vector<ms, md> Add(const Vector<ms, md>& lhs, const Vector<ms, md>& rhs, const double alpha = 1.0);

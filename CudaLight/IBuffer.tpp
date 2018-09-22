@@ -7,6 +7,8 @@
 #include <Types.h>
 #include <sstream>
 
+#include <Npy++.h>
+
 namespace cl
 {
 	template<typename bi, MemorySpace ms, MathDomain md>
@@ -249,9 +251,15 @@ namespace cl
 #pragma endregion
 
 	template<typename bi, MemorySpace ms, MathDomain md>
+	void Scale(IBuffer<bi, ms, md>& lhs, const double alpha)
+	{
+		lhs.Scale(alpha);
+	}
+
+	template<typename bi, MemorySpace ms, MathDomain md>
 	std::ostream& operator<<(std::ostream& os, const IBuffer<bi, ms, md>& buffer)
 	{
-		buffer.Serialize(os);
+		buffer.ToOutputStream(os);
 		return os;
 	}
 
@@ -285,8 +293,10 @@ namespace cl
 		std::cout << "**********************" << std::endl;
 	}
 
+    #pragma region Serialization
+
 	template<typename T>
-	static std::ostream& SerializeVector(const std::vector<T>& vec, std::ostream& os)
+	static std::ostream& VectorToOutputStream(const std::vector<T>& vec, std::ostream& os)
 	{
 		for (size_t i = 0; i < vec.size(); i++)
 			os << std::setprecision(16) << vec[i] << std::endl;
@@ -295,7 +305,7 @@ namespace cl
 	}
 
 	template<typename T>
-	static std::istream& DeserializeVector(std::vector<T>& vec, std::istream& is)
+	static std::istream& VectorFromInputStream(std::vector<T>& vec, std::istream& is)
 	{
 		T value;
 		while (is >> value)
@@ -305,7 +315,7 @@ namespace cl
 	}
 
 	template<typename T>
-	static std::ostream& SerializeMatrix(const std::vector<T>& mat, const unsigned nRows, const unsigned nCols, std::ostream& os)
+	static std::ostream& MatrixToOutputStream(const std::vector<T>& mat, const unsigned nRows, const unsigned nCols, std::ostream& os)
 	{
 		for (size_t i = 0; i < nRows; i++)
 		{
@@ -318,7 +328,7 @@ namespace cl
 	}
 
 	template<typename T>
-	static std::istream& DeserializeMatrix(std::vector<T>& mat, unsigned& nRows, unsigned& nCols, std::istream& is)
+	static std::istream& MatrixFromInputStream(std::vector<T>& mat, unsigned& nRows, unsigned& nCols, std::istream& is)
 	{
 		std::string line;	
 		unsigned i = 0;
@@ -347,9 +357,34 @@ namespace cl
 		return is;
 	}
 
-	template<typename bi, MemorySpace ms, MathDomain md>
-	void Scale(IBuffer<bi, ms, md>& lhs, const double alpha)
+	template<typename T>
+	static void VectorToBinaryFile(const std::vector<T>& vec, const std::string& fileName, const std::string mode)
 	{
-		lhs.Scale(alpha);
+		npypp::Save(fileName, vec, { vec.size() }, mode);
 	}
+
+	template<typename T>
+	static void VectorFromBinaryFile(std::vector<T>& vec, const std::string& fileName, const bool useMemoryMapping)
+	{
+		vec = npypp::Load<T>(fileName, useMemoryMapping);
+	}
+
+	template<typename T>
+	static void MatrixToBinaryFile(const std::vector<T>& mat, const unsigned nRows, const unsigned nCols, const std::string& fileName, const std::string mode)
+	{
+		npypp::Save(fileName, mat, { static_cast<size_t>(nRows), static_cast<size_t>(nCols) }, mode);
+	}
+
+	template<typename T>
+	static void MatrixFromBinaryFile(std::vector<T>& mat, unsigned& nRows, unsigned& nCols, const std::string& fileName, const bool useMemoryMapping)
+	{
+		const auto& fullExtract = npypp::LoadFull<T>(fileName, useMemoryMapping);
+		mat = fullExtract.data;
+
+		assert(fullExtract.shape.size() == 2);
+		nRows = fullExtract.shape[0];
+		nCols = fullExtract.shape[1];
+	}
+
+    #pragma endregion
 }

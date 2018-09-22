@@ -38,6 +38,15 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
+	Vector<ms, md>::Vector(const std::string& fileName, bool useMemoryMapping)
+	{
+		std::vector<typename Traits<md>::stdType> vec;
+		cl.VectorFromBinaryFile(vec, fileName, useMemoryMapping);
+
+		ReadFrom(vec);
+	}
+
+	template<MemorySpace ms, MathDomain md>
 	Vector<ms, md>::Vector(const MemoryBuffer& buffer)
 		: IBuffer(false), buffer(buffer)
 	{
@@ -52,16 +61,22 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	std::ostream& Vector<ms, md>::Serialize(std::ostream& os) const
+	std::ostream& Vector<ms, md>::ToOutputStream(std::ostream& os) const
 	{
-		cl::SerializeVector(Get(), os);
+		cl::VectorToOutputStream(Get(), os);
 		return os;
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	void Vector<ms, md>::ToBinaryFile(const std::string& fileName, const std::string mode) const
+	{
+		cl::VectorToBinaryFile(Get(), fileName, mode);
 	}
 
 	template<MemorySpace ms, MathDomain md>
 	std::ostream& operator<<(std::ostream& os, const Vector<ms, md>& buffer)
 	{
-		buffer.Serialize(os);
+		buffer.ToOutputStream(os);
 		return os;
 	}
 
@@ -152,17 +167,36 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	std::ostream& SerializeVector(const Vector<ms, md>& vec, std::ostream& os)
+	std::ostream& VectorToOutputStream(const Vector<ms, md>& vec, std::ostream& os)
 	{
-		os << cl::SerializeVector(vec.Get(), os);
+		os << cl::VectorToOutputStream(vec.Get(), os);
 		return os;
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	Vector<ms, md> DeserializeVector(std::istream& is)
+	void VectorToBinaryFile(const Vector<ms, md>& vec, const std::string& fileName, const std::string mode)
+	{
+		const auto& _vec = vec.Get();
+		cl::VectorToBinaryFile(_vec, fileName, mode);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	Vector<ms, md> VectorFromInputStream(std::istream& is)
 	{
 		std::vector<Vector<ms, md>::stdType> _vec;
-		cl::DeserializeVector(_vec, is);
+		cl::VectorFromInputStream(_vec, is);
+
+		Vector<ms, md> ret(static_cast<unsigned>(_vec.size()));
+		ret.ReadFrom(_vec);
+
+		return ret;
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	Vector<ms, md> VectorFromBinaryFile(const std::string& fileName, const bool useMemoryMapping)
+	{
+		std::vector<Vector<ms, md>::stdType> _vec;
+		cl::VectorFromBinaryFile(_vec, fileName, useMemoryMapping);
 
 		Vector<ms, md> ret(static_cast<unsigned>(_vec.size()));
 		ret.ReadFrom(_vec);

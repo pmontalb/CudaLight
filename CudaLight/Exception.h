@@ -15,7 +15,7 @@ public:
 	Exception& operator=(const Exception& rhs) = default;
 	Exception& operator=(Exception&& rhs) = default;
 
-	char const* what() const override
+	char const* what() const override final
 	{
 		return message.c_str();
 	}

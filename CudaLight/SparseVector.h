@@ -24,11 +24,12 @@ namespace cl
 
 		virtual ~SparseVector() = default;
 
-		const MemoryBuffer& GetBuffer() const noexcept override { return values.GetBuffer(); }
+		const MemoryBuffer& GetBuffer() const noexcept override final { return values.GetBuffer(); }
 
-		std::vector<typename Traits<mathDomain>::stdType> Get() const override;
-		void Print(const std::string& label = "") const override;
-		std::ostream& Serialize(std::ostream& os) const override { throw std::exception("Not Implemented"); };
+		std::vector<typename Traits<mathDomain>::stdType> Get() const override final;
+		void Print(const std::string& label = "") const override final;
+		std::ostream& ToOutputStream(std::ostream& os) const override final { throw std::exception("Not Implemented"); };
+		void ToBinaryFile(const std::string& fileName, const std::string mode) const override final	{ throw std::exception("Not Implemented"); };
 
 		unsigned denseSize;  // used only when converting to dense
 

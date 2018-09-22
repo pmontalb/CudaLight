@@ -38,6 +38,16 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
+	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const std::string& fileName, bool useMemoryMapping)
+	{
+		std::vector<typename Traits<md>::stdType> mat;
+		unsigned nRows = 0, nCols = 0;
+		cl.MatrixFromBinaryFile(mat, nRows, nCols, fileName, useMemoryMapping);
+
+		ReadFrom(mat, nRows, nCols);
+	}
+
+	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const std::vector<typename Traits<md>::stdType>& rhs, const unsigned nRows, const unsigned nCols)
 		: ColumnWiseMatrix(nRows, nCols)
 	{
@@ -106,16 +116,22 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	std::ostream& ColumnWiseMatrix<ms, md>::Serialize(std::ostream& os) const
+	std::ostream& ColumnWiseMatrix<ms, md>::ToOutputStream(std::ostream& os) const
 	{
-		cl::SerializeMatrix(Get(), nRows(), nCols(), os);
+		cl::MatrixToOutputStream(Get(), nRows(), nCols(), os);
 		return os;
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	void ColumnWiseMatrix<ms, md>::ToBinaryFile(const std::string& fileName, const std::string mode) const
+	{
+		cl::MatrixToBinaryFile(Get(), nRows(), nCols(), fileName, mode);
 	}
 
 	template<MemorySpace ms, MathDomain md>
 	std::ostream& operator<<(std::ostream& os, const ColumnWiseMatrix<ms, md>& buffer)
 	{
-		buffer.Serialize(os);
+		buffer.ToOutputStream(os);
 		return os;
 	}
 
@@ -309,24 +325,44 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	std::ostream& SerializeMatrix(const ColumnWiseMatrix<ms, md>& mat, std::ostream& os)
+	std::ostream& MatrixToOutputStream(const ColumnWiseMatrix<ms, md>& mat, std::ostream& os)
 	{
-		cl::SerializeMatrix(mat.Get(), mat.nRows(), mat.nCols(), os);
+		cl::MatrixToOutputStream(mat.Get(), mat.nRows(), mat.nCols(), os);
 
 		return os;
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	ColumnWiseMatrix<ms, md> DeserializeMatrix(std::istream& is)
+	void VectorToBinaryFile(const ColumnWiseMatrix<ms, md>& mat, const std::string& fileName, const std::string mode)
+	{
+		const auto& _mat = mat.Get();
+		cl::MatrixToBinaryFile(_mat, mat.nRows(), mat.nCols(), fileName, mode);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	ColumnWiseMatrix<ms, md> MatrixFromInputStream(std::istream& is)
 	{
 		std::vector<ColumnWiseMatrix<ms, md>::stdType> _mat;
 		unsigned nRows = 0, nCols = 0;
-		cl::DeserializeMatrix(_mat, nRows, nCols, is);
+		cl::MatrixFromInputStream(_mat, nRows, nCols, is);
 		
 		ColumnWiseMatrix<ms, md> mat(nRows, nCols);
 		mat.ReadFrom(_mat);
 
 		return mat;
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	ColumnWiseMatrix<ms, md> MatrixFromBinaryFile(const std::string& fileName, const bool useMemoryMapping)
+	{
+		std::vector<Vector<ms, md>::stdType> _mat;
+		unsigned nRows = 0, nCols = 0;
+		cl::MatrixFromBinaryFile(_mat, nRows, nCols, fileName, useMemoryMapping);
+
+		ColumnWiseMatrix<ms, md> ret(nRows, nCols);
+		ret.ReadFrom(_mat);
+
+		return ret;
 	}
 
 	template<MemorySpace ms, MathDomain md>

@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTests", "UnitTests\Unit
 		{ACB311A5-3BB8-41F4-AA98-552FFCA078F2} = {ACB311A5-3BB8-41F4-AA98-552FFCA078F2}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Npy++", "..\Npy++\Npy++.vcxproj", "{014413C8-BE38-48A4-9F99-9C98A08BC668}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -45,6 +47,14 @@ Global
 		{C8303A4E-D9F7-4821-B650-F0D26C603E3E}.Release|x64.Build.0 = Release|x64
 		{C8303A4E-D9F7-4821-B650-F0D26C603E3E}.Release|x86.ActiveCfg = Release|Win32
 		{C8303A4E-D9F7-4821-B650-F0D26C603E3E}.Release|x86.Build.0 = Release|Win32
+		{014413C8-BE38-48A4-9F99-9C98A08BC668}.Debug|x64.ActiveCfg = Debug|x64
+		{014413C8-BE38-48A4-9F99-9C98A08BC668}.Debug|x64.Build.0 = Debug|x64
+		{014413C8-BE38-48A4-9F99-9C98A08BC668}.Debug|x86.ActiveCfg = Debug|Win32
+		{014413C8-BE38-48A4-9F99-9C98A08BC668}.Debug|x86.Build.0 = Debug|Win32
+		{014413C8-BE38-48A4-9F99-9C98A08BC668}.Release|x64.ActiveCfg = Release|x64
+		{014413C8-BE38-48A4-9F99-9C98A08BC668}.Release|x64.Build.0 = Release|x64
+		{014413C8-BE38-48A4-9F99-9C98A08BC668}.Release|x86.ActiveCfg = Release|Win32
+		{014413C8-BE38-48A4-9F99-9C98A08BC668}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -91,5 +91,8 @@
     <None Include="SparseVector.tpp">
       <Filter>Header Files\Vector</Filter>
     </None>
+    <None Include="CompressedSparseRowMatrix.tpp">
+      <Filter>Header Files\Matrix</Filter>
+    </None>
   </ItemGroup>
 </Project>
