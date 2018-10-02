@@ -199,4 +199,30 @@ namespace clt
 			}
 		}
 	}
+
+	TEST_F(CuBlasTests, KroneckerProduct)
+	{
+		cl::vec u(64, 0.1);
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _u = u.Get();
+
+		cl::vec v(128, 0.2);
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _v = v.Get();
+
+		cl::mat A = cl::mat::KroneckerProduct(u, v, 2.0);
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _A = A.Get();
+		ASSERT_EQ(A.nRows(), u.size());
+		ASSERT_EQ(A.nCols(), v.size());
+
+		for (size_t i = 0; i < A.nRows(); ++i)
+		{
+			for (size_t j = 0; j < A.nCols(); ++j)
+			{
+				double expected = 2.0 * _u[i] * _v[j];
+				ASSERT_TRUE(fabs(_A[i + A.nRows() * j] - expected) <= 5e-5);
+			}
+		}
+	}
 }

@@ -251,6 +251,21 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
+	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::KroneckerProduct(const Vector<ms, md>& lhs, const Vector<ms, md>& rhs, const double alpha)
+	{
+		ColumnWiseMatrix ret(lhs.size(), rhs.size(), 0.0);
+		KroneckerProduct(ret, lhs, rhs, alpha);
+
+		return ret;
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	void ColumnWiseMatrix<ms, md>::KroneckerProduct(ColumnWiseMatrix<ms, md>& out, const Vector<ms, md>& lhs, const Vector<ms, md>& rhs, const double alpha)
+	{
+		dm::detail::KroneckerProduct(out.buffer, lhs.GetBuffer(), rhs.GetBuffer(), alpha);
+	}
+
+	template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::Invert(const MatrixOperation lhsOperation)
 	{
 		dm::detail::Invert(this->buffer, lhsOperation);

@@ -55,6 +55,7 @@ namespace cl
 		Vector operator +(const Vector& rhs) const;
 		Vector operator -(const Vector& rhs) const;
 		Vector operator %(const Vector& rhs) const;  // element-wise product
+
 		Vector Add(const Vector& rhs, const double alpha = 1.0) const;
 
 		#pragma endregion
