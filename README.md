@@ -100,21 +100,36 @@ For convenience's sake the following typedefs have been defined:
   const cl::vec y = A * x;
 ```
 
-- Serialization (compatible with numpy.loadtxt):
+- Serialization to text file (compatible with numpy.loadtxt):
 ```c++
   const unsigned nRows = 10;
   const unsigned nCols = 15;
   std::ofstream f("matrix.cl");
   cl::mat m(nRows, nCols);
-  m.LinSpace(0.0f, 1.0f);
+  f << m;
+```
+
+- Serialization to binary file (compatible with numpy.load and memory mapped files - makes use of [Npy++](https://pmontalb.github.io/NpyCpp/)):
+```c++
+  const unsigned nRows = 10;
+  const unsigned nCols = 15;
+  cl::mat m(nRows, nCols);
+  m.ToBinaryFile("matrix.npy");
   f << m;
 ```
 
 - Deserialization (compatible with numpy.savetxt):
 ```c++
-  std::ofstream f1("matrix.cl");
-  cl::mat m = cl::DeserializeMatrix(f1);
+  std::ifstream f1("matrix.cl");
+  cl::mat m = cl::MatrixFromInputStream(f1);
   
-  std::ofstream f2("vector.cl");
-  cl::vec v = cl::DeserializeMatrix(f2);
+  std::ifstream f2("vector.cl");
+  cl::vec v = cl::VectorFromInputStream(f2);
+```
+
+- Deserialization from binary file (compatible with numpy.save and memory mapped files - makes use of [Npy++](https://pmontalb.github.io/NpyCpp/)):
+```c++
+  cl::mat m = cl::MatrixFromBinaryFile("matrix.npy");
+  
+  cl::vec v = cl::VectorFromBinaryFile("v1.npy");;
 ```
