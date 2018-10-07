@@ -3,10 +3,9 @@
 #include <iostream>
 #include <iomanip>
 #include <assert.h>
+#include <limits>
 
 #include <Types.h>
-#include <sstream>
-
 #include <Npy++.h>
 
 namespace cl
@@ -246,6 +245,50 @@ namespace cl
 
 		dm::detail::Scale(buffer, alpha);
 		return *this;
+	}
+
+	template<typename bi, MemorySpace ms, MathDomain md>
+	int IBuffer<bi, ms, md>::AbsoluteMinimumIndex() const
+	{
+		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		assert(buffer.pointer != 0);
+
+		int ret = -1;
+		dm::detail::ArgAbsMin(ret, buffer);
+	}
+
+	template<typename bi, MemorySpace ms, MathDomain md>
+	int IBuffer<bi, ms, md>::AbsoluteMaximumIndex() const
+	{
+		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		assert(buffer.pointer != 0);
+
+		int ret = -1;
+		dm::detail::ArgAbsMax(ret, buffer);
+	}
+
+	template<typename bi, MemorySpace ms, MathDomain md>
+	typename Traits<md>::stdType IBuffer<bi, ms, md>::MinimumInAbsoluteValue() const
+	{
+		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		assert(buffer.pointer != 0);
+
+		double ret = 0.0;
+		dm::detail::AbsMin(ret, buffer);
+
+		return ret;
+	}
+
+	template<typename bi, MemorySpace ms, MathDomain md>
+	typename Traits<md>::stdType IBuffer<bi, ms, md>::MaximumInAbsoluteValue() const
+	{
+		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		assert(buffer.pointer != 0);
+
+		double ret = 0.0;
+		dm::detail::AbsMax(ret, buffer);
+
+		return ret;
 	}
 
 #pragma endregion

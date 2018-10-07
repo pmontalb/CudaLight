@@ -125,6 +125,10 @@ __CREATE_FUNCTION_1_ARG(Eye, MemoryTile, A);
 __CREATE_FUNCTION_3_ARG(Solve, const MemoryTile, A, MemoryTile, B, const MatrixOperation, aOperation = MatrixOperation::None);
 __CREATE_FUNCTION_2_ARG(Invert, MemoryTile, A, const MatrixOperation, aOperation = MatrixOperation::None);
 __CREATE_FUNCTION_4_ARG(KroneckerProduct, MemoryTile, A, const MemoryBuffer, x, const MemoryBuffer, y, const double, alpha);
+__CREATE_FUNCTION_2_ARG(ArgAbsMin, int&, argMin, const MemoryBuffer, x);
+__CREATE_FUNCTION_2_ARG(ArgAbsMax, int&, argMax, const MemoryBuffer, x);
+__CREATE_FUNCTION_2_ARG(AbsMin, double&, min, const MemoryBuffer, x);
+__CREATE_FUNCTION_2_ARG(AbsMax, double&, max, const MemoryBuffer, x);
 
 //CuSparseWrappers
 __CREATE_FUNCTION_4_ARG(SparseAdd, MemoryBuffer, z, const SparseMemoryBuffer, x, const MemoryBuffer, y, const double, alpha = 1.0);

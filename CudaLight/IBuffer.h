@@ -116,6 +116,11 @@ namespace cl
 		IBuffer& AddEqual(const IBuffer& rhs, const double alpha = 1.0);
 		IBuffer& Scale(const double alpha);
 
+		int AbsoluteMinimumIndex() const;
+		int AbsoluteMaximumIndex() const;
+		stdType MinimumInAbsoluteValue() const;
+		stdType MaximumInAbsoluteValue() const;
+
 		#pragma endregion
 		
 		protected:

@@ -178,6 +178,10 @@ __CREATE_FUNCTION_1_ARG(Eye, CuBlasKernelExceptionFactory, MemoryTile, A);
 __CREATE_FUNCTION_3_ARG(Solve, CuBlasKernelExceptionFactory, const MemoryTile, A, MemoryTile, B, const MatrixOperation, aOperation);
 __CREATE_FUNCTION_2_ARG(Invert, CuBlasKernelExceptionFactory, MemoryTile, A, const MatrixOperation, aOperation);
 __CREATE_FUNCTION_4_ARG(KroneckerProduct, CuBlasKernelExceptionFactory, MemoryTile, A, const MemoryBuffer, x, const MemoryBuffer, y, const double, alpha);
+__CREATE_FUNCTION_2_ARG(ArgAbsMin, CuBlasKernelExceptionFactory, int&, argMin, const MemoryBuffer, x);
+__CREATE_FUNCTION_2_ARG(ArgAbsMax, CuBlasKernelExceptionFactory, int&, argMax, const MemoryBuffer, x);
+__CREATE_FUNCTION_2_ARG(AbsMin, CuBlasKernelExceptionFactory, double&, min, const MemoryBuffer, x);
+__CREATE_FUNCTION_2_ARG(AbsMax, CuBlasKernelExceptionFactory, double&, max, const MemoryBuffer, x);
 
 //CuSparseWrappers
 __CREATE_FUNCTION_4_ARG(SparseAdd, CuSparseKernelExceptionFactory, MemoryBuffer, z, const SparseMemoryBuffer, x, const MemoryBuffer, y, const double, alpha);
