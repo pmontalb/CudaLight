@@ -64,7 +64,7 @@ namespace clt
 		for (size_t i = 0; i < m1.size(); ++i)
 			ASSERT_TRUE(fabs(_m3[i] - _m1[i] - _m2[i]) <= 1e-7);
 
-		auto m4 = m1.Add(m2, 2.0);
+		auto m4 = m1.Add(m2, MatrixOperation::None, MatrixOperation::None, 2.0);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _m4 = m4.Get();
 

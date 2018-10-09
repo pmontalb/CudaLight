@@ -138,6 +138,21 @@
 		}\
 	}
 
+#define __CREATE_FUNCTION_9_ARG(NAME, EXCEPTION, TYPE0, ARG0, TYPE1, ARG1, TYPE2, ARG2, TYPE3, ARG3, TYPE4, ARG4, TYPE5, ARG5, TYPE6, ARG6, TYPE7, ARG7, TYPE8, ARG8)\
+	EXTERN_C int _##NAME(TYPE0 ARG0, TYPE1 ARG1, TYPE2 ARG2, TYPE3 ARG3, TYPE4 ARG4, TYPE5 ARG5, TYPE6 ARG6, TYPE7 ARG7, TYPE8 ARG8);\
+	namespace dm\
+	{\
+		namespace detail\
+		{\
+			void NAME(TYPE0 ARG0, TYPE1 ARG1, TYPE2 ARG2, TYPE3 ARG3, TYPE4 ARG4, TYPE5 ARG5, TYPE6 ARG6, TYPE7 ARG7, TYPE8 ARG8)\
+			{\
+				int err = _##NAME(ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8);\
+				if (err != 0)\
+					EXCEPTION::ThrowException(#NAME, err);\
+			}\
+		}\
+	}
+
 #pragma endregion
 
 // Device
@@ -167,12 +182,12 @@ __CREATE_FUNCTION_2_ARG(RandNormal, CudaKernelExceptionFactory, MemoryBuffer, bu
 __CREATE_FUNCTION_4_ARG(Add, CuBlasKernelExceptionFactory, MemoryBuffer, z, const MemoryBuffer, x, const MemoryBuffer, y, const double, alpha);
 __CREATE_FUNCTION_3_ARG(Subtract, CuBlasKernelExceptionFactory, MemoryBuffer, z, const MemoryBuffer, x, const MemoryBuffer, y);
 __CREATE_FUNCTION_3_ARG(AddEqual, CuBlasKernelExceptionFactory, MemoryBuffer, z, const MemoryBuffer, x, const double, alpha);
-__CREATE_FUNCTION_5_ARG(AddEqualMatrix, CuBlasKernelExceptionFactory, MemoryTile, A, const MemoryTile, B, const MatrixOperation, aOperation, const MatrixOperation, bOperation, const double, alpha);
+__CREATE_FUNCTION_6_ARG(AddEqualMatrix, CuBlasKernelExceptionFactory, MemoryTile, A, const MemoryTile, B, const MatrixOperation, aOperation, const MatrixOperation, bOperation, const double, alpha, const double, beta);
 __CREATE_FUNCTION_2_ARG(SubtractEqual, CuBlasKernelExceptionFactory, MemoryBuffer, z, const MemoryBuffer, x);
 __CREATE_FUNCTION_2_ARG(Scale, CuBlasKernelExceptionFactory, MemoryBuffer, z, const double, alpha);
 __CREATE_FUNCTION_4_ARG(ElementwiseProduct, CuBlasKernelExceptionFactory, MemoryBuffer, z, const MemoryBuffer, x, const MemoryBuffer, y, const double, alpha);
-__CREATE_FUNCTION_8_ARG(Multiply, CuBlasKernelExceptionFactory, MemoryTile, A, const MemoryTile, B, const MemoryTile, C, const unsigned, leadingDimensionB, const unsigned, leadingDimensionC, const MatrixOperation, bOperation, const MatrixOperation, cOperation, const double, alpha);
-__CREATE_FUNCTION_5_ARG(Dot, CuBlasKernelExceptionFactory, MemoryBuffer, y, const MemoryTile, A, const MemoryBuffer, x, const MatrixOperation, aOperation, const double, alpha);
+__CREATE_FUNCTION_9_ARG(Multiply, CuBlasKernelExceptionFactory, MemoryTile, A, const MemoryTile, B, const MemoryTile, C, const unsigned, leadingDimensionB, const unsigned, leadingDimensionC, const MatrixOperation, bOperation, const MatrixOperation, cOperation, const double, alpha, const double, beta);
+__CREATE_FUNCTION_6_ARG(Dot, CuBlasKernelExceptionFactory, MemoryBuffer, y, const MemoryTile, A, const MemoryBuffer, x, const MatrixOperation, aOperation, const double, alpha, const double, beta);
 __CREATE_FUNCTION_1_ARG(CumulativeRowSum, CuBlasKernelExceptionFactory, MemoryTile, A);
 __CREATE_FUNCTION_1_ARG(Eye, CuBlasKernelExceptionFactory, MemoryTile, A);
 __CREATE_FUNCTION_3_ARG(Solve, CuBlasKernelExceptionFactory, const MemoryTile, A, MemoryTile, B, const MatrixOperation, aOperation);

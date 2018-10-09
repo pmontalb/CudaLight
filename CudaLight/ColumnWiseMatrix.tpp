@@ -174,13 +174,13 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::Add(const ColumnWiseMatrix& rhs, const double alpha) const
+	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::Add(const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation, const MatrixOperation rhsOperation, const double alpha, const double beta) const
 	{
 		assert(nRows() == rhs.nRows());
 		assert(nCols() == rhs.nCols());
 
 		ColumnWiseMatrix ret(*this);
-		ret.AddEqual(rhs, alpha);
+		dm::detail::AddEqualMatrix(ret.buffer, rhs.buffer, lhsOperation, rhsOperation, alpha, beta);
 
 		return ret;
 	}
@@ -220,34 +220,41 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::Multiply(const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation, const MatrixOperation rhsOperation, const double alpha) const
+	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::Multiply(const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation, const MatrixOperation rhsOperation, const double alpha, const double beta) const
 	{
 		ColumnWiseMatrix ret(nRows(), rhs.nCols());
-		Multiply(ret, rhs, lhsOperation, rhsOperation, alpha);
+		Multiply(ret, rhs, lhsOperation, rhsOperation, alpha, beta);
 
 		return ret;
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void ColumnWiseMatrix<ms, md>::Multiply(ColumnWiseMatrix& out, const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation, const MatrixOperation rhsOperation, const double alpha) const
+	void ColumnWiseMatrix<ms, md>::Multiply(ColumnWiseMatrix& out, const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation, const MatrixOperation rhsOperation, const double alpha, const double beta) const
 	{
-		assert(nCols() == rhs.nRows());
-		dm::detail::Multiply(out.buffer, this->buffer, rhs.buffer, this->nRows(), rhs.nRows());
+		if (lhsOperation == MatrixOperation::None)
+			assert(nCols() == rhs.nRows());
+		else
+			assert(nRows() == rhs.nCols());
+
+		dm::detail::Multiply(out.buffer, this->buffer, rhs.buffer, this->nRows(), rhs.nRows(), lhsOperation, rhsOperation, alpha, beta);
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	Vector<ms, md> ColumnWiseMatrix<ms, md>::Dot(const Vector<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha) const
+	Vector<ms, md> ColumnWiseMatrix<ms, md>::Dot(const Vector<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha, const double beta) const
 	{
 		Vector<ms, md> ret(rhs.size());
-		Dot(ret, rhs, lhsOperation, alpha);
+		Dot(ret, rhs, lhsOperation, alpha, beta);
 		return ret;
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void ColumnWiseMatrix<ms, md>::Dot(Vector<ms, md>& out, const Vector<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha) const
+	void ColumnWiseMatrix<ms, md>::Dot(Vector<ms, md>& out, const Vector<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha, const double beta) const
 	{
-		assert(nRows() == rhs.size());
-		dm::detail::Dot(out.GetBuffer(), this->buffer, rhs.GetBuffer(), lhsOperation, alpha);
+		if (lhsOperation == MatrixOperation::None)
+			assert(nRows() == rhs.size());
+		else
+			assert(nCols() == rhs.size());
+		dm::detail::Dot(out.GetBuffer(), this->buffer, rhs.GetBuffer(), lhsOperation, alpha, beta);
 	}
 
 	template<MemorySpace ms, MathDomain md>
