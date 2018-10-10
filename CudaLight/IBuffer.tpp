@@ -213,13 +213,7 @@ namespace cl
 		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
 		assert(buffer.pointer != 0);
 
-		MemoryBuffer tmp(0, buffer.size, ms, md);
-		ctor(tmp);
-		dm::detail::AutoCopy(tmp, buffer);
-
-		dm::detail::ElementwiseProduct(buffer, tmp, static_cast<const bi*>(&rhs)->buffer, 1.0);
-
-		dtor(tmp);
+		dm::detail::ElementwiseProduct(buffer, buffer, static_cast<const bi*>(&rhs)->buffer, 1.0);
 
 		return *this;
 	}
