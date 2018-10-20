@@ -120,6 +120,7 @@ namespace cl
 		int AbsoluteMaximumIndex() const;
 		stdType MinimumInAbsoluteValue() const;
 		stdType MaximumInAbsoluteValue() const;
+		double Sum() const;
 
 		#pragma endregion
 		

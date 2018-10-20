@@ -53,6 +53,9 @@
     <ClCompile Include="SerializationTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CubTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

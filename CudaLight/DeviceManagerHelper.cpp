@@ -204,6 +204,9 @@ __CREATE_FUNCTION_3_ARG(SparseSubtract, CuSparseKernelExceptionFactory, MemoryBu
 __CREATE_FUNCTION_5_ARG(SparseDot, CuSparseKernelExceptionFactory, MemoryBuffer, y, const SparseMemoryTile, A, const MemoryBuffer, x, const MatrixOperation, aOperation, const double, alpha);
 __CREATE_FUNCTION_7_ARG(SparseMultiply, CuSparseKernelExceptionFactory, MemoryTile, A, const SparseMemoryTile, B, const MemoryTile, C, const unsigned, leadingDimensionB, const unsigned, leadingDimensionC, const MatrixOperation, bOperation, const double, alpha);
 
+//CustomKernelsWrappers
+__CREATE_FUNCTION_2_ARG(Sum, CudaKernelExceptionFactory, double&, sum, const MemoryBuffer, v);
+
 #pragma region Undef macros
 
 #undef __CREATE_FUNCTION_0_ARG

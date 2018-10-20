@@ -173,6 +173,7 @@
   <ItemGroup>
     <ClCompile Include="CuBlasTests.cpp" />
     <ClCompile Include="CuSparseTests.cpp" />
+    <ClCompile Include="CubTests.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MatrixTests.cpp" />
     <ClCompile Include="SerializationTests.cpp" />

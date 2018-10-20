@@ -285,6 +285,18 @@ namespace cl
 		return ret;
 	}
 
+	template<typename bi, MemorySpace ms, MathDomain md>
+	double IBuffer<bi, ms, md>::Sum() const
+	{
+		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		assert(buffer.pointer != 0);
+
+		double ret = -1;
+		dm::detail::Sum(ret, buffer);
+
+		return ret;
+	}
+
 #pragma endregion
 
 	template<typename bi, MemorySpace ms, MathDomain md>

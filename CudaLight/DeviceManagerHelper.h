@@ -145,6 +145,9 @@ __CREATE_FUNCTION_3_ARG(SparseSubtract, MemoryBuffer, z, const SparseMemoryBuffe
 __CREATE_FUNCTION_5_ARG(SparseDot, MemoryBuffer, y, const SparseMemoryTile, A, const MemoryBuffer, x, const MatrixOperation, aOperation = MatrixOperation::None, const double, alpha = 1.0);
 __CREATE_FUNCTION_7_ARG(SparseMultiply, MemoryTile, A, const SparseMemoryTile, B, const MemoryTile, C, const unsigned, leadingDimensionB, const unsigned, leadingDimensionC, const MatrixOperation, bOperation = MatrixOperation::None, const double, alpha = 1.0);
 
+//CustomKernelsWrappers
+__CREATE_FUNCTION_2_ARG(Sum, double&, sum, const MemoryBuffer, v);
+
 #pragma region Undef macros
 
 #undef __CREATE_FUNCTION_0_ARG
