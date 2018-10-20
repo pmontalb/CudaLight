@@ -279,7 +279,7 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void ColumnWiseMatrix<ms, md>::Solve(const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation)
+	void ColumnWiseMatrix<ms, md>::Solve(const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation) const
 	{
 		assert(nRows() == rhs.nRows());
 		assert(nCols() == rhs.nCols());
@@ -287,13 +287,50 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void ColumnWiseMatrix<ms, md>::Solve(const Vector<ms, md>& rhs, const MatrixOperation lhsOperation)
+	void ColumnWiseMatrix<ms, md>::Solve(const Vector<ms, md>& rhs, const MatrixOperation lhsOperation) const
 	{
 		assert(nRows() == rhs.size());
 
 		MemoryTile tmp(rhs.GetBuffer());
 		dm::detail::Solve(this->buffer, tmp, lhsOperation);
 	}
+
+	template<MemorySpace ms, MathDomain md>
+	void ColumnWiseMatrix<ms, md>::ColumnWiseArgAbsMinimum(Vector<ms, MathDomain::Int>& out) const
+	{
+		assert(out.GetBuffer().pointer != 0);
+		assert(out.size() == nCols());
+
+		dm::detail::ColumnWiseArgAbsMin(out.GetBuffer(), buffer);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	Vector<ms, MathDomain::Int> ColumnWiseMatrix<ms, md>::ColumnWiseArgAbsMinimum() const
+	{
+		Vector<ms, MathDomain::Int> out(nCols());
+		ColumnWiseArgAbsMinimum(out);
+
+		return out;
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	void ColumnWiseMatrix<ms, md>::ColumnWiseArgAbsMaximum(Vector<ms, MathDomain::Int>& out) const
+	{
+		assert(out.GetBuffer().pointer != 0);
+		assert(out.size() == nCols());
+
+		dm::detail::ColumnWiseArgAbsMax(out.GetBuffer(), buffer);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	Vector<ms, MathDomain::Int> ColumnWiseMatrix<ms, md>::ColumnWiseArgAbsMaximum() const
+	{
+		Vector<ms, MathDomain::Int> out(nCols());
+		ColumnWiseArgAbsMaximum(out);
+
+		return out;
+	}
+
 
 	#pragma endregion
 

@@ -4,11 +4,11 @@
 
 namespace clt
 {
-	class CustomKernelsTests : public ::testing::Test
+	class CubTests : public ::testing::Test
 	{
 	};
 
-	TEST_F(CustomKernelsTests, Sum)
+	TEST_F(CubTests, Sum)
 	{
 		const size_t size = 1024;
 		auto v1 = cl::LinSpace<MemorySpace::Device, MathDomain::Double>(-1.0, 1.0, size);

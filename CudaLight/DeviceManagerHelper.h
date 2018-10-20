@@ -135,7 +135,9 @@ __CREATE_FUNCTION_3_ARG(Solve, const MemoryTile, A, MemoryTile, B, const MatrixO
 __CREATE_FUNCTION_2_ARG(Invert, MemoryTile, A, const MatrixOperation, aOperation = MatrixOperation::None);
 __CREATE_FUNCTION_4_ARG(KroneckerProduct, MemoryTile, A, const MemoryBuffer, x, const MemoryBuffer, y, const double, alpha);
 __CREATE_FUNCTION_2_ARG(ArgAbsMin, int&, argMin, const MemoryBuffer, x);
+__CREATE_FUNCTION_2_ARG(ColumnWiseArgAbsMin, MemoryBuffer, argMin, const MemoryTile, A);
 __CREATE_FUNCTION_2_ARG(ArgAbsMax, int&, argMax, const MemoryBuffer, x);
+__CREATE_FUNCTION_2_ARG(ColumnWiseArgAbsMax, MemoryBuffer, argMax, const MemoryTile, A);
 __CREATE_FUNCTION_2_ARG(AbsMin, double&, min, const MemoryBuffer, x);
 __CREATE_FUNCTION_2_ARG(AbsMax, double&, max, const MemoryBuffer, x);
 

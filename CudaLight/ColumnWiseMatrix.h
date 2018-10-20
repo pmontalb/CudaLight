@@ -107,12 +107,18 @@ namespace cl
 		/**
 		* Solve A * X = B, B is overwritten
 		*/
-		void Solve(const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation = MatrixOperation::None);
+		void Solve(const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation = MatrixOperation::None) const;
 
 		/**
 		* Solve A * x = b, b is overwritten
 		*/
-		void Solve(const Vector<memorySpace, mathDomain>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None);
+		void Solve(const Vector<memorySpace, mathDomain>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None) const;
+
+		Vector<memorySpace, MathDomain::Int> ColumnWiseArgAbsMinimum() const;
+		void ColumnWiseArgAbsMinimum(Vector<memorySpace, MathDomain::Int>& out) const;
+
+		Vector<memorySpace, MathDomain::Int> ColumnWiseArgAbsMaximum() const;
+		void ColumnWiseArgAbsMaximum(Vector<memorySpace, MathDomain::Int>& out) const;
 
 		#pragma endregion
 

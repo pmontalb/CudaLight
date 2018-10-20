@@ -246,4 +246,33 @@ namespace clt
 		ASSERT_TRUE(fabs(_min - xMin) <= 1e-7);
 		ASSERT_TRUE(fabs(_max - xMax) <= 1e-7);
 	}
+
+	TEST_F(CuBlasTests, ColumnWiseAbsoluteMinMax)
+	{
+		cl::mat A = cl::LinSpace(-1.0f, 1.0f, 128);
+		auto _A = A.Get();
+
+		auto AMin = A.ColumnWiseArgAbsMinimum();
+		auto _AMin = AMin.Get();
+		auto AMax = A.ColumnWiseArgAbsMaximum();
+		auto _AMax = AMax.Get();
+
+		std::vector<int> _min(A.nCols(), 0); 
+		std::vector<int> _max(A.nCols(), 0);
+
+		for (size_t j = 0; j < A.nCols(); j++)
+		{
+			for (size_t i = 0; i < A.nRows(); i++)
+			{
+				const size_t idx = i + A.nRows() * j;
+				if (fabs(_A[idx]) < fabs(_A[_min[j] + A.nRows() * j]))
+					_min[j] = i;
+				if (fabs(_A[idx]) > fabs(_A[_max[j] + A.nRows() * j]))
+					_max[j] = i;
+			}
+
+			ASSERT_TRUE(fabs(_min[j] - (_AMin[j] - 1)) <= 1e-7);
+			ASSERT_TRUE(fabs(_max[j] - (_AMax[j] - 1)) <= 1e-7);
+		}
+	}
 }
