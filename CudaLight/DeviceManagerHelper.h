@@ -138,8 +138,7 @@ __CREATE_FUNCTION_2_ARG(ArgAbsMin, int&, argMin, const MemoryBuffer, x);
 __CREATE_FUNCTION_2_ARG(ColumnWiseArgAbsMin, MemoryBuffer, argMin, const MemoryTile, A);
 __CREATE_FUNCTION_2_ARG(ArgAbsMax, int&, argMax, const MemoryBuffer, x);
 __CREATE_FUNCTION_2_ARG(ColumnWiseArgAbsMax, MemoryBuffer, argMax, const MemoryTile, A);
-__CREATE_FUNCTION_2_ARG(AbsMin, double&, min, const MemoryBuffer, x);
-__CREATE_FUNCTION_2_ARG(AbsMax, double&, max, const MemoryBuffer, x);
+__CREATE_FUNCTION_2_ARG(IsNonZero, MemoryBuffer, z, const MemoryBuffer, x);
 
 //CuSparseWrappers
 __CREATE_FUNCTION_4_ARG(SparseAdd, MemoryBuffer, z, const SparseMemoryBuffer, x, const MemoryBuffer, y, const double, alpha = 1.0);
@@ -147,8 +146,12 @@ __CREATE_FUNCTION_3_ARG(SparseSubtract, MemoryBuffer, z, const SparseMemoryBuffe
 __CREATE_FUNCTION_5_ARG(SparseDot, MemoryBuffer, y, const SparseMemoryTile, A, const MemoryBuffer, x, const MatrixOperation, aOperation = MatrixOperation::None, const double, alpha = 1.0);
 __CREATE_FUNCTION_7_ARG(SparseMultiply, MemoryTile, A, const SparseMemoryTile, B, const MemoryTile, C, const unsigned, leadingDimensionB, const unsigned, leadingDimensionC, const MatrixOperation, bOperation = MatrixOperation::None, const double, alpha = 1.0);
 
-//CustomKernelsWrappers
+//CubWrappers
 __CREATE_FUNCTION_2_ARG(Sum, double&, sum, const MemoryBuffer, v);
+__CREATE_FUNCTION_2_ARG(AbsMin, double&, min, const MemoryBuffer, x);
+__CREATE_FUNCTION_2_ARG(AbsMax, double&, max, const MemoryBuffer, x);
+__CREATE_FUNCTION_2_ARG(Min, double&, min, const MemoryBuffer, x);
+__CREATE_FUNCTION_2_ARG(Max, double&, max, const MemoryBuffer, x);
 
 #pragma region Undef macros
 

@@ -197,8 +197,7 @@ __CREATE_FUNCTION_2_ARG(ArgAbsMin, CuBlasKernelExceptionFactory, int&, argMin, c
 __CREATE_FUNCTION_2_ARG(ColumnWiseArgAbsMin, CuBlasKernelExceptionFactory, MemoryBuffer, argMin, const MemoryTile, A);
 __CREATE_FUNCTION_2_ARG(ArgAbsMax, CuBlasKernelExceptionFactory, int&, argMax, const MemoryBuffer, x);
 __CREATE_FUNCTION_2_ARG(ColumnWiseArgAbsMax, CuBlasKernelExceptionFactory, MemoryBuffer, argMax, const MemoryTile, A);
-__CREATE_FUNCTION_2_ARG(AbsMin, CuBlasKernelExceptionFactory, double&, min, const MemoryBuffer, x);
-__CREATE_FUNCTION_2_ARG(AbsMax, CuBlasKernelExceptionFactory, double&, max, const MemoryBuffer, x);
+__CREATE_FUNCTION_2_ARG(IsNonZero, CudaKernelExceptionFactory, MemoryBuffer, z, const MemoryBuffer, x);
 
 //CuSparseWrappers
 __CREATE_FUNCTION_4_ARG(SparseAdd, CuSparseKernelExceptionFactory, MemoryBuffer, z, const SparseMemoryBuffer, x, const MemoryBuffer, y, const double, alpha);
@@ -206,8 +205,12 @@ __CREATE_FUNCTION_3_ARG(SparseSubtract, CuSparseKernelExceptionFactory, MemoryBu
 __CREATE_FUNCTION_5_ARG(SparseDot, CuSparseKernelExceptionFactory, MemoryBuffer, y, const SparseMemoryTile, A, const MemoryBuffer, x, const MatrixOperation, aOperation, const double, alpha);
 __CREATE_FUNCTION_7_ARG(SparseMultiply, CuSparseKernelExceptionFactory, MemoryTile, A, const SparseMemoryTile, B, const MemoryTile, C, const unsigned, leadingDimensionB, const unsigned, leadingDimensionC, const MatrixOperation, bOperation, const double, alpha);
 
-//CustomKernelsWrappers
+//CubWrappers
 __CREATE_FUNCTION_2_ARG(Sum, CudaKernelExceptionFactory, double&, sum, const MemoryBuffer, v);
+__CREATE_FUNCTION_2_ARG(AbsMin, CuBlasKernelExceptionFactory, double&, min, const MemoryBuffer, x);
+__CREATE_FUNCTION_2_ARG(AbsMax, CuBlasKernelExceptionFactory, double&, max, const MemoryBuffer, x);
+__CREATE_FUNCTION_2_ARG(Min, CuBlasKernelExceptionFactory, double&, min, const MemoryBuffer, x);
+__CREATE_FUNCTION_2_ARG(Max, CuBlasKernelExceptionFactory, double&, max, const MemoryBuffer, x);
 
 #pragma region Undef macros
 

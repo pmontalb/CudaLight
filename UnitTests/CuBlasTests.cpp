@@ -226,27 +226,6 @@ namespace clt
 		}
 	}
 
-	TEST_F(CuBlasTests, AbsoluteMinMax)
-	{
-		cl::vec x = cl::LinSpace(-1.0f, 1.0f, 128);
-		auto _x = x.Get();
-
-		float xMin = x.MinimumInAbsoluteValue();
-		float xMax = x.MaximumInAbsoluteValue();
-		
-		float _min = 1e9, _max = 0.0;
-		for (size_t i = 0; i < x.size(); i++)
-		{
-			if (fabs(_x[i]) < fabs(_min))
-				_min = _x[i];
-			if (fabs(_x[i]) > fabs(_max))
-				_max = _x[i];
-		}
-
-		ASSERT_TRUE(fabs(_min - xMin) <= 1e-7);
-		ASSERT_TRUE(fabs(_max - xMax) <= 1e-7);
-	}
-
 	TEST_F(CuBlasTests, ColumnWiseAbsoluteMinMax)
 	{
 		cl::mat A = cl::LinSpace(-1.0f, 1.0f, 128);
@@ -274,5 +253,27 @@ namespace clt
 			ASSERT_TRUE(fabs(_min[j] - (_AMin[j] - 1)) <= 1e-7);
 			ASSERT_TRUE(fabs(_max[j] - (_AMax[j] - 1)) <= 1e-7);
 		}
+	}
+
+	TEST_F(CuBlasTests, CountEquals)
+	{
+		cl::vec u(64, 0.1);
+		cl::vec v(u);
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _v = v.Get();
+
+		ASSERT_EQ(u.CountEquals(v), u.size());
+		ASSERT_EQ(v.CountEquals(u), u.size());
+
+		_v[_v.size() / 2] *= 2;
+		v.ReadFrom(_v);
+
+		ASSERT_EQ(u.CountEquals(v), u.size() - 1);
+		ASSERT_EQ(v.CountEquals(u), u.size() - 1);
+
+		cl::vec w = cl::LinSpace(-3.14, 3.14, u.size());
+		ASSERT_EQ(w.CountEquals(w), w.size());
+		ASSERT_EQ(w.CountEquals(u), 0);
+		ASSERT_EQ(w.CountEquals(v), 0);
 	}
 }

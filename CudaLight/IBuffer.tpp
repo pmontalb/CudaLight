@@ -262,7 +262,7 @@ namespace cl
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
-	typename Traits<md>::stdType IBuffer<bi, ms, md>::MinimumInAbsoluteValue() const
+	typename Traits<md>::stdType IBuffer<bi, ms, md>::AbsoluteMinimum() const
 	{
 		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
 		assert(buffer.pointer != 0);
@@ -274,7 +274,7 @@ namespace cl
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
-	typename Traits<md>::stdType IBuffer<bi, ms, md>::MaximumInAbsoluteValue() const
+	typename Traits<md>::stdType IBuffer<bi, ms, md>::AbsoluteMaximum() const
 	{
 		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
 		assert(buffer.pointer != 0);
@@ -286,13 +286,72 @@ namespace cl
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
-	double IBuffer<bi, ms, md>::Sum() const
+	typename Traits<md>::stdType IBuffer<bi, ms, md>::Minimum() const
+	{
+		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		assert(buffer.pointer != 0);
+
+		double ret = 0.0;
+		dm::detail::Min(ret, buffer);
+
+		return ret;
+	}
+
+	template<typename bi, MemorySpace ms, MathDomain md>
+	typename Traits<md>::stdType IBuffer<bi, ms, md>::Maximum() const
+	{
+		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		assert(buffer.pointer != 0);
+
+		double ret = 0.0;
+		dm::detail::Max(ret, buffer);
+
+		return ret;
+	}
+
+	template<typename bi, MemorySpace ms, MathDomain md>
+	typename Traits<md>::stdType IBuffer<bi, ms, md>::Sum() const
 	{
 		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
 		assert(buffer.pointer != 0);
 
 		double ret = -1;
 		dm::detail::Sum(ret, buffer);
+
+		return ret;
+	}
+
+	template<typename bi, MemorySpace ms, MathDomain md>
+	int IBuffer<bi, ms, md>::CountEquals(const IBuffer& rhs, MemoryBuffer cache) const
+	{
+		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		assert(rhs.size() == size());
+		assert(buffer.pointer != 0);
+		assert(static_cast<const bi*>(&rhs)->buffer.pointer != 0);
+
+		bool needToFreeCache = cache.pointer == 0;
+		if (needToFreeCache)
+		{
+			cache.memorySpace = ms;
+			cache.mathDomain = md;
+			cache.size = size();
+			dm::detail::Alloc(cache);
+		}
+
+		// calculate the difference
+		dm::detail::Subtract(cache, buffer, static_cast<const bi*>(&rhs)->buffer);
+
+		// calculate how many non-zeros, overriding cache
+		dm::detail::IsNonZero(cache, cache);
+
+		double ret = -1;
+		dm::detail::Sum(ret, cache);
+
+		// we are counting the zero entries
+		ret = size() - ret;
+
+		if (needToFreeCache)
+			dm::detail::Free(cache);
 
 		return ret;
 	}

@@ -118,9 +118,12 @@ namespace cl
 
 		int AbsoluteMinimumIndex() const;
 		int AbsoluteMaximumIndex() const;
-		stdType MinimumInAbsoluteValue() const;
-		stdType MaximumInAbsoluteValue() const;
-		double Sum() const;
+		stdType AbsoluteMinimum() const;
+		stdType AbsoluteMaximum() const;
+		stdType Minimum() const;
+		stdType Maximum() const;
+		stdType Sum() const;
+		int CountEquals(const IBuffer& rhs, MemoryBuffer cache = MemoryBuffer()) const;
 
 		#pragma endregion
 		
