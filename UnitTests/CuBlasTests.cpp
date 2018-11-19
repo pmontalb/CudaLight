@@ -45,6 +45,35 @@ namespace clt
 
 		for (size_t i = 0; i < v1.size(); ++i)
 			ASSERT_TRUE(fabs(_v4[i] - _v1[i] - 2.0 * _v2[i]) <= 1.2e-7);
+
+		cl::ivec v5(32, 5);
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _v5 = v5.Get();
+
+		cl::ivec v6(32, 7);
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _v6 = v6.Get();
+
+		auto v7 = v5.Add(v6, 3);
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _v7 = v7.Get();
+
+		for (size_t i = 0; i < v7.size(); ++i)
+			ASSERT_EQ(_v7[i], _v5[i] + 3 * _v6[i]);
+
+		auto v8 = v5.Add(v6, -2);
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _v8 = v8.Get();
+
+		for (size_t i = 0; i < v7.size(); ++i)
+			ASSERT_EQ(_v8[i], _v5[i] - 2 * _v6[i]);
+
+		v5.AddEqual(v6, +10);
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _v5New = v5.Get();
+
+		for (size_t i = 0; i < v7.size(); ++i)
+			ASSERT_EQ(_v5New[i], _v5[i] + 10 * _v6[i]);
 	}
 
 	TEST_F(CuBlasTests, AddMatrix)
