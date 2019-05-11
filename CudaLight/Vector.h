@@ -47,7 +47,7 @@ namespace cl
 		std::ostream& ToOutputStream(std::ostream& os) const override final;
 		virtual void ToBinaryFile(const std::string& fileName, const std::string mode = "w") const override final;
 
-		template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+		template<MemorySpace ms, MathDomain md>
 		friend std::ostream& operator<<(std::ostream& os, const Vector<ms, md>& buffer);
 
 		#pragma region Linear Algebra
@@ -119,6 +119,11 @@ namespace cl
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	void Scale(Vector<ms, md>& lhs, const double alpha);
+
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	Vector<ms, MathDomain::Float> MakePair(const Vector<ms, md>& x, const Vector<ms, md>& y);
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	void MakePair(Vector<ms, MathDomain::Float>& pair, const Vector<ms, md>& x, const Vector<ms, md>& y);
 
 	#pragma region Type aliases
 

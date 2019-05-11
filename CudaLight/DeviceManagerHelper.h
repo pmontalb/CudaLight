@@ -153,6 +153,10 @@ __CREATE_FUNCTION_2_ARG(AbsMax, double&, max, const MemoryBuffer, x);
 __CREATE_FUNCTION_2_ARG(Min, double&, min, const MemoryBuffer, x);
 __CREATE_FUNCTION_2_ARG(Max, double&, max, const MemoryBuffer, x);
 
+// Forge Helpers
+__CREATE_FUNCTION_3_ARG(MakePair, MemoryBuffer, z, const MemoryBuffer, x, const MemoryBuffer, y);
+__CREATE_FUNCTION_4_ARG(MakeTriple, MemoryBuffer, v, const MemoryBuffer, x, const MemoryBuffer, y, const MemoryBuffer, z);
+
 #pragma region Undef macros
 
 #undef __CREATE_FUNCTION_0_ARG

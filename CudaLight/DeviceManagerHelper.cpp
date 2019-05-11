@@ -212,6 +212,10 @@ __CREATE_FUNCTION_2_ARG(AbsMax, CuBlasKernelExceptionFactory, double&, max, cons
 __CREATE_FUNCTION_2_ARG(Min, CuBlasKernelExceptionFactory, double&, min, const MemoryBuffer, x);
 __CREATE_FUNCTION_2_ARG(Max, CuBlasKernelExceptionFactory, double&, max, const MemoryBuffer, x);
 
+// Forge Helpers
+__CREATE_FUNCTION_3_ARG(MakePair, CudaKernelExceptionFactory, MemoryBuffer, z, const MemoryBuffer, x, const MemoryBuffer, y);
+__CREATE_FUNCTION_4_ARG(MakeTriple, CudaKernelExceptionFactory, MemoryBuffer, v, const MemoryBuffer, x, const MemoryBuffer, y, const MemoryBuffer, z);
+
 #pragma region Undef macros
 
 #undef __CREATE_FUNCTION_0_ARG

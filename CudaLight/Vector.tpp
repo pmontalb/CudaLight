@@ -41,7 +41,7 @@ namespace cl
 	Vector<ms, md>::Vector(const std::string& fileName, bool useMemoryMapping)
 	{
 		std::vector<typename Traits<md>::stdType> vec;
-		cl.VectorFromBinaryFile(vec, fileName, useMemoryMapping);
+		cl::VectorFromBinaryFile(vec, fileName, useMemoryMapping);
 
 		ReadFrom(vec);
 	}
@@ -183,7 +183,7 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	Vector<ms, md> VectorFromInputStream(std::istream& is)
 	{
-		std::vector<Vector<ms, md>::stdType> _vec;
+		std::vector<typename Vector<ms, md>::stdType> _vec;
 		cl::VectorFromInputStream(_vec, is);
 
 		Vector<ms, md> ret(static_cast<unsigned>(_vec.size()));
@@ -195,7 +195,7 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	Vector<ms, md> VectorFromBinaryFile(const std::string& fileName, const bool useMemoryMapping)
 	{
-		std::vector<Vector<ms, md>::stdType> _vec;
+		std::vector<typename Vector<ms, md>::stdType> _vec;
 		cl::VectorFromBinaryFile(_vec, fileName, useMemoryMapping);
 
 		Vector<ms, md> ret(static_cast<unsigned>(_vec.size()));
@@ -214,5 +214,21 @@ namespace cl
 	void Scale(Vector<ms, md>& lhs, const double alpha)
 	{
 		lhs.Scale(alpha);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	Vector<ms, MathDomain::Float> MakePair(const Vector<ms, md>& x, const Vector<ms, md>& y)
+	{
+		assert(x.size() == y.size());
+		Vector<ms, MathDomain::Float> pair(2 * x.size());
+		MakePair(pair, x, y);
+
+		return pair;
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	void MakePair(Vector<ms, MathDomain::Float>& pair, const Vector<ms, md>& x, const Vector<ms, md>& y)
+	{
+		dm::detail::MakePair(pair.GetBuffer(), x.GetBuffer(), y.GetBuffer());
 	}
 }

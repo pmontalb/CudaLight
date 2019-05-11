@@ -15,22 +15,26 @@ namespace cl
 	#pragma region Type mapping from MathDomain to C++ type
 
 	template <MathDomain mathDomain>
-	struct Traits {
+	struct Traits 
+	{
 		using stdType = void;
 	};
 
 	template <>
-	struct Traits<MathDomain::Double> {
+	struct Traits<MathDomain::Double> 
+	{
 		using stdType = double;
 	};
 
 	template <>
-	struct Traits<MathDomain::Float> {
+	struct Traits<MathDomain::Float> 
+	{
 		using stdType = float;
 	};
 
 	template <>
-	struct Traits<MathDomain::Int> {
+	struct Traits<MathDomain::Int> 
+	{
 		using stdType = int;
 	};
 
@@ -39,22 +43,26 @@ namespace cl
 	#pragma region Type mapping from C++ type to MathDomain
 
 	template <typename T>
-	struct _Traits {
+	struct _Traits
+	{
 		static constexpr MathDomain clType = MathDomain::Null;
 	};
 
 	template <>
-	struct _Traits<double> {
+	struct _Traits<double> 
+	{
 		static constexpr MathDomain clType = MathDomain::Double;
 	};
 
 	template <>
-	struct _Traits<float> {
+	struct _Traits<float> 
+	{
 		static constexpr MathDomain clType = MathDomain::Float;
 	};
 
 	template <>
-	struct _Traits<int> {
+	struct _Traits<int> 
+	{
 		static constexpr MathDomain clType = MathDomain::Int;
 	};
 
@@ -95,7 +103,7 @@ namespace cl
 		virtual std::ostream& ToOutputStream(std::ostream& os) const = 0;
 		virtual void ToBinaryFile(const std::string& fileName, const std::string mode = "w") const = 0;
 
-		template<typename bi, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+		template<typename bi, MemorySpace ms, MathDomain md>
 		friend std::ostream& operator<<(std::ostream& os, const IBuffer<bi, ms, md>& buffer);
 
 		template<typename bi, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
@@ -156,7 +164,6 @@ namespace cl
 
 	namespace detail
 	{
-
 		template<MathDomain md>
 		void Fill(std::vector<typename Traits<md>::stdType>& dest, const MemoryBuffer& source)
 		{

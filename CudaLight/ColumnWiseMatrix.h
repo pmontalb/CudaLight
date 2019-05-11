@@ -52,7 +52,7 @@ namespace cl
 		std::ostream& ToOutputStream(std::ostream& os) const override final;
 		void ToBinaryFile(const std::string& fileName, const std::string mode = "w") const override final;
 
-		template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+		template<MemorySpace ms, MathDomain md>
 		friend std::ostream& operator<<(std::ostream& os, const ColumnWiseMatrix<ms, md>& buffer);
 
 		virtual ~ColumnWiseMatrix() = default;
@@ -197,6 +197,11 @@ namespace cl
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	void Scale(ColumnWiseMatrix<ms, md>& lhs, const double alpha);
+
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	Vector<ms, MathDomain::Float> MakeTriple(const Vector<ms, md>& x, const Vector<ms, md>& y, const ColumnWiseMatrix<ms, md>& z);
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	void MakeTriple(Vector<ms, MathDomain::Float>& triple, const Vector<ms, md>& x, const Vector<ms, md>& y, const ColumnWiseMatrix<ms, md>& z);
 
 	#pragma region Type aliases
 

@@ -36,7 +36,7 @@ namespace cl
 
 	template<MemorySpace ms, MathDomain md>
 	Tensor<ms, md>::Tensor(const unsigned nRows, const unsigned nMatrices)
-		: ColumnWiseMatrix(nRows, nRows, nMatrices)
+		: ColumnWiseMatrix<ms, md>(nRows, nRows, nMatrices)
 	{
 	}
 

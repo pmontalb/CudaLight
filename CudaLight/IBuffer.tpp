@@ -63,7 +63,7 @@ namespace cl
 						||
 					  (std::is_same<T, float>::value && md == MathDomain::Float)
 						||
-					  (std::is_same<T, int>::value && md == MathDomain::Int));
+					  (std::is_same<T, int>::value && md == MathDomain::Int), "Invalid type");
 		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
 		assert(buffer.pointer != 0);
 

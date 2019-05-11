@@ -42,7 +42,7 @@ namespace cl
 	{
 		std::vector<typename Traits<md>::stdType> mat;
 		unsigned nRows = 0, nCols = 0;
-		cl.MatrixFromBinaryFile(mat, nRows, nCols, fileName, useMemoryMapping);
+		cl::MatrixFromBinaryFile(mat, nRows, nCols, fileName, useMemoryMapping);
 
 		ReadFrom(mat, nRows, nCols);
 	}
@@ -401,7 +401,7 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md> MatrixFromInputStream(std::istream& is)
 	{
-		std::vector<ColumnWiseMatrix<ms, md>::stdType> _mat;
+		std::vector<typename ColumnWiseMatrix<ms, md>::stdType> _mat;
 		unsigned nRows = 0, nCols = 0;
 		cl::MatrixFromInputStream(_mat, nRows, nCols, is);
 		
@@ -414,7 +414,7 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md> MatrixFromBinaryFile(const std::string& fileName, const bool useMemoryMapping)
 	{
-		std::vector<Vector<ms, md>::stdType> _mat;
+		std::vector<typename Vector<ms, md>::stdType> _mat;
 		unsigned nRows = 0, nCols = 0;
 		cl::MatrixFromBinaryFile(_mat, nRows, nCols, fileName, useMemoryMapping);
 
@@ -458,5 +458,22 @@ namespace cl
 	void Dot(Vector<ms, md>& out, const ColumnWiseMatrix<ms, md>& lhs, const Vector<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha)
 	{
 		lhs.Multiply(out, rhs, lhsOperation, alpha);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	Vector<ms, MathDomain::Float> MakeTriple(const Vector<ms, md>& x, const Vector<ms, md>& y, const Vector<ms, md>& z)
+	{
+		assert(x.size() == z.nRows());
+		assert(y.size() == z.nCols());
+		Vector<ms, MathDomain::Float> triple(3 * x.size() * y.size());
+		MakeTriple(triple, x, y);
+
+		return triple;
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	void MakeTriple(Vector<ms, MathDomain::Float>& triple, const Vector<ms, md>& x, const Vector<ms, md>& y, const Vector<ms, md>& z)
+	{
+		dm::detail::MakeTriple(triple.GetBuffer(), x.GetBuffer(), y.GetBuffer(), z.GetBuffer());
 	}
 }
