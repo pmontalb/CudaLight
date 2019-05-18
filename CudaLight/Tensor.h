@@ -26,9 +26,9 @@ namespace cl
 		template<typename T>
 		Tensor(const std::vector<T>& rhs, const unsigned nRows, const unsigned nCols, const unsigned nMatrices);
 		
-		Tensor(const ColumnWiseMatrix<memorySpace, mathDomain>& rhs);
+		explicit Tensor(const ColumnWiseMatrix<memorySpace, mathDomain>& rhs);
 
-		Tensor(const Vector<memorySpace, mathDomain>& rhs);
+		explicit Tensor(const Vector<memorySpace, mathDomain>& rhs);
 
 		using IBuffer<Tensor, memorySpace, mathDomain>::ReadFrom;
 		void ReadFrom(const ColumnWiseMatrix<memorySpace, mathDomain>& rhs);
@@ -43,8 +43,8 @@ namespace cl
 		void Set(const Vector<memorySpace, mathDomain>& columnVector, const unsigned column, const unsigned matrix);
 
 		void Print(const std::string& label = "") const override final;
-		std::ostream& ToOutputStream(std::ostream& os) const override final { throw std::exception("Not Implemented"); };
-		void ToBinaryFile(const std::string& fileName, const std::string mode) const override final { throw std::exception("Not Implemented"); };
+		std::ostream& ToOutputStream(std::ostream& os) const override final { throw std::logic_error("Not Implemented"); };
+		void ToBinaryFile(const std::string& fileName, const std::string mode) const override final { throw std::logic_error("Not Implemented"); };
 
 		virtual ~Tensor() = default;
 

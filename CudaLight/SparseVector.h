@@ -18,7 +18,7 @@ namespace cl
 		SparseVector(const unsigned size, const Vector<memorySpace, MathDomain::Int>& nonZeroIndices);
 		SparseVector(const unsigned size, const Vector<memorySpace, MathDomain::Int>& nonZeroIndices, const stdType value);
 		// copy denseVector to host, numerically finds the non-zero indices, and then copy back to device
-		SparseVector(const Vector<memorySpace, mathDomain>& denseVector);
+		explicit SparseVector(const Vector<memorySpace, mathDomain>& denseVector);
 
 		SparseVector(const SparseVector& rhs);
 
@@ -28,8 +28,8 @@ namespace cl
 
 		std::vector<typename Traits<mathDomain>::stdType> Get() const override final;
 		void Print(const std::string& label = "") const override final;
-		std::ostream& ToOutputStream(std::ostream& os) const override final { throw std::exception("Not Implemented"); };
-		void ToBinaryFile(const std::string& fileName, const std::string mode) const override final	{ throw std::exception("Not Implemented"); };
+		std::ostream& ToOutputStream(std::ostream& os) const override final { throw std::logic_error("Not Implemented"); };
+		void ToBinaryFile(const std::string& fileName, const std::string mode) const override final	{ throw std::logic_error("Not Implemented"); };
 
 		unsigned denseSize;  // used only when converting to dense
 

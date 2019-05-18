@@ -28,10 +28,9 @@ namespace cl
 		explicit Vector(const unsigned size);
 
 		Vector(const unsigned size, const stdType value);
-
 		Vector(const Vector& rhs);
-		Vector(const std::vector<stdType>& rhs);
-		Vector(const std::string& fileName, bool useMemoryMapping = false);
+		explicit Vector(const std::vector<stdType>& rhs);
+        explicit Vector(const std::string& fileName, bool useMemoryMapping = false);
 
 		using IBuffer<Vector, memorySpace, mathDomain>::Set;
 
@@ -80,7 +79,7 @@ namespace cl
 	protected:
 		using IBuffer<Vector, memorySpace, mathDomain>::IBuffer;
 
-		Vector() : IBuffer(true) {};
+		Vector() : IBuffer<Vector<memorySpace, mathDomain>, memorySpace, mathDomain>(true) {};
 		explicit Vector(const MemoryBuffer& buffer);
 	private:
 

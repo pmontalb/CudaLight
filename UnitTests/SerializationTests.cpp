@@ -86,6 +86,8 @@ namespace clt
 		std::ifstream f("..\\..\\UnitTests\\vec.npy");
 		if (!f.is_open())
 			f = std::ifstream("vec.npy");
+        if (!f.is_open())
+            f = std::ifstream(cwd + "/../UnitTests/vec.npy");
 		ASSERT_TRUE(f.is_open());
 		ASSERT_FALSE(f.fail());
 
@@ -111,6 +113,8 @@ namespace clt
 		std::ifstream f("..\\..\\UnitTests\\mat.npy");
 		if (!f.is_open())
 			f = std::ifstream("mat.npy");
+        if (!f.is_open())
+            f = std::ifstream(cwd + "/../UnitTests/mat.npy");
 		ASSERT_TRUE(f.is_open());
 		ASSERT_FALSE(f.fail());
 
@@ -118,7 +122,7 @@ namespace clt
 		{
 			cl::mat v = cl::MatrixFromInputStream(f);
 			ASSERT_TRUE(v.nRows() == 128);
-			ASSERT_TRUE(v.nCols() == 64);
+			ASSERT_EQ(v.nCols(), 64);
 		}
 		catch (...)
 		{
