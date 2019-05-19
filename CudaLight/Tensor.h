@@ -43,14 +43,14 @@ namespace cl
 		void Set(const Vector<memorySpace, mathDomain>& columnVector, const unsigned column, const unsigned matrix);
 
 		void Print(const std::string& label = "") const override final;
-		std::ostream& ToOutputStream(std::ostream& os) const override final { throw std::logic_error("Not Implemented"); };
-		void ToBinaryFile(const std::string& fileName, const std::string mode) const override final { throw std::logic_error("Not Implemented"); };
+		std::ostream& ToOutputStream(std::ostream&) const override final { throw std::logic_error("Not Implemented"); };
+		void ToBinaryFile(const std::string&, const std::string) const override final { throw std::logic_error("Not Implemented"); };
 
 		virtual ~Tensor() = default;
 
-		const unsigned nRows() const noexcept { return buffer.nRows; }
-		const unsigned nCols() const noexcept { return buffer.nCols; }
-		const unsigned nMatrices() const noexcept { return buffer.nCubes; }
+		unsigned nRows() const noexcept { return buffer.nRows; }
+		unsigned nCols() const noexcept { return buffer.nCols; }
+		unsigned nMatrices() const noexcept { return buffer.nCubes; }
 
 		std::vector<std::shared_ptr<ColumnWiseMatrix<memorySpace, mathDomain>>> matrices;
 	

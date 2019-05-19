@@ -249,6 +249,8 @@ namespace cl
 
 		int ret = -1;
 		dm::detail::ArgAbsMin(ret, buffer);
+
+		return ret;
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
@@ -259,6 +261,8 @@ namespace cl
 
 		int ret = -1;
 		dm::detail::ArgAbsMax(ret, buffer);
+
+		return ret;
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>

@@ -57,7 +57,7 @@ namespace cl
 	void Vector<ms, md>::Print(const std::string& label) const
 	{
 		auto vec = this->Get();
-		cl::Print(vec);
+		cl::Print(vec, label);
 	}
 
 	template<MemorySpace ms, MathDomain md>

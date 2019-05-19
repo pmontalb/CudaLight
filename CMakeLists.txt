@@ -1,3 +1,5 @@
+include_guard()
+
 cmake_minimum_required(VERSION 3.14)
 project(CudaLight)
 
@@ -7,9 +9,6 @@ enable_language(CUDA)
 
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIR})
-
-include(ExternalProject)
-include(GNUInstallDirs)
 
 # Npy++
 include_directories(../NpyCpp/MemoryMapping)

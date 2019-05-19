@@ -168,7 +168,7 @@ namespace cl
 		void Fill(std::vector<typename Traits<md>::stdType>& dest, const MemoryBuffer& source)
 		{
 			using stdType = typename Traits<md>::stdType;
-			const stdType* const ptr = reinterpret_cast<const stdType* const>(source.pointer);
+			const stdType* const ptr = reinterpret_cast<const stdType*>(source.pointer);
 			for (size_t i = 0; i < dest.size(); i++)
 				dest[i] = ptr[i];
 		}
@@ -177,7 +177,7 @@ namespace cl
 		void Fill(std::vector<typename Traits<md>::stdType>& dest, const MemoryTile& source)
 		{
 			using stdType = typename Traits<md>::stdType;
-			const stdType* const ptr = reinterpret_cast<const stdType* const>(source.pointer);
+			const stdType* const ptr = reinterpret_cast<const stdType*>(source.pointer);
 			for (size_t j = 0; j < source.nCols; j++)
 				for (size_t i = 0; i < source.nRows; i++)
 					dest[i + source.nRows * j] = ptr[i + source.nRows * j];
