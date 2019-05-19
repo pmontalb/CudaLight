@@ -6,16 +6,16 @@
 class Exception : public std::exception
 {
 public:
-	Exception(const std::string& message = "") : message(message) {}
-	Exception(const char* message = "") : message(message) {}
-	~Exception() = default;
+    explicit Exception(const std::string& message_ = "") : message(message_) {}
+    explicit Exception(const char* message_ = "") : message(message_) {}
+	virtual ~Exception() = default;
 
 	Exception(const Exception& rhs) = default;
 	Exception(Exception&& rhs) = default;
-	Exception& operator=(const Exception& rhs) = default;
-	Exception& operator=(Exception&& rhs) = default;
+	Exception& operator=(const Exception& rhs) = delete;
+	Exception& operator=(Exception&& rhs) = delete;
 
-	char const* what() const override final
+	char const* what() const noexcept override final
 	{
 		return message.c_str();
 	}
@@ -27,7 +27,7 @@ protected:
 class InternalErrorException : public Exception
 {
 public:
-	InternalErrorException(const std::string& message = "")
+	explicit InternalErrorException(const std::string& message = "")
 		: Exception("InternalErrorException: " + message)
 	{
 	}
@@ -36,7 +36,7 @@ public:
 class ExpectedEvenSizeException : public Exception
 {
 public:
-	ExpectedEvenSizeException(const std::string& message = "")
+    explicit ExpectedEvenSizeException(const std::string& message = "")
 		: Exception("ExpectedEvenSizeException: " + message)
 	{
 	}
@@ -45,7 +45,7 @@ public:
 class NotSupportedException : public Exception
 {
 public:
-	NotSupportedException(const std::string& message = "")
+    explicit NotSupportedException(const std::string& message = "")
 		: Exception("NotSupportedException: " + message)
 	{
 	}
@@ -54,7 +54,7 @@ public:
 class NotImplementedException : public Exception
 {
 public:
-	NotImplementedException(const std::string& message = "")
+    explicit NotImplementedException(const std::string& message = "")
 		: Exception("NotImplementedException: " + message)
 	{
 	}
@@ -63,7 +63,7 @@ public:
 class BufferNotInitialisedException : public Exception
 {
 public:
-	BufferNotInitialisedException(const std::string& message = "")
+    explicit BufferNotInitialisedException(const std::string& message = "")
 		: Exception("BufferNotInitialisedException: " + message)
 	{
 	}

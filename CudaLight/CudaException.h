@@ -2,10 +2,16 @@
 
 #include <Exception.h>
 
+#ifndef _MSVC
+    #define NORETURN __attribute__((noreturn))
+#else
+    #define NORETURN
+#endif
+
 class CudaGenericKernelException : public Exception
 {
 public:
-	CudaGenericKernelException(const std::string& kernelName, const int errorCode = -1)
+	explicit CudaGenericKernelException(const std::string& kernelName, const int errorCode = -1)
 		: Exception(kernelName + " returned " + std::to_string(errorCode))
 	{
 	}
@@ -16,7 +22,7 @@ public:
 class CudaErrorMissingConfigurationException: public Exception 
 {
 public:
-	CudaErrorMissingConfigurationException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorMissingConfigurationException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -28,7 +34,7 @@ public:
 class CudaErrorMemoryAllocationException: public Exception 
 {
 public:
-	CudaErrorMemoryAllocationException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorMemoryAllocationException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -40,7 +46,7 @@ public:
 class CudaErrorInitializationErrorException: public Exception 
 {
 public:
-	CudaErrorInitializationErrorException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorInitializationErrorException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -56,7 +62,7 @@ public:
 class CudaErrorLaunchFailureException: public Exception 
 {
 public:
-	CudaErrorLaunchFailureException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorLaunchFailureException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -64,14 +70,13 @@ public:
 /**
 * This indicated that a previous kernel launch failed. This was previously
 * used for device emulation of kernel launches.
-* \deprecated
 * This error return is deprecated as of CUDA 3.1. Device emulation mode was
 * removed with the CUDA 3.1 release.
 */
 class CudaErrorPriorLaunchFailureException: public Exception 
 {
 public:
-	CudaErrorPriorLaunchFailureException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorPriorLaunchFailureException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -88,7 +93,7 @@ public:
 class CudaErrorLaunchTimeoutException: public Exception 
 {
 public:
-	CudaErrorLaunchTimeoutException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorLaunchTimeoutException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -103,7 +108,7 @@ public:
 class CudaErrorLaunchOutOfResourcesException: public Exception 
 {
 public:
-	CudaErrorLaunchOutOfResourcesException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorLaunchOutOfResourcesException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -115,7 +120,7 @@ public:
 class CudaErrorInvalidDeviceFunctionException: public Exception 
 {
 public:
-	CudaErrorInvalidDeviceFunctionException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorInvalidDeviceFunctionException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -130,7 +135,7 @@ public:
 class CudaErrorInvalidConfigurationException: public Exception 
 {
 public:
-	CudaErrorInvalidConfigurationException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorInvalidConfigurationException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -142,7 +147,7 @@ public:
 class CudaErrorInvalidDeviceException: public Exception 
 {
 public:
-	CudaErrorInvalidDeviceException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorInvalidDeviceException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -154,7 +159,7 @@ public:
 class CudaErrorInvalidValueException: public Exception 
 {
 public:
-	CudaErrorInvalidValueException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorInvalidValueException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -166,7 +171,7 @@ public:
 class CudaErrorInvalidPitchValueException: public Exception 
 {
 public:
-	CudaErrorInvalidPitchValueException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorInvalidPitchValueException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -178,7 +183,7 @@ public:
 class CudaErrorInvalidSymbolException: public Exception 
 {
 public:
-	CudaErrorInvalidSymbolException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorInvalidSymbolException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -189,7 +194,7 @@ public:
 class CudaErrorMapBufferObjectFailedException: public Exception 
 {
 public:
-	CudaErrorMapBufferObjectFailedException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorMapBufferObjectFailedException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -200,7 +205,7 @@ public:
 class CudaErrorUnmapBufferObjectFailedException: public Exception 
 {
 public:
-	CudaErrorUnmapBufferObjectFailedException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorUnmapBufferObjectFailedException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -212,7 +217,7 @@ public:
 class CudaErrorInvalidHostPointerException: public Exception 
 {
 public:
-	CudaErrorInvalidHostPointerException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorInvalidHostPointerException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -224,7 +229,7 @@ public:
 class CudaErrorInvalidDevicePointerException: public Exception 
 {
 public:
-	CudaErrorInvalidDevicePointerException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorInvalidDevicePointerException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -236,7 +241,7 @@ public:
 class CudaErrorInvalidTextureException: public Exception 
 {
 public:
-	CudaErrorInvalidTextureException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorInvalidTextureException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -248,7 +253,7 @@ public:
 class CudaErrorInvalidTextureBindingException: public Exception 
 {
 public:
-	CudaErrorInvalidTextureBindingException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorInvalidTextureBindingException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -261,7 +266,7 @@ public:
 class CudaErrorInvalidChannelDescriptorException: public Exception 
 {
 public:
-	CudaErrorInvalidChannelDescriptorException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorInvalidChannelDescriptorException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -273,7 +278,7 @@ public:
 class CudaErrorInvalidMemcpyDirectionException: public Exception 
 {
 public:
-	CudaErrorInvalidMemcpyDirectionException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorInvalidMemcpyDirectionException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -281,7 +286,6 @@ public:
 /**
 * This indicated that the user has taken the address of a constant variable,
 * which was forbidden up until the CUDA 3.1 release.
-* \deprecated
 * This error return is deprecated as of CUDA 3.1. Variables in constant
 * memory may now have their address taken by the runtime via
 * ::cudaGetSymbolAddress().
@@ -289,7 +293,7 @@ public:
 class CudaErrorAddressOfConstantException: public Exception 
 {
 public:
-	CudaErrorAddressOfConstantException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorAddressOfConstantException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -297,14 +301,13 @@ public:
 /**
 * This indicated that a texture fetch was not able to be performed.
 * This was previously used for device emulation of texture operations.
-* \deprecated
 * This error return is deprecated as of CUDA 3.1. Device emulation mode was
 * removed with the CUDA 3.1 release.
 */
 class CudaErrorTextureFetchFailedException: public Exception 
 {
 public:
-	CudaErrorTextureFetchFailedException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorTextureFetchFailedException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -312,14 +315,13 @@ public:
 /**
 * This indicated that a texture was not bound for access.
 * This was previously used for device emulation of texture operations.
-* \deprecated
 * This error return is deprecated as of CUDA 3.1. Device emulation mode was
 * removed with the CUDA 3.1 release.
 */
 class CudaErrorTextureNotBoundException: public Exception 
 {
 public:
-	CudaErrorTextureNotBoundException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorTextureNotBoundException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -327,14 +329,13 @@ public:
 /**
 * This indicated that a synchronization operation had failed.
 * This was previously used for some device emulation functions.
-* \deprecated
 * This error return is deprecated as of CUDA 3.1. Device emulation mode was
 * removed with the CUDA 3.1 release.
 */
 class CudaErrorSynchronizationErrorException: public Exception 
 {
 public:
-	CudaErrorSynchronizationErrorException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorSynchronizationErrorException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -346,7 +347,7 @@ public:
 class CudaErrorInvalidFilterSettingException: public Exception 
 {
 public:
-	CudaErrorInvalidFilterSettingException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorInvalidFilterSettingException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -358,21 +359,20 @@ public:
 class CudaErrorInvalidNormSettingException: public Exception 
 {
 public:
-	CudaErrorInvalidNormSettingException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorInvalidNormSettingException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
 
 /**
 * Mixing of device and device emulation code was not allowed.
-* \deprecated
 * This error return is deprecated as of CUDA 3.1. Device emulation mode was
 * removed with the CUDA 3.1 release.
 */
 class CudaErrorMixedDeviceExecutionException: public Exception 
 {
 public:
-	CudaErrorMixedDeviceExecutionException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorMixedDeviceExecutionException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -385,7 +385,7 @@ public:
 class CudaErrorCudartUnloadingException: public Exception 
 {
 public:
-	CudaErrorCudartUnloadingException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorCudartUnloadingException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -396,7 +396,7 @@ public:
 class CudaErrorUnknownException: public Exception 
 {
 public:
-	CudaErrorUnknownException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorUnknownException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -404,13 +404,12 @@ public:
 /**
 * This indicates that the API call is not yet implemented. Production
 * releases of CUDA will never return this error.
-* \deprecated
 * This error return is deprecated as of CUDA 4.1.
 */
 class CudaErrorNotYetImplementedException: public Exception 
 {
 public:
-	CudaErrorNotYetImplementedException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorNotYetImplementedException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -418,14 +417,13 @@ public:
 /**
 * This indicated that an emulated device pointer exceeded the 32-bit address
 * range.
-* \deprecated
 * This error return is deprecated as of CUDA 3.1. Device emulation mode was
 * removed with the CUDA 3.1 release.
 */
 class CudaErrorMemoryValueTooLargeException: public Exception 
 {
 public:
-	CudaErrorMemoryValueTooLargeException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorMemoryValueTooLargeException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -438,7 +436,7 @@ public:
 class CudaErrorInvalidResourceHandleException: public Exception 
 {
 public:
-	CudaErrorInvalidResourceHandleException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorInvalidResourceHandleException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -452,7 +450,7 @@ public:
 class CudaErrorNotReadyException: public Exception 
 {
 public:
-	CudaErrorNotReadyException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorNotReadyException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -465,7 +463,7 @@ public:
 class CudaErrorInsufficientDriverException: public Exception 
 {
 public:
-	CudaErrorInsufficientDriverException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorInsufficientDriverException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -484,7 +482,7 @@ public:
 class CudaErrorSetOnActiveProcessException: public Exception 
 {
 public:
-	CudaErrorSetOnActiveProcessException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorSetOnActiveProcessException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -496,7 +494,7 @@ public:
 class CudaErrorInvalidSurfaceException: public Exception 
 {
 public:
-	CudaErrorInvalidSurfaceException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorInvalidSurfaceException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -508,7 +506,7 @@ public:
 class CudaErrorNoDeviceException: public Exception 
 {
 public:
-	CudaErrorNoDeviceException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorNoDeviceException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -520,7 +518,7 @@ public:
 class CudaErrorECCUncorrectableException: public Exception 
 {
 public:
-	CudaErrorECCUncorrectableException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorECCUncorrectableException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -531,7 +529,7 @@ public:
 class CudaErrorSharedObjectSymbolNotFoundException: public Exception 
 {
 public:
-	CudaErrorSharedObjectSymbolNotFoundException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorSharedObjectSymbolNotFoundException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -542,7 +540,7 @@ public:
 class CudaErrorSharedObjectInitFailedException: public Exception 
 {
 public:
-	CudaErrorSharedObjectInitFailedException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorSharedObjectInitFailedException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -554,7 +552,7 @@ public:
 class CudaErrorUnsupportedLimitException: public Exception 
 {
 public:
-	CudaErrorUnsupportedLimitException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorUnsupportedLimitException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -566,7 +564,7 @@ public:
 class CudaErrorDuplicateVariableNameException: public Exception 
 {
 public:
-	CudaErrorDuplicateVariableNameException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorDuplicateVariableNameException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -578,7 +576,7 @@ public:
 class CudaErrorDuplicateTextureNameException: public Exception 
 {
 public:
-	CudaErrorDuplicateTextureNameException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorDuplicateTextureNameException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -590,7 +588,7 @@ public:
 class CudaErrorDuplicateSurfaceNameException: public Exception 
 {
 public:
-	CudaErrorDuplicateSurfaceNameException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorDuplicateSurfaceNameException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -606,7 +604,7 @@ public:
 class CudaErrorDevicesUnavailableException: public Exception 
 {
 public:
-	CudaErrorDevicesUnavailableException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorDevicesUnavailableException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -617,7 +615,7 @@ public:
 class CudaErrorInvalidKernelImageException: public Exception 
 {
 public:
-	CudaErrorInvalidKernelImageException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorInvalidKernelImageException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -631,7 +629,7 @@ public:
 class CudaErrorNoKernelImageForDeviceException: public Exception 
 {
 public:
-	CudaErrorNoKernelImageForDeviceException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorNoKernelImageForDeviceException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -650,7 +648,7 @@ public:
 class CudaErrorIncompatibleDriverContextException: public Exception 
 {
 public:
-	CudaErrorIncompatibleDriverContextException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorIncompatibleDriverContextException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -663,7 +661,7 @@ public:
 class CudaErrorPeerAccessAlreadyEnabledException: public Exception 
 {
 public:
-	CudaErrorPeerAccessAlreadyEnabledException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorPeerAccessAlreadyEnabledException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -676,7 +674,7 @@ public:
 class CudaErrorPeerAccessNotEnabledException: public Exception 
 {
 public:
-	CudaErrorPeerAccessNotEnabledException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorPeerAccessNotEnabledException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -688,7 +686,7 @@ public:
 class CudaErrorDeviceAlreadyInUseException: public Exception 
 {
 public:
-	CudaErrorDeviceAlreadyInUseException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorDeviceAlreadyInUseException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -701,13 +699,12 @@ public:
 class CudaErrorProfilerDisabledException: public Exception 
 {
 public:
-	CudaErrorProfilerDisabledException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorProfilerDisabledException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
 
 /**
-* \deprecated
 * This error return is deprecated as of CUDA 5.0. It is no longer an error
 * to attempt to enable/disable the profiling via ::cudaProfilerStart or
 * ::cudaProfilerStop without initialization.
@@ -715,33 +712,31 @@ public:
 class CudaErrorProfilerNotInitializedException: public Exception 
 {
 public:
-	CudaErrorProfilerNotInitializedException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorProfilerNotInitializedException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
 
 /**
-* \deprecated
 * This error return is deprecated as of CUDA 5.0. It is no longer an error
 * to call cudaProfilerStart() when profiling is already enabled.
 */
 class CudaErrorProfilerAlreadyStartedException: public Exception 
 {
 public:
-	CudaErrorProfilerAlreadyStartedException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorProfilerAlreadyStartedException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
 
 /**
-* \deprecated
 * This error return is deprecated as of CUDA 5.0. It is no longer an error
 * to call cudaProfilerStop() when profiling is already disabled.
 */
 class CudaErrorProfilerAlreadyStoppedException: public Exception 
 {
 public:
-	CudaErrorProfilerAlreadyStoppedException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorProfilerAlreadyStoppedException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -755,7 +750,7 @@ public:
 class CudaErrorAssertException: public Exception 
 {
 public:
-	CudaErrorAssertException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorAssertException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -768,7 +763,7 @@ public:
 class CudaErrorTooManyPeersException: public Exception 
 {
 public:
-	CudaErrorTooManyPeersException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorTooManyPeersException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -780,7 +775,7 @@ public:
 class CudaErrorHostMemoryAlreadyRegisteredException: public Exception 
 {
 public:
-	CudaErrorHostMemoryAlreadyRegisteredException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorHostMemoryAlreadyRegisteredException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -792,7 +787,7 @@ public:
 class CudaErrorHostMemoryNotRegisteredException: public Exception 
 {
 public:
-	CudaErrorHostMemoryNotRegisteredException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorHostMemoryNotRegisteredException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -803,7 +798,7 @@ public:
 class CudaErrorOperatingSystemException: public Exception 
 {
 public:
-	CudaErrorOperatingSystemException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorOperatingSystemException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -815,7 +810,7 @@ public:
 class CudaErrorPeerAccessUnsupportedException: public Exception 
 {
 public:
-	CudaErrorPeerAccessUnsupportedException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorPeerAccessUnsupportedException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -828,7 +823,7 @@ public:
 class CudaErrorLaunchMaxDepthExceededException: public Exception 
 {
 public:
-	CudaErrorLaunchMaxDepthExceededException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorLaunchMaxDepthExceededException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -842,7 +837,7 @@ public:
 class CudaErrorLaunchFileScopedTexException: public Exception 
 {
 public:
-	CudaErrorLaunchFileScopedTexException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorLaunchFileScopedTexException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -856,7 +851,7 @@ public:
 class CudaErrorLaunchFileScopedSurfException: public Exception 
 {
 public:
-	CudaErrorLaunchFileScopedSurfException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorLaunchFileScopedSurfException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -877,7 +872,7 @@ public:
 class CudaErrorSyncDepthExceededException: public Exception 
 {
 public:
-	CudaErrorSyncDepthExceededException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorSyncDepthExceededException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -895,7 +890,7 @@ public:
 class CudaErrorLaunchPendingCountExceededException: public Exception 
 {
 public:
-	CudaErrorLaunchPendingCountExceededException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorLaunchPendingCountExceededException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -906,7 +901,7 @@ public:
 class CudaErrorNotPermittedException: public Exception 
 {
 public:
-	CudaErrorNotPermittedException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorNotPermittedException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -918,7 +913,7 @@ public:
 class CudaErrorNotSupportedException: public Exception 
 {
 public:
-	CudaErrorNotSupportedException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorNotSupportedException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -933,7 +928,7 @@ public:
 class CudaErrorHardwareStackErrorException: public Exception 
 {
 public:
-	CudaErrorHardwareStackErrorException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorHardwareStackErrorException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -947,7 +942,7 @@ public:
 class CudaErrorIllegalInstructionException: public Exception 
 {
 public:
-	CudaErrorIllegalInstructionException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorIllegalInstructionException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -962,7 +957,7 @@ public:
 class CudaErrorMisalignedAddressException: public Exception 
 {
 public:
-	CudaErrorMisalignedAddressException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorMisalignedAddressException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -979,7 +974,7 @@ public:
 class CudaErrorInvalidAddressSpaceException: public Exception 
 {
 public:
-	CudaErrorInvalidAddressSpaceException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorInvalidAddressSpaceException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -993,7 +988,7 @@ public:
 class CudaErrorInvalidPcException: public Exception 
 {
 public:
-	CudaErrorInvalidPcException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorInvalidPcException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -1007,7 +1002,7 @@ public:
 class CudaErrorIllegalAddressException: public Exception 
 {
 public:
-	CudaErrorIllegalAddressException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorIllegalAddressException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -1019,7 +1014,7 @@ public:
 class CudaErrorInvalidPtxException: public Exception 
 {
 public:
-	CudaErrorInvalidPtxException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorInvalidPtxException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -1030,7 +1025,7 @@ public:
 class CudaErrorInvalidGraphicsContextException: public Exception 
 {
 public:
-	CudaErrorInvalidGraphicsContextException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorInvalidGraphicsContextException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -1042,7 +1037,7 @@ public:
 class CudaErrorNvlinkUncorrectableException: public Exception 
 {
 public:
-	CudaErrorNvlinkUncorrectableException(const std::string& kernelName)  : Exception(kernelName)
+    explicit CudaErrorNvlinkUncorrectableException(const std::string& kernelName)  : Exception(kernelName)
 	{
 	}
 }; 
@@ -1055,7 +1050,7 @@ public:
 class CudaErrorJitCompilerNotFoundException: public Exception 
 {
 public:
-	CudaErrorJitCompilerNotFoundException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorJitCompilerNotFoundException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -1070,7 +1065,7 @@ public:
 class CudaErrorCooperativeLaunchTooLargeException: public Exception 
 {
 public:
-	CudaErrorCooperativeLaunchTooLargeException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorCooperativeLaunchTooLargeException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -1081,7 +1076,7 @@ public:
 class CudaErrorStartupFailureException: public Exception 
 {
 public:
-	CudaErrorStartupFailureException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorStartupFailureException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -1089,13 +1084,12 @@ public:
 /**
 * Any unhandled CUDA driver error is added to this value and returned via
 * the runtime. Production releases of CUDA should not return such errors.
-* \deprecated
 * This error return is deprecated as of CUDA 4.1.
 */
 class CudaErrorApiFailureBaseException: public Exception 
 {
 public:
-	CudaErrorApiFailureBaseException(const std::string& kernelName) : Exception(kernelName)
+    explicit CudaErrorApiFailureBaseException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 }; 
@@ -1107,7 +1101,7 @@ public:
 class CuBlasNotInitialisedException : public Exception
 {
 public:
-	CuBlasNotInitialisedException(const std::string& kernelName) : Exception(kernelName)
+    explicit CuBlasNotInitialisedException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 };
@@ -1115,7 +1109,7 @@ public:
 class CuBlasAllocFailedException : public Exception
 {
 public:
-	CuBlasAllocFailedException(const std::string& kernelName) : Exception(kernelName)
+    explicit CuBlasAllocFailedException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 };
@@ -1123,7 +1117,7 @@ public:
 class CuBlasInvalidValueException : public Exception
 {
 public:
-	CuBlasInvalidValueException(const std::string& kernelName) : Exception(kernelName)
+    explicit CuBlasInvalidValueException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 };
@@ -1131,7 +1125,7 @@ public:
 class CuBlasArchMismatchException : public Exception
 {
 public:
-	CuBlasArchMismatchException(const std::string& kernelName) : Exception(kernelName)
+    explicit CuBlasArchMismatchException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 };
@@ -1139,7 +1133,7 @@ public:
 class CuBlasMappingErrorException : public Exception
 {
 public:
-	CuBlasMappingErrorException(const std::string& kernelName) : Exception(kernelName)
+    explicit CuBlasMappingErrorException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 };
@@ -1147,7 +1141,7 @@ public:
 class CuBlasExecutionFailedException : public Exception
 {
 public:
-	CuBlasExecutionFailedException(const std::string& kernelName) : Exception(kernelName)
+    explicit CuBlasExecutionFailedException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 };
@@ -1155,7 +1149,7 @@ public:
 class CuBlasInternalErrorException : public Exception
 {
 public:
-	CuBlasInternalErrorException(const std::string& kernelName) : Exception(kernelName)
+    explicit CuBlasInternalErrorException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 };
@@ -1163,7 +1157,7 @@ public:
 class CuBlasNotSupportedException : public Exception
 {
 public:
-	CuBlasNotSupportedException(const std::string& kernelName) : Exception(kernelName)
+    explicit CuBlasNotSupportedException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 };
@@ -1171,7 +1165,7 @@ public:
 class CuBlasLicenseErrorException : public Exception
 {
 public:
-	CuBlasLicenseErrorException(const std::string& kernelName) : Exception(kernelName)
+    explicit CuBlasLicenseErrorException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 };
@@ -1183,7 +1177,7 @@ public:
 class CuSparseNotInitialisedException : public Exception
 {
 public:
-	CuSparseNotInitialisedException(const std::string& kernelName) : Exception(kernelName)
+    explicit CuSparseNotInitialisedException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 };
@@ -1191,7 +1185,7 @@ public:
 class CuSparseAllocFailedException : public Exception
 {
 public:
-	CuSparseAllocFailedException(const std::string& kernelName) : Exception(kernelName)
+    explicit CuSparseAllocFailedException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 };
@@ -1199,7 +1193,7 @@ public:
 class CuSparseInvalidValueException : public Exception
 {
 public:
-	CuSparseInvalidValueException(const std::string& kernelName) : Exception(kernelName)
+    explicit CuSparseInvalidValueException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 };
@@ -1207,7 +1201,7 @@ public:
 class CuSparseArchMismatchException : public Exception
 {
 public:
-	CuSparseArchMismatchException(const std::string& kernelName) : Exception(kernelName)
+    explicit CuSparseArchMismatchException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 };
@@ -1215,7 +1209,7 @@ public:
 class CuSparseMappingErrorException : public Exception
 {
 public:
-	CuSparseMappingErrorException(const std::string& kernelName) : Exception(kernelName)
+    explicit CuSparseMappingErrorException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 };
@@ -1223,7 +1217,7 @@ public:
 class CuSparseExecutionFailedException : public Exception
 {
 public:
-	CuSparseExecutionFailedException(const std::string& kernelName) : Exception(kernelName)
+    explicit CuSparseExecutionFailedException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 };
@@ -1231,7 +1225,7 @@ public:
 class CuSparseInternalErrorException : public Exception
 {
 public:
-	CuSparseInternalErrorException(const std::string& kernelName) : Exception(kernelName)
+    explicit CuSparseInternalErrorException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 };
@@ -1239,7 +1233,7 @@ public:
 class CuSparseMatrixTypeNotSupportedException : public Exception
 {
 public:
-	CuSparseMatrixTypeNotSupportedException(const std::string& kernelName) : Exception(kernelName)
+    explicit CuSparseMatrixTypeNotSupportedException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 };
@@ -1247,7 +1241,7 @@ public:
 class CuSparseZeroPivotException : public Exception
 {
 public:
-	CuSparseZeroPivotException(const std::string& kernelName) : Exception(kernelName)
+    explicit CuSparseZeroPivotException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
 };
@@ -1258,7 +1252,7 @@ public:
 // CudaLightInternalExceptions
 struct CudaGenericKernelExceptionFactory
 {
-	static void ThrowException(const std::string& kernelName, const int errorCode)
+	static void ThrowException(const std::string& kernelName, const int errorCode) NORETURN
 	{
 		switch (errorCode)
 		{
@@ -1277,7 +1271,7 @@ struct CudaGenericKernelExceptionFactory
 
 struct CudaKernelExceptionFactory
 {
-	static void ThrowException(const std::string& kernelName, const int errorCode)
+	static void ThrowException(const std::string& kernelName, const int errorCode) NORETURN
 	{
 		switch (errorCode)
 		{
@@ -1458,7 +1452,7 @@ struct CudaKernelExceptionFactory
 
 struct CuBlasKernelExceptionFactory
 {
-	static void ThrowException(const std::string& kernelName, const int errorCode)
+	static void ThrowException(const std::string& kernelName, const int errorCode) NORETURN
 	{
 		switch (errorCode)
 		{
@@ -1493,7 +1487,7 @@ struct CuBlasKernelExceptionFactory
 
 struct CuSparseKernelExceptionFactory
 {
-	static void ThrowException(const std::string& kernelName, const int errorCode)
+	static void ThrowException(const std::string& kernelName, const int errorCode) NORETURN
 	{
 		switch (errorCode)
 		{

@@ -4,7 +4,7 @@ namespace cl
 {
 	template< MemorySpace ms, MathDomain md>
 	CompressedSparseRowMatrix<ms, md>::CompressedSparseRowMatrix(const unsigned nRows, const unsigned nCols, const Vector<ms, MathDomain::Int>& nonZeroColumnIndices, const Vector<ms, MathDomain::Int>& nNonZeroRows)
-		: IBuffer(false),  // CompressedSparseRowMatrix doesn't allocate its memory in its buffer!
+		: IBuffer<CompressedSparseRowMatrix<ms, md>, ms, md>(false),  // CompressedSparseRowMatrix doesn't allocate its memory in its buffer!
 		buffer(0, nonZeroColumnIndices.size(), 0, 0, nRows, nCols, ms, md),
 		values(nonZeroColumnIndices.size()), nonZeroColumnIndices(nonZeroColumnIndices), nNonZeroRows(nNonZeroRows)
 	{
@@ -20,7 +20,7 @@ namespace cl
 
 	template< MemorySpace ms, MathDomain md>
 	CompressedSparseRowMatrix<ms, md>::CompressedSparseRowMatrix(const ColumnWiseMatrix<ms, md>& denseMatrix)
-		: IBuffer(false), buffer(0, 0, 0, 0, denseMatrix.nRows(), denseMatrix.nCols(), ms, md)
+		: IBuffer<CompressedSparseRowMatrix<ms, md>, ms, md>(false), buffer(0, 0, 0, 0, denseMatrix.nRows(), denseMatrix.nCols(), ms, md)
 	{
 		const auto hostDenseMatrix = denseMatrix.Get();
 
@@ -62,7 +62,7 @@ namespace cl
 
 	template< MemorySpace ms, MathDomain md>
 	CompressedSparseRowMatrix<ms, md>::CompressedSparseRowMatrix(const CompressedSparseRowMatrix& rhs)
-		: IBuffer(false), // CompressedSparseRowMatrix doesn't allocate its memory in its buffer!
+		: IBuffer<CompressedSparseRowMatrix<ms, md>, ms, md>(false), // CompressedSparseRowMatrix doesn't allocate its memory in its buffer!
 		buffer(0, 0, 0, 0, rhs.nRows(), rhs.nCols(), ms, md),
 		values(rhs.values), nonZeroColumnIndices(rhs.nonZeroColumnIndices), nNonZeroRows(rhs.nNonZeroRows)
 	{

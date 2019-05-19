@@ -11,9 +11,9 @@ namespace cl
 {
 	template<MemorySpace ms, MathDomain md>
 	Vector<ms, md>::Vector(const unsigned size)
-		: IBuffer(true), buffer(MemoryBuffer(0, size, ms, md))
+		: IBuffer<Vector<ms, md>, ms, md>(true), buffer(MemoryBuffer(0, size, ms, md))
 	{
-		ctor(buffer);
+		this->ctor(buffer);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -27,14 +27,14 @@ namespace cl
 	Vector<ms, md>::Vector(const Vector& rhs)
 		: Vector(rhs.size())
 	{		
-		ReadFrom(rhs);
+		this->ReadFrom(rhs);
 	}
 
 	template<MemorySpace ms, MathDomain md>
 	Vector<ms, md>::Vector(const std::vector<typename Traits<md>::stdType>& rhs)
 		: Vector(static_cast<unsigned>(rhs.size()))
 	{
-		ReadFrom(rhs);
+        this->ReadFrom(rhs);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -43,12 +43,12 @@ namespace cl
 		std::vector<typename Traits<md>::stdType> vec;
 		cl::VectorFromBinaryFile(vec, fileName, useMemoryMapping);
 
-		ReadFrom(vec);
+        this->ReadFrom(vec);
 	}
 
 	template<MemorySpace ms, MathDomain md>
 	Vector<ms, md>::Vector(const MemoryBuffer& buffer)
-		: IBuffer(false), buffer(buffer)
+		: IBuffer<Vector<ms, md>, ms, md>(false), buffer(buffer)
 	{
 
 	}
@@ -56,21 +56,21 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void Vector<ms, md>::Print(const std::string& label) const
 	{
-		auto vec = Get();
+		auto vec = this->Get();
 		cl::Print(vec);
 	}
 
 	template<MemorySpace ms, MathDomain md>
 	std::ostream& Vector<ms, md>::ToOutputStream(std::ostream& os) const
 	{
-		cl::VectorToOutputStream(Get(), os);
+		cl::VectorToOutputStream(this->Get(), os);
 		return os;
 	}
 
 	template<MemorySpace ms, MathDomain md>
 	void Vector<ms, md>::ToBinaryFile(const std::string& fileName, const std::string mode) const
 	{
-		cl::VectorToBinaryFile(Get(), fileName, mode);
+		cl::VectorToBinaryFile(this->Get(), fileName, mode);
 	}
 
 	template<MemorySpace ms, MathDomain md>

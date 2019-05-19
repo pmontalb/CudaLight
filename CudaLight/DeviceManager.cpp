@@ -10,7 +10,7 @@ namespace dm
 
 	void DeviceManager::SetDevice(const unsigned i)
 	{
-		detail::SetDevice(i);
+		detail::SetDevice(static_cast<int>(i));
 		CheckDeviceSanity();
 	}
 
@@ -18,7 +18,7 @@ namespace dm
 	{
 		int bestDevice = -1;
 		detail::GetBestDevice(bestDevice);
-		SetDevice(bestDevice);
+		SetDevice(static_cast<unsigned>(bestDevice));
 	}
 
 	void DeviceManager::CheckDeviceSanity()
@@ -31,6 +31,6 @@ namespace dm
 		int ret;
 		detail::GetDeviceCount(ret);
 
-		return ret;
+		return static_cast<unsigned>(ret);
 	}
 }

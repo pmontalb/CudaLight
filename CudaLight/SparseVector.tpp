@@ -4,7 +4,7 @@ namespace cl
 {
 	template< MemorySpace ms, MathDomain md>
 	SparseVector<ms, md>::SparseVector(const unsigned size, const Vector<ms, MathDomain::Int>& nonZeroIndices)
-		: IBuffer(false),  // SparseVector doesn't allocate its memory in its buffer!
+		: IBuffer<SparseVector<ms, md>, ms, md>(false),  // SparseVector doesn't allocate its memory in its buffer!
 		denseSize(size),
 		buffer(0, nonZeroIndices.size(), 0, ms, md),
 		values(nonZeroIndices.size()), nonZeroIndices(nonZeroIndices)
@@ -21,8 +21,8 @@ namespace cl
 
 	template< MemorySpace ms, MathDomain md>
 	SparseVector<ms, md>::SparseVector(const unsigned size, const unsigned nNonZeros)
-		: IBuffer(false), // SparseVector doesn't allocate its memory in its buffer!
-		  denseSize(size), values(nNonZeros), nonZeroIndices(nNonZeros),
+		: IBuffer<SparseVector<ms, md>, ms, md>(false), // SparseVector doesn't allocate its memory in its buffer!
+		  denseSize(size), values(nNonZeros), nonZeroIndices(nNonZeros)
 		{
 			assert(size != 0);
 			assert(nNonZeros != 0);
@@ -40,7 +40,7 @@ namespace cl
 
 	template< MemorySpace ms, MathDomain md>
 	SparseVector<ms, md>::SparseVector(const Vector<ms, md>& denseVector)
-		: IBuffer(false), denseSize(denseVector.size())
+		: IBuffer<SparseVector<ms, md>, ms, md>(false), denseSize(denseVector.size())
 	{
 		const auto hostDenseVector = denseVector.Get();
 
@@ -68,7 +68,7 @@ namespace cl
 
 	template< MemorySpace ms, MathDomain md>
 	SparseVector<ms, md>::SparseVector(const SparseVector& rhs)
-		: IBuffer(false), // SparseVector doesn't allocate its memory in its buffer!
+		: IBuffer<SparseVector<ms, md>, ms, md>(false), // SparseVector doesn't allocate its memory in its buffer!
 		values(rhs.values), nonZeroIndices(rhs.nonZeroIndices), denseSize(rhs.denseSize)
 	{
 		SyncPointers();

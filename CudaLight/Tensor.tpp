@@ -6,9 +6,9 @@ namespace cl
 {
 	template<MemorySpace ms, MathDomain md>
 	Tensor<ms, md>::Tensor(const unsigned nRows, const unsigned nCols, const unsigned nMatrices)
-		: IBuffer(true), buffer(MemoryCube(0, nRows, nCols, nMatrices, ms, md))
+		: IBuffer<Tensor<ms, md>, ms, md>(true), buffer(MemoryCube(0, nRows, nCols, nMatrices, ms, md))
 	{
-		ctor(buffer);
+		this->ctor(buffer);
 
 		matrices.resize(nMatrices);
 		for (size_t i = 0; i < nMatrices; i++)
@@ -72,7 +72,7 @@ namespace cl
 
 	template<MemorySpace ms, MathDomain md>
 	Tensor<ms, md>::Tensor(const MemoryCube& buffer)
-		: IBuffer(false), buffer(buffer)
+		: IBuffer<Tensor<ms, md>, ms, md>(false), buffer(buffer)
 	{
 
 	}

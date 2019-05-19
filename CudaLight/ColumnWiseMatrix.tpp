@@ -4,9 +4,9 @@ namespace cl
 {
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const unsigned nRows, const unsigned nCols)
-		: IBuffer(true), buffer(MemoryTile(0, nRows, nCols, ms, md))
+		: IBuffer<ColumnWiseMatrix<ms, md>, ms, md>(true), buffer(MemoryTile(0, nRows, nCols, ms, md))
 	{
-		ctor(buffer);
+		this->ctor(buffer);
 
 		columns.resize(nCols);
 		for (size_t i = 0; i < nCols; i++)
@@ -64,7 +64,7 @@ namespace cl
 
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const MemoryTile& buffer)
-		: IBuffer(false), buffer(buffer)
+		: IBuffer<ColumnWiseMatrix<ms, md>, ms, md>(false), buffer(buffer)
 	{
 
 	}
@@ -79,7 +79,7 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	Vector<ms, md> ColumnWiseMatrix<ms, md>::Flatten() const
 	{
-		Vector<ms, md> ret(size());
+		Vector<ms, md> ret(this->size());
 		dm::detail::AutoCopy(ret.GetBuffer(), buffer);
 		return ret;
 	}
