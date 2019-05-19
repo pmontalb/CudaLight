@@ -2,7 +2,7 @@
 
 #include <Exception.h>
 
-#ifndef _MSVC
+#ifndef _MSC_VER
     #define NORETURN __attribute__((noreturn))
 #else
     #define NORETURN

@@ -87,11 +87,11 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::ReadFrom(const Vector<ms, md>& rhs)
 	{
-		assert(rhs.size > 0);
-		assert(rhs.buffer.pointer != 0);
+		assert(rhs.size() > 0);
+		assert(rhs.GetBuffer().pointer != 0);
 		assert(buffer.pointer != 0);
 
-		dm::detail::AutoCopy(columns[0]->buffer, rhs.buffer);
+		dm::detail::AutoCopy(columns[0]->buffer, rhs.GetBuffer());
 	}
 
 	template<MemorySpace ms, MathDomain md>
