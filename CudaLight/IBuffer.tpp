@@ -491,11 +491,16 @@ namespace cl
 	static void MatrixFromBinaryFile(std::vector<T>& mat, unsigned& nRows, unsigned& nCols, const std::string& fileName, const bool useMemoryMapping)
 	{
 		const auto& fullExtract = npypp::LoadFull<T>(fileName, useMemoryMapping);
-		mat = fullExtract.data;
-
 		assert(fullExtract.shape.size() == 2);
 		nRows = fullExtract.shape[0];
 		nCols = fullExtract.shape[1];
+		
+		mat.resize(fullExtract.data.size());
+		for (size_t i = 0; i < nRows; ++i)
+		{
+			for (size_t j = 0; j < nCols; ++j)
+				mat[i + j * nRows] = fullExtract.data[j + i * nCols];
+		}
 	}
 
     #pragma endregion

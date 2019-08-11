@@ -36,6 +36,11 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     message(FATAL "MSVC not supported")
 endif()
 
+set(DEBUG_FLAGS "")
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    set(DEBUG_FLAGS "-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC")
+endif()
+
 add_library(
         CudaLight
 
@@ -68,7 +73,7 @@ add_library(
         CudaLight/Tensor.h
         CudaLight/Tensor.tpp
 )
-target_compile_options(CudaLight PRIVATE ${WARNINGS})
+target_compile_options(CudaLight PRIVATE ${WARNINGS} ${DEBUG_FLAGS})
 target_link_libraries(CudaLight Npy++ CudaLightKernels)
 
 add_executable(
@@ -90,6 +95,7 @@ add_executable(
         UnitTests/TensorTests.cpp
         UnitTests/VectorTests.cpp
 )
+target_compile_options(CLTests PRIVATE ${DEBUG_FLAGS})
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     target_compile_options(CLTests PRIVATE -Wno-absolute-value)
 endif()

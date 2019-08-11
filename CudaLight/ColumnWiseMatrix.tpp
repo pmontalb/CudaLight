@@ -40,10 +40,10 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const std::string& fileName, bool useMemoryMapping)
 	{
-		std::vector<typename Traits<md>::stdType> mat;
+		std::vector<typename Traits<md>::stdType> mat {};
 		unsigned nRows = 0, nCols = 0;
 		cl::MatrixFromBinaryFile(mat, nRows, nCols, fileName, useMemoryMapping);
-
+		
 		ReadFrom(mat, nRows, nCols);
 	}
 
@@ -211,9 +211,9 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	Vector<ms, md> ColumnWiseMatrix<ms, md>::operator *(const Vector<ms, md>& rhs) const
 	{
-		assert(nRows() == rhs.size());
+		assert(nCols() == rhs.size());
 
-		Vector<ms, md> ret(rhs.size());
+		Vector<ms, md> ret(nRows());
 		dm::detail::Dot(ret.GetBuffer(), this->buffer, rhs.GetBuffer());
 
 		return ret;
@@ -251,9 +251,15 @@ namespace cl
 	void ColumnWiseMatrix<ms, md>::Dot(Vector<ms, md>& out, const Vector<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha, const double beta) const
 	{
 		if (lhsOperation == MatrixOperation::None)
-			assert(nRows() == rhs.size());
-		else
+		{
 			assert(nCols() == rhs.size());
+			assert(nRows() == out.size());
+		}
+		else
+		{
+			assert(nRows() == rhs.size());
+			assert(nCols() == out.size());
+		}
 		dm::detail::Dot(out.GetBuffer(), this->buffer, rhs.GetBuffer(), lhsOperation, alpha, beta);
 	}
 
