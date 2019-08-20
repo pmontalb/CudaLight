@@ -54,6 +54,13 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
+	void Vector<ms, md>::RandomShuffle(const unsigned seed) const
+	{
+		assert(buffer.pointer != 0);
+		dm::detail::RandShuffle(buffer, seed);
+	}
+
+	template<MemorySpace ms, MathDomain md>
 	void Vector<ms, md>::Print(const std::string& label) const
 	{
 		auto vec = this->Get();
@@ -161,6 +168,18 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
+	void RandomShuffle(Vector<ms, md>& v, const unsigned seed)
+	{
+		v.RandomShuffle(seed);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	void RandomShufflePair(Vector<ms, md>& v1, Vector<ms, md>& v2, const unsigned seed)
+	{
+		dm::detail::RandShufflePair(v1.GetBuffer(), v2.GetBuffer(), seed);
+	}
+	
+template<MemorySpace ms, MathDomain md>
 	void Print(const Vector<ms, md>& vec, const std::string& label)
 	{
 		vec.Print(label);

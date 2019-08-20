@@ -177,6 +177,10 @@ __CREATE_FUNCTION_2_ARG(Initialize, CudaKernelExceptionFactory, MemoryBuffer, bu
 __CREATE_FUNCTION_3_ARG(LinSpace, CudaKernelExceptionFactory, MemoryBuffer, buf, const double, x0, const double, x1);
 __CREATE_FUNCTION_2_ARG(RandUniform, CudaKernelExceptionFactory, MemoryBuffer, buf, const unsigned, seed);
 __CREATE_FUNCTION_2_ARG(RandNormal, CudaKernelExceptionFactory, MemoryBuffer, buf, const  unsigned, seed);
+__CREATE_FUNCTION_2_ARG(RandShuffle, CudaKernelExceptionFactory, MemoryBuffer, buf, const  unsigned, seed);
+__CREATE_FUNCTION_3_ARG(RandShufflePair, CudaKernelExceptionFactory, MemoryBuffer, buf1, MemoryBuffer, buf2, const  unsigned, seed);
+__CREATE_FUNCTION_2_ARG(RandShuffleColumns, CudaKernelExceptionFactory, MemoryTile, buf, const  unsigned, seed);
+__CREATE_FUNCTION_3_ARG(RandShuffleColumnsPair, CudaKernelExceptionFactory, MemoryTile, buf1, MemoryTile, buf2, const  unsigned, seed);
 
 // CuBlasWrapper
 __CREATE_FUNCTION_4_ARG(Add, CuBlasKernelExceptionFactory, MemoryBuffer, z, const MemoryBuffer, x, const MemoryBuffer, y, const double, alpha);

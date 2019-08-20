@@ -35,7 +35,9 @@ namespace cl
 		using IBuffer<Vector, memorySpace, mathDomain>::Set;
 
 		virtual ~Vector() = default;
-
+		
+		void RandomShuffle(const unsigned seed = 1234) const;
+		
 		// For avoiding unnecessary checks and overheads, it's not possible to use operator=
 		template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 		Vector& operator=(const Vector<ms, md>& rhs) = delete;
@@ -97,7 +99,13 @@ namespace cl
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	Vector<ms, md> RandomGaussian(const unsigned size, const unsigned seed = 1234);
-
+	
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	void RandomShuffle(Vector<ms, md>& v, const unsigned seed = 1234);
+	
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	void RandomShufflePair(Vector<ms, md>& v1, Vector<ms, md>& v2, const unsigned seed = 1234);
+	
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	void Print(const Vector<ms, md>& vec, const std::string& label = "");
 

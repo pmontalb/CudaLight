@@ -95,7 +95,7 @@ namespace cl
 		void RandomUniform(const unsigned seed = 1234) const;
 
 		void RandomGaussian(const unsigned seed = 1234) const;
-
+		
 		virtual std::vector<stdType> Get() const;
 
 		virtual void Print(const std::string& label = "") const = 0;

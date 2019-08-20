@@ -44,6 +44,8 @@ namespace cl
 		void MakeIdentity();
 
 		Vector<memorySpace, mathDomain> Flatten() const;
+		
+		void RandomShuffleColumns(const unsigned seed) const;
 
 		using IBuffer<ColumnWiseMatrix, memorySpace, mathDomain>::Set;
 		void Set(const Vector<memorySpace, mathDomain>& columnVector, const unsigned column);
@@ -160,7 +162,13 @@ namespace cl
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	ColumnWiseMatrix<ms, md> RandomGaussian(const unsigned nRows, const unsigned nCols, const unsigned seed = 1234);
-
+	
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	void RandomShuffleColumns(ColumnWiseMatrix<ms, md>& v, const unsigned seed = 1234);
+	
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	void RandomShuffleColumnsPair(ColumnWiseMatrix<ms, md>& v1, ColumnWiseMatrix<ms, md>& v2, const unsigned seed = 1234);
+	
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	void Print(const ColumnWiseMatrix<ms, md>& mat, const std::string& label = "");
 

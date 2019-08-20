@@ -133,4 +133,81 @@ namespace clt
 			}
 		}
 	}
+	
+	TEST_F(MatrixTests, RandomShuffle)
+	{
+		cl::mat m = cl::RandomGaussian(10, 20, 1234);
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _m1 = m.Get();
+		
+		m.RandomShuffleColumns(2345);
+		auto _m2 = m.Get();
+		
+		// check columns have been permuted, not changing rows
+		for (size_t j = 0; j < m.nCols(); ++j)
+		{
+			size_t j2 = 0;
+			bool found = false;
+			for (; j2 < m.nCols(); ++j2)
+			{
+				if (fabs(_m2[0 + j2 * m.nRows()] - _m1[0 + j * m.nRows()]) < 1e-12)
+				{
+					found = true;
+					break;
+				}
+			}
+			ASSERT_TRUE(found);
+			
+			for (size_t i = 0; i < m.nRows(); ++i)
+				ASSERT_DOUBLE_EQ(_m2[i + j2 * m.nRows()], _m1[i + j * m.nRows()]);
+		}
+	}
+	
+	TEST_F(MatrixTests, RandomShufflePair)
+	{
+		cl::mat m = cl::RandomGaussian(10, 20, 1234);
+		cl::mat n = cl::RandomGaussian(15, 20, 1234);
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _m1 = m.Get();
+		auto _n1 = n.Get();
+		
+		cl::RandomShuffleColumnsPair(m, n, 2345);
+		auto _m2 = m.Get();
+		auto _n2 = n.Get();
+		
+		// check columns have been permuted, not changing rows
+		for (size_t j = 0; j < m.nCols(); ++j)
+		{
+			size_t j2 = 0;
+			bool found = false;
+			for (; j2 < m.nCols(); ++j2)
+			{
+				if (fabs(_m2[0 + j2 * m.nRows()] - _m1[0 + j * m.nRows()]) < 1e-12)
+				{
+					found = true;
+					break;
+				}
+			}
+			ASSERT_TRUE(found);
+			
+			size_t k2 = 0;
+			found = false;
+			for (; k2 < m.nCols(); ++k2)
+			{
+				if (fabs(_n2[0 + k2 * n.nRows()] - _n1[0 + j * n.nRows()]) < 1e-12)
+				{
+					found = true;
+					break;
+				}
+			}
+			ASSERT_TRUE(found);
+			ASSERT_EQ(k2, j2);
+			
+			for (size_t i = 0; i < m.nRows(); ++i)
+			{
+				ASSERT_DOUBLE_EQ(_m2[i + j2 * m.nRows()], _m1[i + j * m.nRows()]);
+				ASSERT_DOUBLE_EQ(_n2[i + j2 * n.nRows()], _n1[i + j * n.nRows()]);
+			}
+		}
+	}
 }

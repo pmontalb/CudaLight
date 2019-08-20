@@ -118,6 +118,10 @@ __CREATE_FUNCTION_2_ARG(Initialize, MemoryBuffer, buf, const double, value);
 __CREATE_FUNCTION_3_ARG(LinSpace, MemoryBuffer, buf, const double, x0, const double, x1);
 __CREATE_FUNCTION_2_ARG(RandUniform, MemoryBuffer, buf, const unsigned, seed);
 __CREATE_FUNCTION_2_ARG(RandNormal, MemoryBuffer, buf, const unsigned, seed);
+__CREATE_FUNCTION_2_ARG(RandShuffle, MemoryBuffer, buf, const  unsigned, seed);
+__CREATE_FUNCTION_3_ARG(RandShufflePair, MemoryBuffer, buf1, MemoryBuffer, buf2, const  unsigned, seed);
+__CREATE_FUNCTION_2_ARG(RandShuffleColumns, MemoryTile, buf, const  unsigned, seed);
+__CREATE_FUNCTION_3_ARG(RandShuffleColumnsPair, MemoryTile, buf1, MemoryTile, buf2, const  unsigned, seed);
 
 // CuBlasWrappers
 __CREATE_FUNCTION_4_ARG(Add, MemoryBuffer, z, const MemoryBuffer, x, const MemoryBuffer, y, const double, alpha = 1.0);

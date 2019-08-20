@@ -109,6 +109,12 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
+	void ColumnWiseMatrix<ms, md>::RandomShuffleColumns(const unsigned seed) const
+	{
+		dm::detail::RandShuffleColumns(this->buffer, seed);
+	}
+
+	template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::Print(const std::string& label) const
 	{
 		auto mat = Get();
@@ -383,6 +389,18 @@ namespace cl
 		return ret;
 	}
 
+	template<MemorySpace ms, MathDomain md>
+	void RandomShuffleColumns(ColumnWiseMatrix<ms, md>& m, const unsigned seed)
+	{
+		m.RandomShuffleColumns(seed);
+	}
+	
+	template<MemorySpace ms, MathDomain md>
+	void RandomShuffleColumnsPair(ColumnWiseMatrix<ms, md>& m1, ColumnWiseMatrix<ms, md>& m2, const unsigned seed)
+	{
+		dm::detail::RandShuffleColumnsPair(m1.GetTile(), m2.GetTile(), seed);
+	}
+	
 	template<MemorySpace ms, MathDomain md>
 	void Print(const ColumnWiseMatrix<ms, md>& mat, const std::string& label)
 	{
