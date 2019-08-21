@@ -77,8 +77,8 @@ namespace cl
 	template< MemorySpace ms, MathDomain md>
 	void SparseVector<ms, md>::SyncPointers()
 	{
-		buffer.pointer = values.buffer.pointer;
-		buffer.indices = nonZeroIndices.buffer.pointer;
+		buffer.pointer = values._buffer.pointer;
+		buffer.indices = nonZeroIndices._buffer.pointer;
 	}
 
 	template< MemorySpace ms, MathDomain md>
@@ -111,7 +111,7 @@ namespace cl
 		assert(buffer.pointer != 0);
 
 		Vector<ms, md> ret(rhs.size());
-		dm::detail::SparseAdd(ret.buffer, buffer, rhs.buffer, 1.0);
+		dm::detail::SparseAdd(ret._buffer, buffer, rhs._buffer, 1.0);
 		return ret;
 	}
 
@@ -123,7 +123,7 @@ namespace cl
 		assert(buffer.pointer != 0);
 
 		Vector<ms, md> ret(rhs.size());
-		dm::detail::SparseSubtract(ret.buffer, buffer, rhs.buffer);
+		dm::detail::SparseSubtract(ret._buffer, buffer, rhs._buffer);
 		return ret;
 	}
 
@@ -135,7 +135,7 @@ namespace cl
 		assert(buffer.pointer != 0);
 
 		Vector<ms, md> ret(rhs.size());
-		dm::detail::SparseAdd(ret.buffer, buffer, rhs.buffer, alpha);
+		dm::detail::SparseAdd(ret._buffer, buffer, rhs._buffer, alpha);
 		return ret;
 	}
 

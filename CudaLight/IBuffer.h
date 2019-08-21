@@ -111,7 +111,7 @@ namespace cl
 		template<typename bi, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 		bool operator!=(const IBuffer<bi, ms, md>& rhs) const { return !(*this == rhs); }
 
-		unsigned size() const noexcept { return GetBuffer().size; };
+		unsigned size() const noexcept { return GetBuffer().size; }
 
 		virtual ~IBuffer();
 
@@ -123,6 +123,7 @@ namespace cl
 
 		IBuffer& AddEqual(const IBuffer& rhs, const double alpha = 1.0);
 		IBuffer& Scale(const double alpha);
+		IBuffer& ElementWiseProduct(const IBuffer& rhs, const double alpha = 1.0);
 
 		int AbsoluteMinimumIndex() const;
 		int AbsoluteMaximumIndex() const;
@@ -159,7 +160,7 @@ namespace cl
 
 		static void Alloc(MemoryBuffer& buffer);
 
-		const bool isOwner;
+		const bool _isOwner;
 	};
 
 	namespace detail

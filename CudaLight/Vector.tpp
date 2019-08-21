@@ -11,16 +11,16 @@ namespace cl
 {
 	template<MemorySpace ms, MathDomain md>
 	Vector<ms, md>::Vector(const unsigned size)
-		: IBuffer<Vector<ms, md>, ms, md>(true), buffer(MemoryBuffer(0, size, ms, md))
+		: IBuffer<Vector<ms, md>, ms, md>(true), _buffer(MemoryBuffer(0, size, ms, md))
 	{
-		this->ctor(buffer);
+		this->ctor(_buffer);
 	}
 
 	template<MemorySpace ms, MathDomain md>
 	Vector<ms, md>::Vector(const unsigned size, const typename Traits<md>::stdType value)
 		: Vector(size)
 	{
-		dm::detail::Initialize(buffer, value);
+		dm::detail::Initialize(_buffer, value);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -48,7 +48,7 @@ namespace cl
 
 	template<MemorySpace ms, MathDomain md>
 	Vector<ms, md>::Vector(const MemoryBuffer& buffer)
-		: IBuffer<Vector<ms, md>, ms, md>(false), buffer(buffer)
+		: IBuffer<Vector<ms, md>, ms, md>(false), _buffer(buffer)
 	{
 
 	}
@@ -56,8 +56,8 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void Vector<ms, md>::RandomShuffle(const unsigned seed) const
 	{
-		assert(buffer.pointer != 0);
-		dm::detail::RandShuffle(buffer, seed);
+		assert(_buffer.pointer != 0);
+		dm::detail::RandShuffle(_buffer, seed);
 	}
 
 	template<MemorySpace ms, MathDomain md>

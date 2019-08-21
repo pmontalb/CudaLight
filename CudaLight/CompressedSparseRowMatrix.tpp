@@ -72,9 +72,9 @@ namespace cl
 	template< MemorySpace ms, MathDomain md>
 	void CompressedSparseRowMatrix<ms, md>::SyncPointers()
 	{
-		buffer.pointer = values.buffer.pointer;
-		buffer.nonZeroColumnIndices = nonZeroColumnIndices.buffer.pointer;
-		buffer.nNonZeroRows = nNonZeroRows.buffer.pointer;
+		buffer.pointer = values._buffer.pointer;
+		buffer.nonZeroColumnIndices = nonZeroColumnIndices._buffer.pointer;
+		buffer.nNonZeroRows = nNonZeroRows._buffer.pointer;
 	}
 
 	template< MemorySpace ms, MathDomain md>
@@ -114,7 +114,7 @@ namespace cl
 		assert(nCols() == rhs.nRows());
 
 		ColumnWiseMatrix<ms, md> ret(nRows(), rhs.nCols());
-		dm::detail::SparseMultiply(ret.buffer, this->buffer, rhs.buffer, this->nRows(), rhs.nRows());
+		dm::detail::SparseMultiply(ret._buffer, this->buffer, rhs._buffer, this->nRows(), rhs.nRows());
 
 		return ret;
 	}
@@ -125,7 +125,7 @@ namespace cl
 		assert(nRows() == rhs.size());
 
 		Vector<ms, md> ret(rhs.size());
-		dm::detail::SparseDot(ret.buffer, this->buffer, rhs.buffer);
+		dm::detail::SparseDot(ret._buffer, this->buffer, rhs._buffer);
 
 		return ret;
 	}
@@ -143,7 +143,7 @@ namespace cl
 	void CompressedSparseRowMatrix<ms, md>::Multiply(ColumnWiseMatrix<ms, md>& out, const ColumnWiseMatrix<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha) const
 	{
 		assert(nCols() == rhs.nRows());
-		dm::detail::SparseMultiply(out.buffer, this->buffer, rhs.buffer, this->nRows(), rhs.nRows(), lhsOperation, alpha);
+		dm::detail::SparseMultiply(out._buffer, this->buffer, rhs._buffer, this->nRows(), rhs.nRows(), lhsOperation, alpha);
 	}
 
 	template< MemorySpace ms, MathDomain md>
@@ -159,7 +159,7 @@ namespace cl
 	void CompressedSparseRowMatrix<ms, md>::Dot(Vector<ms, md>& out, const Vector<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha) const
 	{
 		assert(nRows() == rhs.size());
-		dm::detail::SparseDot(out.buffer, this->buffer, rhs.buffer, lhsOperation, 1.0);
+		dm::detail::SparseDot(out._buffer, this->buffer, rhs._buffer, lhsOperation, 1.0);
 	}
 
 #pragma endregion 

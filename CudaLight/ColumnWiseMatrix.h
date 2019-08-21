@@ -59,8 +59,8 @@ namespace cl
 
 		virtual ~ColumnWiseMatrix() = default;
 
-		unsigned nRows() const noexcept { return buffer.nRows; }
-		unsigned nCols() const noexcept { return buffer.nCols; }
+		unsigned nRows() const noexcept { return _buffer.nRows; }
+		unsigned nCols() const noexcept { return _buffer.nCols; }
 
 		std::vector<std::shared_ptr<Vector<memorySpace, mathDomain>>> columns;
 
@@ -140,12 +140,12 @@ namespace cl
 
 		#pragma endregion
 
-		const MemoryBuffer& GetBuffer() const noexcept override final { return buffer; }
-		const MemoryTile& GetTile() const noexcept { return buffer; }
+		const MemoryBuffer& GetBuffer() const noexcept override final { return _buffer; }
+		const MemoryTile& GetTile() const noexcept { return _buffer; }
 	protected:
 		explicit ColumnWiseMatrix(const MemoryTile& buffer);
 		
-		MemoryTile buffer;
+		MemoryTile _buffer;
 	};
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>

@@ -12,7 +12,7 @@ namespace cl
 {
 	template<typename bi, MemorySpace ms, MathDomain md>
 	IBuffer<bi, ms, md>::IBuffer(const bool isOwner)
-		: isOwner(isOwner)
+		: _isOwner(isOwner)
 	{
 	}
 
@@ -20,7 +20,7 @@ namespace cl
 	void IBuffer<bi, ms, md>::ctor(MemoryBuffer& buffer)
 	{
 		// if is not the owner it has already been allocated!
-		if (!isOwner)
+		if (!_isOwner)
 		{
 			assert(buffer.pointer != 0);
 			return;
@@ -50,9 +50,9 @@ namespace cl
 	template<typename biRhs, MemorySpace msRhs, MathDomain mdRhs>
 	void IBuffer<bi, ms, md>::ReadFrom(const IBuffer<biRhs, msRhs, mdRhs>& rhs)
 	{
-		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
+		const MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
-		dm::detail::AutoCopy(buffer, static_cast<const bi*>(&rhs)->buffer);
+		dm::detail::AutoCopy(buffer, static_cast<const bi*>(&rhs)->_buffer);
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
@@ -64,11 +64,11 @@ namespace cl
 					  (std::is_same<T, float>::value && md == MathDomain::Float)
 						||
 					  (std::is_same<T, int>::value && md == MathDomain::Int), "Invalid type");
-		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
+		const MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
 		MemoryBuffer rhsBuf;
-		ptr_t pointer = (ptr_t)(rhs.data());
+		auto pointer = reinterpret_cast<ptr_t>(rhs.data());
 		rhsBuf = MemoryBuffer(pointer, static_cast<unsigned>(rhs.size()), MemorySpace::Host, _Traits<T>::clType);
 
 		dm::detail::AutoCopy(buffer, rhsBuf);
@@ -77,7 +77,7 @@ namespace cl
 	template<typename bi, MemorySpace ms, MathDomain md>
 	void IBuffer<bi, ms, md>::Set(const stdType value) const
 	{
-		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 		dm::detail::Initialize(buffer, value);
 	}
@@ -101,7 +101,7 @@ namespace cl
 	template<typename bi, MemorySpace ms, MathDomain md>
 	void IBuffer<bi, ms, md>::RandomGaussian(const unsigned seed) const
 	{
-		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 		dm::detail::RandNormal(buffer, seed);
 	}
@@ -111,7 +111,7 @@ namespace cl
 	{
 		dm::detail::ThreadSynchronize();
 
-		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
 		MemoryBuffer newBuf(buffer);
@@ -131,7 +131,7 @@ namespace cl
 	template<typename bi, MemorySpace ms, MathDomain md>
 	IBuffer<bi, ms, md>::~IBuffer()
 	{
-		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
+		const MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		dtor(buffer);
 	}
 
@@ -139,7 +139,7 @@ namespace cl
 	void IBuffer<bi, ms, md>::dtor(MemoryBuffer buffer)
 	{
 		// if this is not the owner of the buffer, it must not free it
-		if (!isOwner)
+		if (!_isOwner)
 			return;
 		assert(buffer.pointer != 0);
 
@@ -184,10 +184,10 @@ namespace cl
 		assert(size() == rhs.size());
 		assert(rhs.GetBuffer().pointer != 0);
 
-		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
+		const MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
-		dm::detail::AddEqual(buffer, static_cast<const bi*>(&rhs)->buffer, 1.0);
+		dm::detail::AddEqual(buffer, static_cast<const bi*>(&rhs)->_buffer, 1.0);
 		return *this;
 	}
 
@@ -195,12 +195,12 @@ namespace cl
 	IBuffer<bi, ms, md>& IBuffer<bi, ms, md>::operator -=(const IBuffer& rhs)
 	{
 		assert(size() == rhs.size());
-		assert(static_cast<const bi*>(&rhs)->buffer.pointer != 0);
+		assert(static_cast<const bi*>(&rhs)->_buffer.pointer != 0);
 
-		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
+		const MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
-		dm::detail::AddEqual(buffer, static_cast<const bi&>(rhs).buffer, -1.0);
+		dm::detail::AddEqual(buffer, static_cast<const bi&>(rhs)._buffer, -1.0);
 		return *this;
 	}
 
@@ -210,13 +210,24 @@ namespace cl
 		assert(size() == rhs.size());
 		assert(rhs.GetBuffer().pointer != 0);
 
-		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
+		const MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
-		dm::detail::ElementwiseProduct(buffer, buffer, static_cast<const bi*>(&rhs)->buffer, 1.0);
+		dm::detail::ElementwiseProduct(buffer, buffer, static_cast<const bi*>(&rhs)->_buffer, 1.0);
 
 		return *this;
 	}
+	
+	template<typename bi, MemorySpace ms, MathDomain md>
+	IBuffer<bi, ms, md>& IBuffer<bi, ms, md>::ElementWiseProduct(const IBuffer& rhs, const double alpha)
+	{
+		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
+		assert(buffer.pointer != 0);
+		
+		dm::detail::ElementwiseProduct(buffer, buffer, static_cast<const bi*>(&rhs)->buffer, alpha);
+		return *this;
+	}
+	
 
 	template<typename bi, MemorySpace ms, MathDomain md>
 	IBuffer<bi, ms, md>& IBuffer<bi, ms, md>::AddEqual(const IBuffer& rhs, const double alpha)
@@ -224,17 +235,17 @@ namespace cl
 		assert(size() == rhs.size());
 		assert(rhs.GetBuffer().pointer != 0);
 
-		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
+		const MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
-		dm::detail::AddEqual(buffer, static_cast<const bi*>(&rhs)->buffer, alpha);
+		dm::detail::AddEqual(buffer, static_cast<const bi*>(&rhs)->_buffer, alpha);
 		return *this;
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
 	IBuffer<bi, ms, md>& IBuffer<bi, ms, md>::Scale(const double alpha)
 	{
-		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
+		const MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
 		dm::detail::Scale(buffer, alpha);
@@ -328,10 +339,10 @@ namespace cl
 	template<typename bi, MemorySpace ms, MathDomain md>
 	int IBuffer<bi, ms, md>::CountEquals(const IBuffer& rhs, MemoryBuffer cache) const
 	{
-		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
 		assert(rhs.size() == size());
 		assert(buffer.pointer != 0);
-		assert(static_cast<const bi*>(&rhs)->buffer.pointer != 0);
+		assert(static_cast<const bi*>(&rhs)->_buffer.pointer != 0);
 
 		bool needToFreeCache = cache.pointer == 0;
 		if (needToFreeCache)
@@ -343,7 +354,7 @@ namespace cl
 		}
 
 		// calculate the difference
-		dm::detail::Subtract(cache, buffer, static_cast<const bi*>(&rhs)->buffer);
+		dm::detail::Subtract(cache, buffer, static_cast<const bi*>(&rhs)->_buffer);
 
 		// calculate how many non-zeros, overriding cache
 		dm::detail::IsNonZero(cache, cache);
@@ -357,7 +368,7 @@ namespace cl
 		if (needToFreeCache)
 			dm::detail::Free(cache);
 
-		return ret;
+		return static_cast<int>(ret);
 	}
 
 #pragma endregion
@@ -442,9 +453,8 @@ namespace cl
 	template<typename T>
 	static std::istream& MatrixFromInputStream(std::vector<T>& mat, unsigned& nRows, unsigned& nCols, std::istream& is)
 	{
-		std::string line;	
-		unsigned i = 0;
-
+		std::string line;
+		
 		// read transposed matrix
 		std::vector<T> matTranspose;
 		while (std::getline(is, line))
@@ -492,8 +502,8 @@ namespace cl
 	{
 		const auto& fullExtract = npypp::LoadFull<T>(fileName, useMemoryMapping);
 		assert(fullExtract.shape.size() == 2);
-		nRows = fullExtract.shape[0];
-		nCols = fullExtract.shape[1];
+		nRows = static_cast<unsigned>(fullExtract.shape[0]);
+		nCols = static_cast<unsigned>(fullExtract.shape[1]);
 		
 		mat.resize(fullExtract.data.size());
 		for (size_t i = 0; i < nRows; ++i)

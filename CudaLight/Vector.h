@@ -77,15 +77,15 @@ namespace cl
 
 		#pragma endregion
 
-		const MemoryBuffer& GetBuffer() const noexcept override final { return buffer; }
+		const MemoryBuffer& GetBuffer() const noexcept override final { return _buffer; }
 	protected:
 		using IBuffer<Vector, memorySpace, mathDomain>::IBuffer;
 
-		Vector() : IBuffer<Vector<memorySpace, mathDomain>, memorySpace, mathDomain>(true) {};
+		Vector() : IBuffer<Vector<memorySpace, mathDomain>, memorySpace, mathDomain>(true) {}
 		explicit Vector(const MemoryBuffer& buffer);
 	private:
 
-		MemoryBuffer buffer;
+		MemoryBuffer _buffer;
 	};
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>

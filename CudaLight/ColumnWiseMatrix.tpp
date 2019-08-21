@@ -4,15 +4,15 @@ namespace cl
 {
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const unsigned nRows, const unsigned nCols)
-		: IBuffer<ColumnWiseMatrix<ms, md>, ms, md>(true), buffer(MemoryTile(0, nRows, nCols, ms, md))
+		: IBuffer<ColumnWiseMatrix<ms, md>, ms, md>(true), _buffer(MemoryTile(0, nRows, nCols, ms, md))
 	{
-		this->ctor(buffer);
+		this->ctor(_buffer);
 
 		columns.resize(nCols);
 		for (size_t i = 0; i < nCols; i++)
 		{
-			const size_t colShift = i * nRows * buffer.ElementarySize();
-			MemoryBuffer colBuffer(buffer.pointer + colShift, buffer.nRows, ms, md);
+			const size_t colShift = i * nRows * _buffer.ElementarySize();
+			MemoryBuffer colBuffer(_buffer.pointer + colShift, _buffer.nRows, ms, md);
 			columns[i] = Vector<ms, md>::make_shared(colBuffer);
 		}
 	}
@@ -21,7 +21,7 @@ namespace cl
 	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const unsigned nRows, const unsigned nCols, const typename Traits<md>::stdType value)
 		: ColumnWiseMatrix(nRows, nCols)
 	{
-		dm::detail::Initialize(static_cast<MemoryBuffer>(buffer), value);
+		dm::detail::Initialize(static_cast<MemoryBuffer>(_buffer), value);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -64,7 +64,7 @@ namespace cl
 
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const MemoryTile& buffer)
-		: IBuffer<ColumnWiseMatrix<ms, md>, ms, md>(false), buffer(buffer)
+		: IBuffer<ColumnWiseMatrix<ms, md>, ms, md>(false), _buffer(buffer)
 	{
 
 	}
@@ -80,7 +80,7 @@ namespace cl
 	Vector<ms, md> ColumnWiseMatrix<ms, md>::Flatten() const
 	{
 		Vector<ms, md> ret(this->size());
-		dm::detail::AutoCopy(ret.GetBuffer(), buffer);
+		dm::detail::AutoCopy(ret.GetBuffer(), _buffer);
 		return ret;
 	}
 
@@ -89,7 +89,7 @@ namespace cl
 	{
 		assert(rhs.size() > 0);
 		assert(rhs.GetBuffer().pointer != 0);
-		assert(buffer.pointer != 0);
+		assert(_buffer.pointer != 0);
 
 		dm::detail::AutoCopy(columns[0]->buffer, rhs.GetBuffer());
 	}
@@ -210,7 +210,7 @@ namespace cl
 		ColumnWiseMatrix ret(nRows(), rhs.nCols());
 		dm::detail::Multiply(ret.buffer, this->buffer, rhs.buffer, this->nRows(), rhs.nRows());
 
-		dm::detail::AutoCopy(buffer, ret.buffer);
+		dm::detail::AutoCopy(_buffer, ret.buffer);
 		return *this;
 	}
 
@@ -266,7 +266,7 @@ namespace cl
 			assert(nRows() == rhs.size());
 			assert(nCols() == out.size());
 		}
-		dm::detail::Dot(out.GetBuffer(), this->buffer, rhs.GetBuffer(), lhsOperation, alpha, beta);
+		dm::detail::Dot(out.GetBuffer(), this->_buffer, rhs.GetBuffer(), lhsOperation, alpha, beta);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -281,7 +281,7 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::KroneckerProduct(ColumnWiseMatrix<ms, md>& out, const Vector<ms, md>& lhs, const Vector<ms, md>& rhs, const double alpha)
 	{
-		dm::detail::KroneckerProduct(out.buffer, lhs.GetBuffer(), rhs.GetBuffer(), alpha);
+		dm::detail::KroneckerProduct(out._buffer, lhs.GetBuffer(), rhs.GetBuffer(), alpha);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -313,7 +313,7 @@ namespace cl
 		assert(out.GetBuffer().pointer != 0);
 		assert(out.size() == nCols());
 
-		dm::detail::ColumnWiseArgAbsMin(out.GetBuffer(), buffer);
+		dm::detail::ColumnWiseArgAbsMin(out.GetBuffer(), _buffer);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -331,7 +331,7 @@ namespace cl
 		assert(out.GetBuffer().pointer != 0);
 		assert(out.size() == nCols());
 
-		dm::detail::ColumnWiseArgAbsMax(out.GetBuffer(), buffer);
+		dm::detail::ColumnWiseArgAbsMax(out.GetBuffer(), _buffer);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -490,7 +490,7 @@ namespace cl
 		assert(x.size() == z.nRows());
 		assert(y.size() == z.nCols());
 		Vector<ms, MathDomain::Float> triple(3 * x.size() * y.size());
-		MakeTriple(triple, x, y);
+		MakeTriple(triple, x, y, z);
 
 		return triple;
 	}
