@@ -150,4 +150,17 @@ namespace clt
 			ASSERT_EQ(j, k);
 		}
 	}
+	
+	TEST_F(VectorTests, EuclideanNorm)
+	{
+		cl::vec u = cl::RandomGaussian(10);
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _u = u.Get();
+		
+		auto norm = u.EuclideanNorm();
+		float normCpu = 0.0;
+		for (auto& x: _u)
+			normCpu += x * x;
+		ASSERT_NEAR(normCpu, norm * norm, 1e-6);
+	}
 }

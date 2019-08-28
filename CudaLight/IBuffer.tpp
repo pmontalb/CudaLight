@@ -85,7 +85,7 @@ namespace cl
 	template<typename bi, MemorySpace ms, MathDomain md>
 	void IBuffer<bi, ms, md>::LinSpace(const stdType x0, const stdType x1) const
 	{
-		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 		dm::detail::LinSpace(buffer, x0, x1);
 	}
@@ -93,7 +93,7 @@ namespace cl
 	template<typename bi, MemorySpace ms, MathDomain md>
 	void IBuffer<bi, ms, md>::RandomUniform(const unsigned seed) const
 	{
-		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 		dm::detail::RandUniform(buffer, seed);
 	}
@@ -279,7 +279,7 @@ namespace cl
 	template<typename bi, MemorySpace ms, MathDomain md>
 	typename Traits<md>::stdType IBuffer<bi, ms, md>::AbsoluteMinimum() const
 	{
-		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
 		double ret = 0.0;
@@ -291,7 +291,7 @@ namespace cl
 	template<typename bi, MemorySpace ms, MathDomain md>
 	typename Traits<md>::stdType IBuffer<bi, ms, md>::AbsoluteMaximum() const
 	{
-		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
 		double ret = 0.0;
@@ -303,7 +303,7 @@ namespace cl
 	template<typename bi, MemorySpace ms, MathDomain md>
 	typename Traits<md>::stdType IBuffer<bi, ms, md>::Minimum() const
 	{
-		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
 		double ret = 0.0;
@@ -315,7 +315,7 @@ namespace cl
 	template<typename bi, MemorySpace ms, MathDomain md>
 	typename Traits<md>::stdType IBuffer<bi, ms, md>::Maximum() const
 	{
-		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
 		double ret = 0.0;
@@ -327,12 +327,24 @@ namespace cl
 	template<typename bi, MemorySpace ms, MathDomain md>
 	typename Traits<md>::stdType IBuffer<bi, ms, md>::Sum() const
 	{
-		const MemoryBuffer& buffer = static_cast<const bi*>(this)->buffer;
+		const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
 		double ret = -1;
 		dm::detail::Sum(ret, buffer);
 
+		return ret;
+	}
+	
+	template<typename bi, MemorySpace ms, MathDomain md>
+	typename Traits<md>::stdType IBuffer<bi, ms, md>::EuclideanNorm() const
+	{
+		const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
+		assert(buffer.pointer != 0);
+		
+		double ret = -1;
+		dm::detail::EuclideanNorm(ret, buffer);
+		
 		return ret;
 	}
 
@@ -494,7 +506,13 @@ namespace cl
 	template<typename T>
 	static void MatrixToBinaryFile(const std::vector<T>& mat, const unsigned nRows, const unsigned nCols, const std::string& fileName, const std::string mode)
 	{
-		npypp::Save(fileName, mat, { static_cast<size_t>(nRows), static_cast<size_t>(nCols) }, mode);
+		std::vector<T> matTranspose(mat.size());
+		for (size_t i = 0; i < nRows; ++i)
+		{
+			for (size_t j = 0; j < nCols; ++j)
+				matTranspose[i + j * nRows] = mat[j + i * nCols];
+		}
+		npypp::Save(fileName, matTranspose, { static_cast<size_t>(nCols), static_cast<size_t>(nRows) }, mode);
 	}
 
 	template<typename T>

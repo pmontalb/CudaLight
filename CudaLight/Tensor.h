@@ -48,9 +48,9 @@ namespace cl
 
 		virtual ~Tensor() = default;
 
-		unsigned nRows() const noexcept { return buffer.nRows; }
-		unsigned nCols() const noexcept { return buffer.nCols; }
-		unsigned nMatrices() const noexcept { return buffer.nCubes; }
+		unsigned nRows() const noexcept { return _buffer.nRows; }
+		unsigned nCols() const noexcept { return _buffer.nCols; }
+		unsigned nMatrices() const noexcept { return _buffer.nCubes; }
 
 		std::vector<std::shared_ptr<ColumnWiseMatrix<memorySpace, mathDomain>>> matrices;
 	
@@ -64,13 +64,13 @@ namespace cl
 
 		#pragma endregion
 
-		const MemoryBuffer& GetBuffer() const noexcept override final { return buffer; }
-		const MemoryCube& GetCube() const noexcept { return buffer; }
+		const MemoryBuffer& GetBuffer() const noexcept override final { return _buffer; }
+		const MemoryCube& GetCube() const noexcept { return _buffer; }
 	protected:
 
 		explicit Tensor(const MemoryCube& buffer);
 
-		MemoryCube buffer;
+		MemoryCube _buffer;
 
 	};
 

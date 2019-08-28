@@ -73,7 +73,7 @@ namespace cl
 	void ColumnWiseMatrix<ms, md>::MakeIdentity()
 	{
 		assert(nRows() == nCols());
-		dm::detail::Eye(this->buffer);
+		dm::detail::Eye(this->_buffer);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -111,7 +111,7 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::RandomShuffleColumns(const unsigned seed) const
 	{
-		dm::detail::RandShuffleColumns(this->buffer, seed);
+		dm::detail::RandShuffleColumns(this->_buffer, seed);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -186,7 +186,7 @@ namespace cl
 		assert(nCols() == rhs.nCols());
 
 		ColumnWiseMatrix ret(*this);
-		dm::detail::AddEqualMatrix(ret.buffer, rhs.buffer, lhsOperation, rhsOperation, alpha, beta);
+		dm::detail::AddEqualMatrix(ret._buffer, rhs._buffer, lhsOperation, rhsOperation, alpha, beta);
 
 		return ret;
 	}
@@ -197,7 +197,7 @@ namespace cl
 		assert(nCols() == rhs.nRows());
 
 		ColumnWiseMatrix ret(nRows(), rhs.nCols());
-		dm::detail::Multiply(ret.buffer, this->buffer, rhs.buffer, this->nRows(), rhs.nRows());
+		dm::detail::Multiply(ret._buffer, this->_buffer, rhs._buffer, this->nRows(), rhs.nRows());
 
 		return ret;
 	}
@@ -220,7 +220,7 @@ namespace cl
 		assert(nCols() == rhs.size());
 
 		Vector<ms, md> ret(nRows());
-		dm::detail::Dot(ret.GetBuffer(), this->buffer, rhs.GetBuffer());
+		dm::detail::Dot(ret.GetBuffer(), this->_buffer, rhs.GetBuffer());
 
 		return ret;
 	}
@@ -242,7 +242,7 @@ namespace cl
 		else
 			assert(nRows() == rhs.nCols());
 
-		dm::detail::Multiply(out.buffer, this->buffer, rhs.buffer, this->nRows(), rhs.nRows(), lhsOperation, rhsOperation, alpha, beta);
+		dm::detail::Multiply(out._buffer, this->_buffer, rhs._buffer, this->nRows(), rhs.nRows(), lhsOperation, rhsOperation, alpha, beta);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -287,7 +287,7 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::Invert(const MatrixOperation lhsOperation)
 	{
-		dm::detail::Invert(this->buffer, lhsOperation);
+		dm::detail::Invert(this->_buffer, lhsOperation);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -295,7 +295,7 @@ namespace cl
 	{
 		assert(nRows() == rhs.nRows());
 		assert(nCols() == rhs.nCols());
-		dm::detail::Solve(this->buffer, rhs.buffer, lhsOperation);
+		dm::detail::Solve(this->_buffer, rhs._buffer, lhsOperation);
 	}
 
 	template<MemorySpace ms, MathDomain md>

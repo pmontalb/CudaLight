@@ -6,22 +6,22 @@ namespace cl
 {
 	template<MemorySpace ms, MathDomain md>
 	Tensor<ms, md>::Tensor(const unsigned nRows, const unsigned nCols, const unsigned nMatrices)
-		: IBuffer<Tensor<ms, md>, ms, md>(true), buffer(MemoryCube(0, nRows, nCols, nMatrices, ms, md))
+		: IBuffer<Tensor<ms, md>, ms, md>(true), _buffer(MemoryCube(0, nRows, nCols, nMatrices, ms, md))
 	{
-		this->ctor(buffer);
+		this->ctor(_buffer);
 
 		matrices.resize(nMatrices);
 		for (size_t i = 0; i < nMatrices; i++)
 		{
-			const size_t matrixShift = i * nRows * nCols * buffer.ElementarySize();
-			MemoryTile matrixBuffer(buffer.pointer + matrixShift, buffer.nRows, buffer.nCols, ms, md);
+			const size_t matrixShift = i * nRows * nCols * _buffer.ElementarySize();
+			MemoryTile matrixBuffer(_buffer.pointer + matrixShift, _buffer.nRows, _buffer.nCols, ms, md);
 			matrices[i] = ColumnWiseMatrix<ms, md>::make_shared(matrixBuffer);
 
 			matrices[i]->columns.resize(nCols);
 			for (size_t j = 0; j < nCols; ++j)
 			{
-				const size_t colShift = j * nRows * buffer.ElementarySize();
-				MemoryBuffer colBuffer(buffer.pointer + colShift, buffer.nRows, ms, md);
+				const size_t colShift = j * nRows * _buffer.ElementarySize();
+				MemoryBuffer colBuffer(_buffer.pointer + colShift, _buffer.nRows, ms, md);
 				matrices[i]->columns[j] = Vector<ms, md>::make_shared(colBuffer);
 			}
 		}
@@ -31,7 +31,7 @@ namespace cl
 	Tensor<ms, md>::Tensor(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const typename Traits<md>::stdType value)
 		: Tensor(nRows, nCols, nMatrices)
 	{
-		dm::detail::Initialize(static_cast<MemoryBuffer>(buffer), value);
+		dm::detail::Initialize(static_cast<MemoryBuffer>(_buffer), value);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -71,8 +71,8 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	Tensor<ms, md>::Tensor(const MemoryCube& buffer)
-		: IBuffer<Tensor<ms, md>, ms, md>(false), buffer(buffer)
+	Tensor<ms, md>::Tensor(const MemoryCube& _buffer)
+		: IBuffer<Tensor<ms, md>, ms, md>(false), _buffer(_buffer)
 	{
 
 	}
@@ -80,21 +80,21 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void Tensor<ms, md>::ReadFrom(const ColumnWiseMatrix<ms, md>& rhs)
 	{
-		assert(buffer.pointer != 0);
-		assert(rhs.buffer.pointer != 0);
+		assert(_buffer.pointer != 0);
+		assert(rhs._buffer.pointer != 0);
 		assert(rhs.size() != 0);
 
-		dm::detail::AutoCopy(static_cast<MemoryBuffer>(matrices[0]->buffer), rhs.buffer);
+		dm::detail::AutoCopy(static_cast<MemoryBuffer>(matrices[0]->_buffer), rhs._buffer);
 	}
 
 	template<MemorySpace ms, MathDomain md>
 	void Tensor<ms, md>::ReadFrom(const Vector<ms, md>& rhs)
 	{
-		assert(buffer.pointer != 0);
-		assert(rhs.buffer.pointer != 0);
+		assert(_buffer.pointer != 0);
+		assert(rhs._buffer.pointer != 0);
 		assert(rhs.size() != 0);
 
-		dm::detail::AutoCopy(matrices[0]->columns[0]->buffer, rhs.buffer);
+		dm::detail::AutoCopy(matrices[0]->columns[0]->_buffer, rhs._buffer);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -116,7 +116,7 @@ namespace cl
 	void Tensor<ms, md>::Set(const ColumnWiseMatrix<ms, md>& matrixBuffer, const unsigned matrix)
 	{
 		assert(matrix < nMatrices());
-		assert(matrixBuffer.buffer.pointer != 0);
+		assert(matrixBuffer._buffer.pointer != 0);
 		matrices[matrix]->ReadFrom(matrixBuffer);
 	}
 

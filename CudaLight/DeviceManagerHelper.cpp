@@ -202,6 +202,7 @@ __CREATE_FUNCTION_2_ARG(ColumnWiseArgAbsMin, CuBlasKernelExceptionFactory, Memor
 __CREATE_FUNCTION_2_ARG(ArgAbsMax, CuBlasKernelExceptionFactory, int&, argMax, const MemoryBuffer, x);
 __CREATE_FUNCTION_2_ARG(ColumnWiseArgAbsMax, CuBlasKernelExceptionFactory, MemoryBuffer, argMax, const MemoryTile, A);
 __CREATE_FUNCTION_2_ARG(IsNonZero, CudaKernelExceptionFactory, MemoryBuffer, z, const MemoryBuffer, x);
+__CREATE_FUNCTION_2_ARG(EuclideanNorm, CuBlasKernelExceptionFactory, double&, norm, const MemoryBuffer, v);
 
 //CuSparseWrappers
 __CREATE_FUNCTION_4_ARG(SparseAdd, CuSparseKernelExceptionFactory, MemoryBuffer, z, const SparseMemoryBuffer, x, const MemoryBuffer, y, const double, alpha);

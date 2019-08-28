@@ -132,6 +132,7 @@ namespace cl
 		stdType Minimum() const;
 		stdType Maximum() const;
 		stdType Sum() const;
+		stdType EuclideanNorm() const;
 		int CountEquals(const IBuffer& rhs, MemoryBuffer cache = MemoryBuffer()) const;
 
 		#pragma endregion

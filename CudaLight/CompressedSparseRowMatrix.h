@@ -35,8 +35,8 @@ namespace cl
 		void ToBinaryFile(const std::string& fileName, const std::string mode) const override final { throw std::logic_error("Not Implemented"); };
 
 		unsigned denseSize() const noexcept { return nRows() * nCols(); }  // used only when converting to dense
-		unsigned nRows() const noexcept { return buffer.nRows; }
-		unsigned nCols() const noexcept { return buffer.nCols; }
+		unsigned nRows() const noexcept { return _buffer.nRows; }
+		unsigned nCols() const noexcept { return _buffer.nCols; }
 
 		#pragma region Linear Algebra
 
@@ -56,7 +56,7 @@ namespace cl
 		#pragma endregion 
 
 	protected:
-		SparseMemoryTile buffer;
+		SparseMemoryTile _buffer;
 
 		Vector<memorySpace, mathDomain> values;
 		Vector<memorySpace, MathDomain::Int> nonZeroColumnIndices;

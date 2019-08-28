@@ -4,8 +4,8 @@ namespace cl
 {
 	template< MemorySpace ms, MathDomain md>
 	CompressedSparseRowMatrix<ms, md>::CompressedSparseRowMatrix(const unsigned nRows, const unsigned nCols, const Vector<ms, MathDomain::Int>& nonZeroColumnIndices, const Vector<ms, MathDomain::Int>& nNonZeroRows)
-		: IBuffer<CompressedSparseRowMatrix<ms, md>, ms, md>(false),  // CompressedSparseRowMatrix doesn't allocate its memory in its buffer!
-		buffer(0, nonZeroColumnIndices.size(), 0, 0, nRows, nCols, ms, md),
+		: IBuffer<CompressedSparseRowMatrix<ms, md>, ms, md>(false),  // CompressedSparseRowMatrix doesn't allocate its memory in its _buffer!
+		_buffer(0, nonZeroColumnIndices.size(), 0, 0, nRows, nCols, ms, md),
 		values(nonZeroColumnIndices.size()), nonZeroColumnIndices(nonZeroColumnIndices), nNonZeroRows(nNonZeroRows)
 	{
 		SyncPointers();
@@ -20,7 +20,7 @@ namespace cl
 
 	template< MemorySpace ms, MathDomain md>
 	CompressedSparseRowMatrix<ms, md>::CompressedSparseRowMatrix(const ColumnWiseMatrix<ms, md>& denseMatrix)
-		: IBuffer<CompressedSparseRowMatrix<ms, md>, ms, md>(false), buffer(0, 0, 0, 0, denseMatrix.nRows(), denseMatrix.nCols(), ms, md)
+		: IBuffer<CompressedSparseRowMatrix<ms, md>, ms, md>(false), _buffer(0, 0, 0, 0, denseMatrix.nRows(), denseMatrix.nCols(), ms, md)
 	{
 		const auto hostDenseMatrix = denseMatrix.Get();
 
@@ -43,18 +43,18 @@ namespace cl
 			nNonZeroRows.push_back(nNonZeros);
 		}
 
-		buffer.size = nNonZeros;
+		_buffer.size = nNonZeros;
 
-		values.buffer = MemoryBuffer(0, static_cast<unsigned>(nonZeroValues.size()), ms, md);
-		Alloc(values.buffer);
+		values._buffer = MemoryBuffer(0, static_cast<unsigned>(nonZeroValues.size()), ms, md);
+		Alloc(values._buffer);
 		values.ReadFrom(nonZeroValues);
 
-		this->nonZeroColumnIndices.buffer = MemoryBuffer(0, static_cast<unsigned>(nonZeroColumnIndices.size()), ms, md);
-		Alloc(this->nonZeroColumnIndices.buffer);
+		this->nonZeroColumnIndices._buffer = MemoryBuffer(0, static_cast<unsigned>(nonZeroColumnIndices.size()), ms, md);
+		Alloc(this->nonZeroColumnIndices._buffer);
 		this->nonZeroColumnIndices.ReadFrom(nonZeroColumnIndices);
 
-		this->nNonZeroRows.buffer = MemoryBuffer(0, static_cast<unsigned>(nNonZeroRows.size()), ms, md);
-		Alloc(this->nNonZeroRows.buffer);
+		this->nNonZeroRows._buffer = MemoryBuffer(0, static_cast<unsigned>(nNonZeroRows.size()), ms, md);
+		Alloc(this->nNonZeroRows._buffer);
 		this->nNonZeroRows.ReadFrom(nNonZeroRows);
 
 		SyncPointers();
@@ -62,8 +62,8 @@ namespace cl
 
 	template< MemorySpace ms, MathDomain md>
 	CompressedSparseRowMatrix<ms, md>::CompressedSparseRowMatrix(const CompressedSparseRowMatrix& rhs)
-		: IBuffer<CompressedSparseRowMatrix<ms, md>, ms, md>(false), // CompressedSparseRowMatrix doesn't allocate its memory in its buffer!
-		buffer(0, 0, 0, 0, rhs.nRows(), rhs.nCols(), ms, md),
+		: IBuffer<CompressedSparseRowMatrix<ms, md>, ms, md>(false), // CompressedSparseRowMatrix doesn't allocate its memory in its _buffer!
+		_buffer(0, 0, 0, 0, rhs.nRows(), rhs.nCols(), ms, md),
 		values(rhs.values), nonZeroColumnIndices(rhs.nonZeroColumnIndices), nNonZeroRows(rhs.nNonZeroRows)
 	{
 		SyncPointers();
@@ -72,9 +72,9 @@ namespace cl
 	template< MemorySpace ms, MathDomain md>
 	void CompressedSparseRowMatrix<ms, md>::SyncPointers()
 	{
-		buffer.pointer = values._buffer.pointer;
-		buffer.nonZeroColumnIndices = nonZeroColumnIndices._buffer.pointer;
-		buffer.nNonZeroRows = nNonZeroRows._buffer.pointer;
+		_buffer.pointer = values._buffer.pointer;
+		_buffer.nonZeroColumnIndices = nonZeroColumnIndices._buffer.pointer;
+		_buffer.nNonZeroRows = nNonZeroRows._buffer.pointer;
 	}
 
 	template< MemorySpace ms, MathDomain md>
@@ -114,7 +114,7 @@ namespace cl
 		assert(nCols() == rhs.nRows());
 
 		ColumnWiseMatrix<ms, md> ret(nRows(), rhs.nCols());
-		dm::detail::SparseMultiply(ret._buffer, this->buffer, rhs._buffer, this->nRows(), rhs.nRows());
+		dm::detail::SparseMultiply(ret._buffer, this->_buffer, rhs._buffer, this->nRows(), rhs.nRows());
 
 		return ret;
 	}
@@ -125,7 +125,7 @@ namespace cl
 		assert(nRows() == rhs.size());
 
 		Vector<ms, md> ret(rhs.size());
-		dm::detail::SparseDot(ret._buffer, this->buffer, rhs._buffer);
+		dm::detail::SparseDot(ret._buffer, this->_buffer, rhs._buffer);
 
 		return ret;
 	}
@@ -143,7 +143,7 @@ namespace cl
 	void CompressedSparseRowMatrix<ms, md>::Multiply(ColumnWiseMatrix<ms, md>& out, const ColumnWiseMatrix<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha) const
 	{
 		assert(nCols() == rhs.nRows());
-		dm::detail::SparseMultiply(out._buffer, this->buffer, rhs._buffer, this->nRows(), rhs.nRows(), lhsOperation, alpha);
+		dm::detail::SparseMultiply(out._buffer, this->_buffer, rhs._buffer, this->nRows(), rhs.nRows(), lhsOperation, alpha);
 	}
 
 	template< MemorySpace ms, MathDomain md>
@@ -159,7 +159,7 @@ namespace cl
 	void CompressedSparseRowMatrix<ms, md>::Dot(Vector<ms, md>& out, const Vector<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha) const
 	{
 		assert(nRows() == rhs.size());
-		dm::detail::SparseDot(out._buffer, this->buffer, rhs._buffer, lhsOperation, 1.0);
+		dm::detail::SparseDot(out._buffer, this->_buffer, rhs._buffer, lhsOperation, 1.0);
 	}
 
 #pragma endregion 

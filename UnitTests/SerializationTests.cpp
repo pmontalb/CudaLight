@@ -66,6 +66,8 @@ namespace clt
 		m1.ToBinaryFile("m1.npy");
 
 		cl::mat m2 = cl::MatrixFromBinaryFile("m1.npy");
+		m1.Print("m1=");
+		m2.Print("m2=");
 
 		auto _m1 = m1.Get();
 		auto _m2 = m2.Get();

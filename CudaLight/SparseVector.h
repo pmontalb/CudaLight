@@ -58,7 +58,7 @@ namespace cl
 		SparseVector(const unsigned size, const unsigned nNonZeros);
 		SparseVector(const unsigned size, const unsigned nNonZeros, const stdType value);
 
-		SparseMemoryBuffer buffer;
+		SparseMemoryBuffer _buffer;
 
 		Vector<memorySpace, mathDomain> values;
 		Vector<memorySpace, MathDomain::Int> nonZeroIndices;

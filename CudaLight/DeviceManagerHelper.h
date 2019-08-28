@@ -143,6 +143,7 @@ __CREATE_FUNCTION_2_ARG(ColumnWiseArgAbsMin, MemoryBuffer, argMin, const MemoryT
 __CREATE_FUNCTION_2_ARG(ArgAbsMax, int&, argMax, const MemoryBuffer, x);
 __CREATE_FUNCTION_2_ARG(ColumnWiseArgAbsMax, MemoryBuffer, argMax, const MemoryTile, A);
 __CREATE_FUNCTION_2_ARG(IsNonZero, MemoryBuffer, z, const MemoryBuffer, x);
+__CREATE_FUNCTION_2_ARG(EuclideanNorm, double&, norm, const MemoryBuffer, v);
 
 //CuSparseWrappers
 __CREATE_FUNCTION_4_ARG(SparseAdd, MemoryBuffer, z, const SparseMemoryBuffer, x, const MemoryBuffer, y, const double, alpha = 1.0);
