@@ -142,7 +142,7 @@ namespace cl
 	}
 
 	#pragma region Linear Algebra
-
+	
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::operator +(const ColumnWiseMatrix& rhs) const
 	{
@@ -225,6 +225,18 @@ namespace cl
 		return ret;
 	}
 
+	template<MemorySpace ms, MathDomain md>
+	ColumnWiseMatrix<ms, md>& ColumnWiseMatrix<ms, md>::AddEqualMatrix(const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation, const MatrixOperation rhsOperation, const double alpha, const double beta)
+	{
+		assert(nRows() == rhs.nRows());
+		assert(nCols() == rhs.nCols());
+		
+		assert(_buffer.pointer != 0);
+		
+		dm::detail::AddEqualMatrix(_buffer, rhs._buffer, lhsOperation, rhsOperation, alpha, beta);
+		return *this;
+	}
+	
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::Multiply(const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation, const MatrixOperation rhsOperation, const double alpha, const double beta) const
 	{

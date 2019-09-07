@@ -65,7 +65,7 @@ namespace cl
 		std::vector<std::shared_ptr<Vector<memorySpace, mathDomain>>> columns;
 
 		#pragma region Linear Algebra
-
+		
 		ColumnWiseMatrix operator +(const ColumnWiseMatrix& rhs) const;
 		ColumnWiseMatrix operator -(const ColumnWiseMatrix& rhs) const;
 		ColumnWiseMatrix operator %(const ColumnWiseMatrix& rhs) const;
@@ -74,6 +74,8 @@ namespace cl
 		ColumnWiseMatrix operator *=(const ColumnWiseMatrix& rhs) const;
 
 		Vector<memorySpace, mathDomain> operator *(const Vector<memorySpace, mathDomain>& rhs) const;
+		
+		ColumnWiseMatrix& AddEqualMatrix(const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const MatrixOperation rhsOperation = MatrixOperation::None, const double alpha = 1.0, const double beta = 1.0);
 
 		/**
 		* A = alpha * B * C + beta * A

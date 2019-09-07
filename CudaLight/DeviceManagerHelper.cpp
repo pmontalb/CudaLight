@@ -173,6 +173,7 @@ __CREATE_FUNCTION_1_ARG(FreeHost, CudaKernelExceptionFactory, const MemoryBuffer
 
 
 // Initializer
+__CREATE_FUNCTION_1_ARG(Zero, CudaKernelExceptionFactory, MemoryBuffer, buf);
 __CREATE_FUNCTION_2_ARG(Initialize, CudaKernelExceptionFactory, MemoryBuffer, buf, const double, value);
 __CREATE_FUNCTION_3_ARG(LinSpace, CudaKernelExceptionFactory, MemoryBuffer, buf, const double, x0, const double, x1);
 __CREATE_FUNCTION_2_ARG(RandUniform, CudaKernelExceptionFactory, MemoryBuffer, buf, const unsigned, seed);

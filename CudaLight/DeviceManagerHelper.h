@@ -114,6 +114,7 @@ __CREATE_FUNCTION_1_ARG(Free, const MemoryBuffer, buf);
 __CREATE_FUNCTION_1_ARG(FreeHost, const MemoryBuffer, buf);
 
 // Initializer
+__CREATE_FUNCTION_1_ARG(Zero, MemoryBuffer, buf);
 __CREATE_FUNCTION_2_ARG(Initialize, MemoryBuffer, buf, const double, value);
 __CREATE_FUNCTION_3_ARG(LinSpace, MemoryBuffer, buf, const double, x0, const double, x1);
 __CREATE_FUNCTION_2_ARG(RandUniform, MemoryBuffer, buf, const unsigned, seed);
