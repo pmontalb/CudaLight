@@ -20,7 +20,7 @@ namespace cl
 	Vector<ms, md>::Vector(const unsigned size, const typename Traits<md>::stdType value)
 		: Vector(size)
 	{
-		dm::detail::Initialize(_buffer, value);
+		dm::detail::Initialize(_buffer, static_cast<double>(value));
 	}
 
 	template<MemorySpace ms, MathDomain md>

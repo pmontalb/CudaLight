@@ -21,7 +21,7 @@ namespace cl
 	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const unsigned nRows, const unsigned nCols, const typename Traits<md>::stdType value)
 		: ColumnWiseMatrix(nRows, nCols)
 	{
-		dm::detail::Initialize(static_cast<MemoryBuffer>(_buffer), value);
+		dm::detail::Initialize(static_cast<MemoryBuffer>(_buffer), static_cast<double>(value));
 	}
 
 	template<MemorySpace ms, MathDomain md>

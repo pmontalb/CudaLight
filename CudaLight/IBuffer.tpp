@@ -79,7 +79,7 @@ namespace cl
 	{
 		const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
-		dm::detail::Initialize(buffer, value);
+		dm::detail::Initialize(buffer, static_cast<double>(value));
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
@@ -345,7 +345,7 @@ namespace cl
 		double ret = -1;
 		dm::detail::EuclideanNorm(ret, buffer);
 		
-		return ret;
+		return static_cast<typename Traits<md>::stdType>(ret);
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
