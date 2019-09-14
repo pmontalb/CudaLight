@@ -19,7 +19,7 @@ namespace clt
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v1 = v1.Get();
 
-		cl::vec v2 = cl::RandomUniform(v1.denseSize);
+		cl::vec v2 = cl::RandomUniform(v1.denseSize, 1234);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v2 = v2.Get();
 

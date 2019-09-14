@@ -29,7 +29,7 @@ namespace cl
 		std::vector<typename Traits<mathDomain>::stdType> Get() const override final;
 		void Print(const std::string& label = "") const override final;
 		std::ostream& ToOutputStream(std::ostream& os) const override final { throw std::logic_error("Not Implemented"); };
-		void ToBinaryFile(const std::string& fileName, const std::string mode) const override final	{ throw std::logic_error("Not Implemented"); };
+		void ToBinaryFile(const std::string& fileName, const bool compressed, const std::string mode) const override final	{ throw std::logic_error("Not Implemented"); };
 
 		unsigned denseSize;  // used only when converting to dense
 

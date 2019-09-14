@@ -36,6 +36,16 @@ namespace clt
 
 		ASSERT_TRUE(u == v);
 	}
+	
+	TEST_F(SerializationTests, VectorSerializationToBinaryFileInversionCompressed)
+	{
+		cl::vec v(18u, 0.12345f);
+		v.ToBinaryFile("v1.npz", true);
+		
+		cl::vec u = cl::VectorFromBinaryFile("v1.npz", true);
+		
+		ASSERT_TRUE(u == v);
+	}
 
 	/*
 	*	If serialization is denoted as f(vec), and deserialization g(vec)
@@ -69,6 +79,25 @@ namespace clt
 		m1.Print("m1=");
 		m2.Print("m2=");
 
+		auto _m1 = m1.Get();
+		auto _m2 = m2.Get();
+		for (size_t i = 0; i < m1.nRows(); i++)
+		{
+			for (size_t j = 0; j < m1.nCols(); j++)
+				ASSERT_TRUE(fabs(_m1[i + m1.nRows() * j] - _m2[i + m1.nRows() * j]) < 1e-6);
+		}
+	}
+	
+	TEST_F(SerializationTests, MatrixSerializationToBinaryFileInversionCompressed)
+	{
+		cl::mat m1(18u, 12u);
+		m1.LinSpace(0.0f, 1.0f);
+		m1.ToBinaryFile("m1.npz", true);
+		
+		cl::mat m2 = cl::MatrixFromBinaryFile("m1.npz", true);
+		m1.Print("m1=");
+		m2.Print("m2=");
+		
 		auto _m1 = m1.Get();
 		auto _m2 = m2.Get();
 		for (size_t i = 0; i < m1.nRows(); i++)

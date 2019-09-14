@@ -187,6 +187,27 @@ namespace cl
 		return ret;
 	}
 
+	template<MemorySpace ms, MathDomain md>
+	ColumnWiseMatrix<ms, md> Tensor<ms, md>::CubeWiseSum() const
+	{
+		ColumnWiseMatrix<ms, md> out(nRows(), nCols(), -123456789.0);
+		CubeWiseSum(out);
+		
+		return out;
+	}
+	template<MemorySpace ms, MathDomain md>
+	void Tensor<ms, md>::CubeWiseSum(ColumnWiseMatrix<ms, md>& out) const
+	{
+		Tensor cacheReshape(nRows(), nMatrices(), nCols(), 1.0);
+		Vector<ms, md> cacheOnes(nMatrices(), 1.0);
+		CubeWiseSum(out, cacheReshape, cacheOnes);
+	}
+	template<MemorySpace ms, MathDomain md>
+	void Tensor<ms, md>::CubeWiseSum(ColumnWiseMatrix<ms, md>& out, Tensor<ms, md>& cacheReshape, Vector<ms, md>& cacheOnes) const
+	{
+		dm::detail::CubeWiseSum(out.GetTile(), _buffer, cacheReshape.GetCube(), cacheOnes.GetBuffer());
+	}
+	
 	#pragma endregion
 
 	template<MemorySpace ms, MathDomain md>

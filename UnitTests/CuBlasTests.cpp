@@ -3,6 +3,7 @@
 
 #include <Vector.h>
 #include <ColumnWiseMatrix.h>
+#include <Tensor.h>
 
 namespace clt
 {
@@ -12,7 +13,7 @@ namespace clt
 
 	static cl::mat GetInvertibleMatrix(size_t nRows, const unsigned seed = 1234)
 	{
-		auto A = cl::RandomUniform(nRows, nRows, seed);
+		cl::mat A = cl::RandomUniform(nRows, nRows, seed);
 		auto _A = A.Get();
 
 		for (size_t i = 0; i < nRows; ++i)
@@ -28,7 +29,7 @@ namespace clt
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v1 = v1.Get();
 
-		cl::vec v2 = cl::RandomUniform(v1.size());
+		cl::vec v2 = cl::RandomUniform(v1.size(), 1234);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v2 = v2.Get();
 
@@ -93,12 +94,12 @@ namespace clt
 		for (size_t i = 0; i < m1.size(); ++i)
 			ASSERT_TRUE(fabs(_m3[i] - _m1[i] - _m2[i]) <= 1e-7);
 
-		auto m4 = m1.Add(m2, MatrixOperation::None, MatrixOperation::None, 2.0);
+		auto m4 = m1.Add(m2, MatrixOperation::None, MatrixOperation::None, 2.0, 3.0);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _m4 = m4.Get();
 
 		for (size_t i = 0; i < m1.size(); ++i)
-			ASSERT_TRUE(fabs(_m4[i] - _m1[i] - 2.0 * _m2[i]) <= 1.2e-7);
+			ASSERT_LT(fabs(_m4[i] / (2.0 * _m1[i] + 3.0 * _m2[i]) - 1.0), 1e-7) << i << "; " << _m4[i] << "; " << 2.0 * _m1[i] - 3.0 * _m2[i];
 	}
 
 	TEST_F(CuBlasTests, Scale)
@@ -120,7 +121,7 @@ namespace clt
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v1 = v1.Get();
 
-		cl::vec v2 = cl::RandomUniform(v1.size());
+		cl::vec v2 = cl::RandomUniform(v1.size(), 1234);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v2 = v2.Get();
 
@@ -254,7 +255,56 @@ namespace clt
 			}
 		}
 	}
-
+	
+	TEST_F(CuBlasTests, RowWiseSum)
+	{
+		cl::mat A(128, 64);
+		A.RandomGaussian(1234);
+		
+		const auto rowSum = A.RowWiseSum();
+		const auto _A = A.Get();
+		const auto _rowSum = rowSum.Get();
+		
+		ASSERT_EQ(rowSum.size(), A.nRows());
+		for (size_t i = 0; i < A.nRows(); ++i)
+		{
+			double goldenRowSum = 0.0;
+			for (size_t j = 0; j < A.nCols(); ++j)
+				goldenRowSum += _A[i + j * A.nRows()];
+			ASSERT_NEAR(goldenRowSum, _rowSum[i], 5e-6);
+		}
+	}
+	
+	TEST_F(CuBlasTests, CubeWiseSum)
+	{
+		cl::ten T(11, 17, 29);
+		dm::DeviceManager::CheckDeviceSanity();
+		for (auto& matrix: T.matrices)
+			matrix->RandomUniform();
+		
+		const auto _T = T.Get();
+		dm::DeviceManager::CheckDeviceSanity();
+		const auto cubeSum = T.CubeWiseSum();
+		dm::DeviceManager::CheckDeviceSanity();
+		
+		const auto _cubeSum = cubeSum.Get();
+		dm::DeviceManager::CheckDeviceSanity();
+		
+		ASSERT_EQ(cubeSum.nRows(), T.nRows());
+		ASSERT_EQ(cubeSum.nCols(), T.nCols());
+		for (size_t i = 0; i < T.nRows(); ++i)
+		{
+			for (size_t j = 0; j < T.nCols(); ++j)
+			{
+				double goldenCubeSum = 0.0;
+				for (size_t k = 0; k < T.nMatrices(); ++k)
+					goldenCubeSum += _T[i + j * T.nRows() + k * T.nRows() * T.nCols()];
+				
+				ASSERT_NEAR(goldenCubeSum / _cubeSum[i + j * T.nRows()], 1.0, 5e-7) << "i=" << i << "; j=" << j << "; idx=" << i + j * T.nRows();
+			}
+		}
+	}
+	
 	TEST_F(CuBlasTests, ColumnWiseAbsoluteMinMax)
 	{
 		cl::mat A = cl::LinSpace(-1.0f, 1.0f, 128);

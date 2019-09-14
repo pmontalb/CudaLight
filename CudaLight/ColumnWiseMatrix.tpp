@@ -129,9 +129,9 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void ColumnWiseMatrix<ms, md>::ToBinaryFile(const std::string& fileName, const std::string mode) const
+	void ColumnWiseMatrix<ms, md>::ToBinaryFile(const std::string& fileName, const bool compressed, const std::string mode) const
 	{
-		cl::MatrixToBinaryFile(Get(), nRows(), nCols(), fileName, mode);
+		cl::MatrixToBinaryFile(Get(), nRows(), nCols(), fileName, compressed, mode);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -297,6 +297,28 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
+	Vector<ms, md> ColumnWiseMatrix<ms, md>::RowWiseSum() const
+	{
+		Vector<ms, md> out(nRows());
+		RowWiseSum(out);
+		
+		return out;
+	}
+	
+	template<MemorySpace ms, MathDomain md>
+	void ColumnWiseMatrix<ms, md>::RowWiseSum(Vector<ms, md>& out) const
+	{
+		Vector<ms, md> cache(nCols(), 1.0);
+		RowWiseSum(out, cache);
+	}
+	
+	template<MemorySpace ms, MathDomain md>
+	void ColumnWiseMatrix<ms, md>::RowWiseSum(Vector<ms, md>& out, Vector<ms, md>& cache) const
+	{
+		dm::detail::RowWiseSum(out.GetBuffer(), this->_buffer, cache.GetBuffer());
+	}
+
+template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::Invert(const MatrixOperation lhsOperation)
 	{
 		dm::detail::Invert(this->_buffer, lhsOperation);
@@ -428,10 +450,10 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void VectorToBinaryFile(const ColumnWiseMatrix<ms, md>& mat, const std::string& fileName, const std::string mode)
+	void MatrixFromBinaryFile(const ColumnWiseMatrix<ms, md>& mat, const std::string& fileName, const bool compressed, const std::string mode)
 	{
 		const auto& _mat = mat.Get();
-		cl::MatrixToBinaryFile(_mat, mat.nRows(), mat.nCols(), fileName, mode);
+		cl::MatrixToBinaryFile(_mat, mat.nRows(), mat.nCols(), fileName, compressed, mode);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -448,11 +470,11 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	ColumnWiseMatrix<ms, md> MatrixFromBinaryFile(const std::string& fileName, const bool useMemoryMapping)
+	ColumnWiseMatrix<ms, md> MatrixFromBinaryFile(const std::string& fileName, const bool compressed, const bool useMemoryMapping)
 	{
-		std::vector<typename Vector<ms, md>::stdType> _mat;
+		std::vector<typename Vector<ms, md>::stdType> _mat {};
 		unsigned nRows = 0, nCols = 0;
-		cl::MatrixFromBinaryFile(_mat, nRows, nCols, fileName, useMemoryMapping);
+		cl::MatrixFromBinaryFile(_mat, nRows, nCols, fileName, compressed, useMemoryMapping);
 
 		ColumnWiseMatrix<ms, md> ret(nRows, nCols);
 		ret.ReadFrom(_mat);

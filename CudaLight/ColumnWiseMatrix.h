@@ -52,7 +52,7 @@ namespace cl
 
 		void Print(const std::string& label = "") const override final;
 		std::ostream& ToOutputStream(std::ostream& os) const override final;
-		void ToBinaryFile(const std::string& fileName, const std::string mode = "w") const override final;
+		void ToBinaryFile(const std::string& fileName, const bool compressed = false, const std::string mode = "w") const override final;
 
 		template<MemorySpace ms, MathDomain md>
 		friend std::ostream& operator<<(std::ostream& os, const ColumnWiseMatrix<ms, md>& buffer);
@@ -97,7 +97,20 @@ namespace cl
 
 		static ColumnWiseMatrix KroneckerProduct(const Vector<memorySpace, mathDomain>& lhs, const Vector<memorySpace, mathDomain>& rhs, const double alpha = 1.0);
 		static void KroneckerProduct(ColumnWiseMatrix& out, const Vector<memorySpace, mathDomain>& lhs, const Vector<memorySpace, mathDomain>& rhs, const double alpha = 1.0);
-
+		
+		/**
+* y = alpha * A * x + beta * y
+*/
+		Vector<memorySpace, mathDomain> RowWiseSum() const;
+		/**
+		* Same version as above, but gives the possibility of reusing the output buffer
+		*/
+		void RowWiseSum(Vector<memorySpace, mathDomain>& out) const;
+		/**
+		* Same version as above, but gives the possibility of reusing the output buffer and the cache needed to do the actual sum
+		*/
+		void RowWiseSum(Vector<memorySpace, mathDomain>& out, Vector<memorySpace, mathDomain>& cache) const;
+		
 		/*
 		* A = alpha * B + beta * A
 		*/
@@ -160,10 +173,10 @@ namespace cl
 	ColumnWiseMatrix<ms, md> LinSpace(const typename Traits<md>::stdType x0, const typename Traits<md>::stdType x1, const unsigned nRows, const unsigned nCols);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	ColumnWiseMatrix<ms, md> RandomUniform(const unsigned nRows, const unsigned nCols, const unsigned seed = 1234);
+	ColumnWiseMatrix<ms, md> RandomUniform(const unsigned nRows, const unsigned nCols, const unsigned seed);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	ColumnWiseMatrix<ms, md> RandomGaussian(const unsigned nRows, const unsigned nCols, const unsigned seed = 1234);
+	ColumnWiseMatrix<ms, md> RandomGaussian(const unsigned nRows, const unsigned nCols, const unsigned seed);
 	
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	void RandomShuffleColumns(ColumnWiseMatrix<ms, md>& v, const unsigned seed = 1234);
@@ -178,13 +191,13 @@ namespace cl
 	std::ostream& MatrixToOutputStream(const ColumnWiseMatrix<ms, md>& mat, std::ostream& os);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	void MatrixToBinaryFile(const ColumnWiseMatrix<ms, md>& vec, const std::string& fileName, const std::string mode = "w");
+	void MatrixToBinaryFile(const ColumnWiseMatrix<ms, md>& vec, const std::string& fileName, const bool compressed = false, const std::string mode = "w");
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	ColumnWiseMatrix<ms, md> MatrixFromInputStream(std::istream& is);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	ColumnWiseMatrix<ms, md> MatrixFromBinaryFile(const std::string& fileName, const bool useMemoryMapping = false);
+	ColumnWiseMatrix<ms, md> MatrixFromBinaryFile(const std::string& fileName, const bool compressed = false, const bool useMemoryMapping = false);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	ColumnWiseMatrix<ms, md> Add(const ColumnWiseMatrix<ms, md>& lhs, const ColumnWiseMatrix<ms, md>& rhs, const double alpha = 1.0);

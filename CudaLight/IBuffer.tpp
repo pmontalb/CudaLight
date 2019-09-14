@@ -492,19 +492,25 @@ namespace cl
 	}
 
 	template<typename T>
-	static void VectorToBinaryFile(const std::vector<T>& vec, const std::string& fileName, const std::string mode)
+	static void VectorToBinaryFile(const std::vector<T>& vec, const std::string& fileName,  const bool compressed, const std::string mode)
 	{
-		npypp::Save(fileName, vec, { vec.size() }, mode);
+		if (!compressed)
+			npypp::Save(fileName, vec, { vec.size() }, mode);
+		else
+			npypp::SaveCompressed(fileName, vec, { vec.size() }, mode);
 	}
 
 	template<typename T>
-	static void VectorFromBinaryFile(std::vector<T>& vec, const std::string& fileName, const bool useMemoryMapping)
+	static void VectorFromBinaryFile(std::vector<T>& vec, const std::string& fileName, const bool compressed, const bool useMemoryMapping)
 	{
-		vec = npypp::Load<T>(fileName, useMemoryMapping);
+		if (!compressed)
+			vec = npypp::Load<T>(fileName, useMemoryMapping);
+		else
+			vec = npypp::LoadCompressed<T>(fileName).begin()->second;
 	}
 
 	template<typename T>
-	static void MatrixToBinaryFile(const std::vector<T>& mat, const unsigned nRows, const unsigned nCols, const std::string& fileName, const std::string mode)
+	static void MatrixToBinaryFile(const std::vector<T>& mat, const unsigned nRows, const unsigned nCols, const std::string& fileName,  const bool compressed, const std::string mode)
 	{
 		std::vector<T> matTranspose(mat.size());
 		for (size_t i = 0; i < nRows; ++i)
@@ -512,13 +518,18 @@ namespace cl
 			for (size_t j = 0; j < nCols; ++j)
 				matTranspose[i + j * nRows] = mat[j + i * nCols];
 		}
-		npypp::Save(fileName, matTranspose, { static_cast<size_t>(nCols), static_cast<size_t>(nRows) }, mode);
+		
+		if (!compressed)
+			npypp::Save(fileName, matTranspose, { static_cast<size_t>(nCols), static_cast<size_t>(nRows) }, mode);
+		else
+			npypp::SaveCompressed(fileName, matTranspose, { static_cast<size_t>(nCols), static_cast<size_t>(nRows) }, mode);
 	}
 
 	template<typename T>
-	static void MatrixFromBinaryFile(std::vector<T>& mat, unsigned& nRows, unsigned& nCols, const std::string& fileName, const bool useMemoryMapping)
+	static void MatrixFromBinaryFile(std::vector<T>& mat, unsigned& nRows, unsigned& nCols, const std::string& fileName, const bool compressed, const bool useMemoryMapping)
 	{
-		const auto& fullExtract = npypp::LoadFull<T>(fileName, useMemoryMapping);
+		const auto& fullExtract = !compressed ? npypp::LoadFull<T>(fileName, useMemoryMapping) : npypp::LoadCompressedFull<T>(fileName).begin()->second;
+		
 		assert(fullExtract.shape.size() == 2);
 		nRows = static_cast<unsigned>(fullExtract.shape[0]);
 		nCols = static_cast<unsigned>(fullExtract.shape[1]);

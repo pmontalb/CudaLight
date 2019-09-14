@@ -75,9 +75,9 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void Vector<ms, md>::ToBinaryFile(const std::string& fileName, const std::string mode) const
+	void Vector<ms, md>::ToBinaryFile(const std::string& fileName, const bool compressed, const std::string mode) const
 	{
-		cl::VectorToBinaryFile(this->Get(), fileName, mode);
+		cl::VectorToBinaryFile(this->Get(), fileName, compressed, mode);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -193,10 +193,10 @@ template<MemorySpace ms, MathDomain md>
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void VectorToBinaryFile(const Vector<ms, md>& vec, const std::string& fileName, const std::string mode)
+	void VectorToBinaryFile(const Vector<ms, md>& vec, const std::string& fileName, const bool compressed, const std::string mode)
 	{
 		const auto& _vec = vec.Get();
-		cl::VectorToBinaryFile(_vec, fileName, mode);
+		cl::VectorToBinaryFile(_vec, fileName, compressed, mode);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -212,10 +212,10 @@ template<MemorySpace ms, MathDomain md>
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	Vector<ms, md> VectorFromBinaryFile(const std::string& fileName, const bool useMemoryMapping)
+	Vector<ms, md> VectorFromBinaryFile(const std::string& fileName, const bool compressed, const bool useMemoryMapping)
 	{
-		std::vector<typename Vector<ms, md>::stdType> _vec;
-		cl::VectorFromBinaryFile(_vec, fileName, useMemoryMapping);
+		std::vector<typename Vector<ms, md>::stdType> _vec {};
+		cl::VectorFromBinaryFile(_vec, fileName, compressed, useMemoryMapping);
 
 		Vector<ms, md> ret(static_cast<unsigned>(_vec.size()));
 		ret.ReadFrom(_vec);

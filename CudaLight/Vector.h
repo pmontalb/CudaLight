@@ -46,7 +46,7 @@ namespace cl
 
 		void Print(const std::string& label = "") const override final;
 		std::ostream& ToOutputStream(std::ostream& os) const override final;
-		virtual void ToBinaryFile(const std::string& fileName, const std::string mode = "w") const override final;
+		virtual void ToBinaryFile(const std::string& fileName, const bool compressed = false, const std::string mode = "w") const override final;
 
 		template<MemorySpace ms, MathDomain md>
 		friend std::ostream& operator<<(std::ostream& os, const Vector<ms, md>& buffer);
@@ -88,17 +88,17 @@ namespace cl
 		MemoryBuffer _buffer;
 	};
 
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	template<MemorySpace ms, MathDomain md>
 	Vector<ms, md> Copy(const Vector<ms, md>& source);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	Vector<ms, md> LinSpace(const typename Traits<md>::stdType x0, const typename Traits<md>::stdType x1, const unsigned size);
 	
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Vector<ms, md> RandomUniform(const unsigned size, const unsigned seed = 1234);
+	Vector<ms, md> RandomUniform(const unsigned size, const unsigned seed);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Vector<ms, md> RandomGaussian(const unsigned size, const unsigned seed = 1234);
+	Vector<ms, md> RandomGaussian(const unsigned size, const unsigned seed);
 	
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	void RandomShuffle(Vector<ms, md>& v, const unsigned seed = 1234);
@@ -113,13 +113,13 @@ namespace cl
 	std::ostream& VectorToOutputStream(const Vector<ms, md>& vec, std::ostream& os);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	void VectorToBinaryFile(const Vector<ms, md>& vec, const std::string& fileName, const std::string mode = "w");
+	void VectorToBinaryFile(const Vector<ms, md>& vec, const std::string& fileName, const bool compressed = false, const std::string mode = "w");
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	Vector<ms, md> VectorFromInputStream(std::istream& is);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Vector<ms, md> VectorFromBinaryFile(const std::string& fileName, const bool useMemoryMapping = false);
+	Vector<ms, md> VectorFromBinaryFile(const std::string& fileName, const bool compressed = false, const bool useMemoryMapping = false);
 	
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	Vector<ms, md> Add(const Vector<ms, md>& lhs, const Vector<ms, md>& rhs, const double alpha = 1.0);

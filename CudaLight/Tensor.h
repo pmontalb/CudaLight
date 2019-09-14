@@ -44,7 +44,7 @@ namespace cl
 
 		void Print(const std::string& label = "") const override final;
 		std::ostream& ToOutputStream(std::ostream&) const override final { throw std::logic_error("Not Implemented"); };
-		void ToBinaryFile(const std::string&, const std::string) const override final { throw std::logic_error("Not Implemented"); };
+		void ToBinaryFile(const std::string&, const bool, const std::string) const override final { throw std::logic_error("Not Implemented"); };
 
 		virtual ~Tensor() = default;
 
@@ -61,6 +61,10 @@ namespace cl
 		Tensor operator %(const Tensor& rhs) const;
 
 		Tensor Add(const Tensor& rhs, const double alpha = 1.0) const;
+		
+		ColumnWiseMatrix<memorySpace, mathDomain> CubeWiseSum() const;
+		void CubeWiseSum(ColumnWiseMatrix<memorySpace, mathDomain>& out) const;
+		void CubeWiseSum(ColumnWiseMatrix<memorySpace, mathDomain>& out, Tensor<memorySpace, mathDomain>& cacheReshape, Vector<memorySpace, mathDomain>& cacheOnes) const;
 
 		#pragma endregion
 
@@ -81,10 +85,10 @@ namespace cl
 	Tensor<ms, md> LinSpace(const typename Traits<md>::stdType x0, const typename Traits<md>::stdType x1, const unsigned nRows, const unsigned nCols, const unsigned nMatrices);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Tensor<ms, md> RandomUniform(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const unsigned seed = 1234);
+	Tensor<ms, md> RandomUniform(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const unsigned seed);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Tensor<ms, md> RandomGaussian(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const unsigned seed = 1234);
+	Tensor<ms, md> RandomGaussian(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const unsigned seed);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	void Print(const Tensor<ms, md>& vec, const std::string& label = "");
