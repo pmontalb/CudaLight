@@ -198,6 +198,7 @@ __CREATE_FUNCTION_1_ARG(Eye, CuBlasKernelExceptionFactory, MemoryTile, A);
 __CREATE_FUNCTION_3_ARG(Solve, CuBlasKernelExceptionFactory, const MemoryTile, A, MemoryTile, B, const MatrixOperation, aOperation);
 __CREATE_FUNCTION_2_ARG(Invert, CuBlasKernelExceptionFactory, MemoryTile, A, const MatrixOperation, aOperation);
 __CREATE_FUNCTION_4_ARG(KroneckerProduct, CuBlasKernelExceptionFactory, MemoryTile, A, const MemoryBuffer, x, const MemoryBuffer, y, const double, alpha);
+__CREATE_FUNCTION_4_ARG(BatchedTransposedKroneckerProduct, CuBlasKernelExceptionFactory, MemoryCube, T, const MemoryTile, x, const MemoryTile, y, const double, alpha);
 __CREATE_FUNCTION_3_ARG(RowWiseSum, CuBlasKernelExceptionFactory, MemoryBuffer, x, const MemoryTile, A, MemoryBuffer, cache);
 __CREATE_FUNCTION_4_ARG(CubeWiseSum, CuBlasKernelExceptionFactory, MemoryTile, A, const MemoryCube, T, MemoryCube, cacheReshape, MemoryBuffer, cacheOnes);
 __CREATE_FUNCTION_2_ARG(ArgAbsMin, CuBlasKernelExceptionFactory, int&, argMin, const MemoryBuffer, x);

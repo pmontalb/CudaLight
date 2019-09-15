@@ -305,6 +305,40 @@ namespace clt
 		}
 	}
 	
+	TEST_F(CuBlasTests, BatchedKroneckerProduct)
+	{
+		size_t nCubes = 113;
+		
+		cl::mat u(64, nCubes);
+		u.RandomUniform();
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _u = u.Get();
+		
+		cl::mat v(128, nCubes);
+		v.RandomGaussian();
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _v = v.Get();
+		
+		cl::ten A = cl::ten::KroneckerProduct(u, v, 2.0);
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _A = A.Get();
+		ASSERT_EQ(A.nRows(), u.nRows());
+		ASSERT_EQ(A.nCols(), v.nRows());
+		ASSERT_EQ(A.nMatrices(), nCubes);
+		
+		for (size_t k = 0; k < nCubes; ++k)
+		{
+			for (size_t i = 0; i < A.nRows(); ++i)
+			{
+				for (size_t j = 0; j < A.nCols(); ++j)
+				{
+					double expected = 2.0 * _u[i + k * u.nRows()] * _v[j + k * v.nRows()];
+					ASSERT_NEAR(_A[i + A.nRows() * j + A.nRows() * A.nCols() * k], expected, 5e-5) << "(" << i << ", " << j << ", " << k << ")";
+				}
+			}
+		}
+	}
+	
 	TEST_F(CuBlasTests, ColumnWiseAbsoluteMinMax)
 	{
 		cl::mat A = cl::LinSpace(-1.0f, 1.0f, 128);

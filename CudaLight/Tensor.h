@@ -65,7 +65,11 @@ namespace cl
 		ColumnWiseMatrix<memorySpace, mathDomain> CubeWiseSum() const;
 		void CubeWiseSum(ColumnWiseMatrix<memorySpace, mathDomain>& out) const;
 		void CubeWiseSum(ColumnWiseMatrix<memorySpace, mathDomain>& out, Tensor<memorySpace, mathDomain>& cacheReshape, Vector<memorySpace, mathDomain>& cacheOnes) const;
-
+		
+		// NB: this computes KroneckerProduct(lhs->columns[i], rhs->columns[i]) and stores the result in this->matrices[i], so we're transposing the cubes!
+		static Tensor KroneckerProduct(const ColumnWiseMatrix<memorySpace, mathDomain>& lhs, const ColumnWiseMatrix<memorySpace, mathDomain>& rhs, const double alpha = 1.0);
+		static void KroneckerProduct(Tensor& out, const ColumnWiseMatrix<memorySpace, mathDomain>& lhs, const ColumnWiseMatrix<memorySpace, mathDomain>& rhs, const double alpha = 1.0);
+		
 		#pragma endregion
 
 		const MemoryBuffer& GetBuffer() const noexcept override final { return _buffer; }

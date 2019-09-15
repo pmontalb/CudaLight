@@ -207,8 +207,32 @@ namespace cl
 	{
 		dm::detail::CubeWiseSum(out.GetTile(), _buffer, cacheReshape.GetCube(), cacheOnes.GetBuffer());
 	}
+
+	template<MemorySpace ms, MathDomain md>
+	Tensor<ms, md> Tensor<ms, md>::KroneckerProduct(const ColumnWiseMatrix<ms, md>& lhs, const ColumnWiseMatrix<ms, md>& rhs, const double alpha)
+	{
+		Tensor<ms, md> ret(lhs.nRows(), rhs.nRows(), rhs.nCols(), 0.0);
+		KroneckerProduct(ret, lhs, rhs, alpha);
+		
+		return ret;
+	}
 	
-	#pragma endregion
+	template<MemorySpace ms, MathDomain md>
+	void Tensor<ms, md>::KroneckerProduct(Tensor<ms, md>& out, const ColumnWiseMatrix<ms, md>& lhs, const ColumnWiseMatrix<ms, md>& rhs, const double alpha)
+	{
+		//#define DO_NOT_USE_STREAMS
+		#ifdef DO_NOT_USE_STREAMS
+			for (size_t k = 0; k < out.nMatrices(); ++k)
+			{
+				dm::detail::KroneckerProduct(out.matrices[k]->GetTile(), lhs.columns[k]->GetBuffer(), rhs.columns[k]->GetBuffer(), alpha);
+			}
+		#else
+			dm::detail::BatchedTransposedKroneckerProduct(out.GetCube(), lhs.GetTile(), rhs.GetTile(), alpha);
+		#endif
+	}
+
+
+#pragma endregion
 
 	template<MemorySpace ms, MathDomain md>
 	Tensor<ms, md> Copy(const Tensor<ms, md>& source)
