@@ -87,6 +87,15 @@ namespace cl
 		void Multiply(ColumnWiseMatrix& out, const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const MatrixOperation rhsOperation = MatrixOperation::None, const double alpha = 1.0, const double beta = 0.0) const;
 		
 		/**
+		* A = alpha * B * C + beta * A
+		*/
+		ColumnWiseMatrix SubMultiply(const ColumnWiseMatrix& rhs, const size_t nRows, const size_t nCols, const size_t nColsRhs, const MatrixOperation lhsOperation = MatrixOperation::None, const MatrixOperation rhsOperation = MatrixOperation::None, const double alpha = 1.0, const double beta = 0.0) const;
+		/**
+		 * Same version as above, but gives the possibility of reusing the output buffer
+		 */
+		void SubMultiply(ColumnWiseMatrix& out, const ColumnWiseMatrix& rhs, const size_t nRows, const size_t nCols, const size_t nColsRhs, const MatrixOperation lhsOperation = MatrixOperation::None, const MatrixOperation rhsOperation = MatrixOperation::None, const double alpha = 1.0, const double beta = 0.0) const;
+		
+		/**
 		* y = alpha * A * x + beta * y
 		*/
 		Vector<memorySpace, mathDomain> Dot(const Vector<memorySpace, mathDomain>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0, const double beta = 0.0) const;

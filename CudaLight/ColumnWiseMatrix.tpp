@@ -249,15 +249,30 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::Multiply(ColumnWiseMatrix& out, const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation, const MatrixOperation rhsOperation, const double alpha, const double beta) const
 	{
-		if (lhsOperation == MatrixOperation::None)
-			assert(nCols() == rhs.nRows());
-		else
-			assert(nRows() == rhs.nCols());
-
-		dm::detail::Multiply(out._buffer, this->_buffer, rhs._buffer, this->nRows(), rhs.nRows(), lhsOperation, rhsOperation, alpha, beta);
+		this->SubMultiply(out, rhs, this->nRows(), this->nCols(), rhs.nCols(), lhsOperation, rhsOperation, alpha, beta);
+	}
+	
+	template<MemorySpace ms, MathDomain md>
+	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::SubMultiply(const ColumnWiseMatrix& rhs, const size_t nRows, const size_t nCols, const size_t nColsRhs, const MatrixOperation lhsOperation, const MatrixOperation rhsOperation, const double alpha, const double beta) const
+	{
+		ColumnWiseMatrix ret(this->nRows(), rhs.nCols(), 0.0);
+		SubMultiply(ret, rhs, nRows, nCols, nColsRhs, lhsOperation, rhsOperation, alpha, beta);
+		
+		return ret;
 	}
 
 	template<MemorySpace ms, MathDomain md>
+	void ColumnWiseMatrix<ms, md>::SubMultiply(ColumnWiseMatrix& out, const ColumnWiseMatrix& rhs, const size_t nRows, const size_t nCols, const size_t nColsRhs, const MatrixOperation lhsOperation, const MatrixOperation rhsOperation, const double alpha, const double beta) const
+	{
+		if (lhsOperation == MatrixOperation::None)
+			assert(this->nCols() == rhs.nRows());
+		else
+			assert(this->nRows() == rhs.nCols());
+		
+		dm::detail::SubMultiply(out._buffer, this->_buffer, rhs._buffer, out.nRows(), this->nRows(), rhs.nRows(), nRows, nCols, nColsRhs, lhsOperation, rhsOperation, alpha, beta);
+	}
+
+template<MemorySpace ms, MathDomain md>
 	Vector<ms, md> ColumnWiseMatrix<ms, md>::Dot(const Vector<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha, const double beta) const
 	{
 		Vector<ms, md> ret(rhs.size());

@@ -153,6 +153,65 @@
 		}\
 	}
 
+#define __CREATE_FUNCTION_10_ARG(NAME, EXCEPTION, TYPE0, ARG0, TYPE1, ARG1, TYPE2, ARG2, TYPE3, ARG3, TYPE4, ARG4, TYPE5, ARG5, TYPE6, ARG6, TYPE7, ARG7, TYPE8, ARG8, TYPE9, ARG9)\
+	EXTERN_C int _##NAME(TYPE0 ARG0, TYPE1 ARG1, TYPE2 ARG2, TYPE3 ARG3, TYPE4 ARG4, TYPE5 ARG5, TYPE6 ARG6, TYPE7 ARG7, TYPE8 ARG8, TYPE9 ARG9);\
+	namespace dm\
+	{\
+		namespace detail\
+		{\
+			void NAME(TYPE0 ARG0, TYPE1 ARG1, TYPE2 ARG2, TYPE3 ARG3, TYPE4 ARG4, TYPE5 ARG5, TYPE6 ARG6, TYPE7 ARG7, TYPE8 ARG8, TYPE9 ARG9)\
+			{\
+				int err = _##NAME(ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9);\
+				if (err != 0)\
+					EXCEPTION::ThrowException(#NAME, err);\
+			}\
+		}\
+	}
+
+#define __CREATE_FUNCTION_11_ARG(NAME, EXCEPTION, TYPE0, ARG0, TYPE1, ARG1, TYPE2, ARG2, TYPE3, ARG3, TYPE4, ARG4, TYPE5, ARG5, TYPE6, ARG6, TYPE7, ARG7, TYPE8, ARG8, TYPE9, ARG9, TYPE10, ARG10)\
+	EXTERN_C int _##NAME(TYPE0 ARG0, TYPE1 ARG1, TYPE2 ARG2, TYPE3 ARG3, TYPE4 ARG4, TYPE5 ARG5, TYPE6 ARG6, TYPE7 ARG7, TYPE8 ARG8, TYPE9 ARG9, TYPE10 ARG10);\
+	namespace dm\
+	{\
+		namespace detail\
+		{\
+			void NAME(TYPE0 ARG0, TYPE1 ARG1, TYPE2 ARG2, TYPE3 ARG3, TYPE4 ARG4, TYPE5 ARG5, TYPE6 ARG6, TYPE7 ARG7, TYPE8 ARG8, TYPE9 ARG9, TYPE10 ARG10)\
+			{\
+				int err = _##NAME(ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10);\
+				if (err != 0)\
+					EXCEPTION::ThrowException(#NAME, err);\
+			}\
+		}\
+	}
+
+#define __CREATE_FUNCTION_12_ARG(NAME, EXCEPTION, TYPE0, ARG0, TYPE1, ARG1, TYPE2, ARG2, TYPE3, ARG3, TYPE4, ARG4, TYPE5, ARG5, TYPE6, ARG6, TYPE7, ARG7, TYPE8, ARG8, TYPE9, ARG9, TYPE10, ARG10, TYPE11, ARG11)\
+	EXTERN_C int _##NAME(TYPE0 ARG0, TYPE1 ARG1, TYPE2 ARG2, TYPE3 ARG3, TYPE4 ARG4, TYPE5 ARG5, TYPE6 ARG6, TYPE7 ARG7, TYPE8 ARG8, TYPE9 ARG9, TYPE10 ARG10, TYPE11 ARG11);\
+	namespace dm\
+	{\
+		namespace detail\
+		{\
+			void NAME(TYPE0 ARG0, TYPE1 ARG1, TYPE2 ARG2, TYPE3 ARG3, TYPE4 ARG4, TYPE5 ARG5, TYPE6 ARG6, TYPE7 ARG7, TYPE8 ARG8, TYPE9 ARG9, TYPE10 ARG10, TYPE11 ARG11)\
+			{\
+				int err = _##NAME(ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11);\
+				if (err != 0)\
+					EXCEPTION::ThrowException(#NAME, err);\
+			}\
+		}\
+	}
+
+#define __CREATE_FUNCTION_13_ARG(NAME, EXCEPTION, TYPE0, ARG0, TYPE1, ARG1, TYPE2, ARG2, TYPE3, ARG3, TYPE4, ARG4, TYPE5, ARG5, TYPE6, ARG6, TYPE7, ARG7, TYPE8, ARG8, TYPE9, ARG9, TYPE10, ARG10, TYPE11, ARG11, TYPE12, ARG12)\
+	EXTERN_C int _##NAME(TYPE0 ARG0, TYPE1 ARG1, TYPE2 ARG2, TYPE3 ARG3, TYPE4 ARG4, TYPE5 ARG5, TYPE6 ARG6, TYPE7 ARG7, TYPE8 ARG8, TYPE9 ARG9, TYPE10 ARG10, TYPE11 ARG11, TYPE12 ARG12);\
+	namespace dm\
+	{\
+		namespace detail\
+		{\
+			void NAME(TYPE0 ARG0, TYPE1 ARG1, TYPE2 ARG2, TYPE3 ARG3, TYPE4 ARG4, TYPE5 ARG5, TYPE6 ARG6, TYPE7 ARG7, TYPE8 ARG8, TYPE9 ARG9, TYPE10 ARG10, TYPE11 ARG11, TYPE12 ARG12)\
+			{\
+				int err = _##NAME(ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12);\
+				if (err != 0)\
+					EXCEPTION::ThrowException(#NAME, err);\
+			}\
+		}\
+	}
 #pragma endregion
 
 // Device
@@ -192,6 +251,7 @@ __CREATE_FUNCTION_2_ARG(SubtractEqual, CuBlasKernelExceptionFactory, MemoryBuffe
 __CREATE_FUNCTION_2_ARG(Scale, CuBlasKernelExceptionFactory, MemoryBuffer, z, const double, alpha);
 __CREATE_FUNCTION_4_ARG(ElementwiseProduct, CuBlasKernelExceptionFactory, MemoryBuffer, z, const MemoryBuffer, x, const MemoryBuffer, y, const double, alpha);
 __CREATE_FUNCTION_9_ARG(Multiply, CuBlasKernelExceptionFactory, MemoryTile, A, const MemoryTile, B, const MemoryTile, C, const unsigned, leadingDimensionB, const unsigned, leadingDimensionC, const MatrixOperation, bOperation, const MatrixOperation, cOperation, const double, alpha, const double, beta);
+__CREATE_FUNCTION_13_ARG(SubMultiply, CuBlasKernelExceptionFactory, MemoryTile, A, const MemoryTile, B, const MemoryTile, C, const unsigned, leadingDimensionA, const unsigned, leadingDimensionB, const unsigned, leadingDimensionC, const unsigned, nRowsB, const unsigned, nColsB, const unsigned, nColsC, const MatrixOperation, bOperation, const MatrixOperation, cOperation, const double, alpha, const double, beta);
 __CREATE_FUNCTION_6_ARG(Dot, CuBlasKernelExceptionFactory, MemoryBuffer, y, const MemoryTile, A, const MemoryBuffer, x, const MatrixOperation, aOperation, const double, alpha, const double, beta);
 __CREATE_FUNCTION_1_ARG(CumulativeRowSum, CuBlasKernelExceptionFactory, MemoryTile, A);
 __CREATE_FUNCTION_1_ARG(Eye, CuBlasKernelExceptionFactory, MemoryTile, A);

@@ -220,15 +220,25 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void Tensor<ms, md>::KroneckerProduct(Tensor<ms, md>& out, const ColumnWiseMatrix<ms, md>& lhs, const ColumnWiseMatrix<ms, md>& rhs, const double alpha)
 	{
+		assert(out.nMatrices() == lhs.nCols());
+		assert(out.nMatrices() == rhs.nCols());
+		
 		//#define DO_NOT_USE_STREAMS
+		//#define USE_EXTENDED_KRONECKER_PRODUCT
 		#ifdef DO_NOT_USE_STREAMS
 			for (size_t k = 0; k < out.nMatrices(); ++k)
-			{
 				dm::detail::KroneckerProduct(out.matrices[k]->GetTile(), lhs.columns[k]->GetBuffer(), rhs.columns[k]->GetBuffer(), alpha);
-			}
 		#else
-			dm::detail::BatchedTransposedKroneckerProduct(out.GetCube(), lhs.GetTile(), rhs.GetTile(), alpha);
+			#ifdef USE_EXTENDED_KRONECKER_PRODUCT
+			    MemoryTile flattenedOut(out.GetBuffer().pointer, out.nRows() * out.nMatrices(), out.nCols(), out.GetBuffer().memorySpace, out.GetBuffer().mathDomain);
+				MemoryBuffer flattenedLhs(lhs.GetBuffer().pointer, lhs.nRows() * lhs.nCols(), lhs.GetBuffer().memorySpace, lhs.GetBuffer().mathDomain);
+				MemoryBuffer flattenedRhs(rhs.GetBuffer().pointer, rhs.nRows() * rhs.nCols(), rhs.GetBuffer().memorySpace, rhs.GetBuffer().mathDomain);
+				dm::detail::KroneckerProduct(flattenedOut, flattenedLhs, flattenedRhs, alpha);
+			#else
+				dm::detail::BatchedTransposedKroneckerProduct(out.GetCube(), lhs.GetTile(), rhs.GetTile(), alpha);
+			#endif
 		#endif
+		
 	}
 
 

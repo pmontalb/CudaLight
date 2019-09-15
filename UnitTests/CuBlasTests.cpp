@@ -157,6 +157,48 @@ namespace clt
 			}
 		}
 	}
+	
+	TEST_F(CuBlasTests, SubMultiply)
+	{
+		cl::mat m1(10, 10, 1.2345f);
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _m1 = m1.Get();
+		
+		cl::mat m2(10, 10, 9.8765f);
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _m2 = m2.Get();
+		
+		cl::mat m3(m1.nRows(), m2.nCols(), -123456789);
+		auto _initialM3 = m3.Get();
+		
+		cl::mat m4 = m1 * m2;
+		auto _m4 = m4.Get();
+		
+		const size_t nRowsM1 = 3;
+		const size_t nColsM1 = 4;
+		const size_t nColsM2 = 5;
+		m1.SubMultiply(m3, m2, nRowsM1, nColsM1, nColsM2);
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _m3 = m3.Get();
+		
+		for (size_t i = 0; i < nRowsM1; ++i)
+		{
+			for (size_t j = 0; j < nColsM2; ++j)
+			{
+				double m1m2 = 0.0;
+				for (size_t k = 0; k < nColsM1; ++k)
+					m1m2 += _m1[i + k * m1.nRows()] * _m2[k + j * m2.nRows()];
+
+				ASSERT_NEAR(m1m2, _m3[i + j * m1.nRows()], 5e-5);
+			}
+		}
+		
+		for (size_t i = nRowsM1; i < m1.nRows(); ++i)
+		{
+			for (size_t j = nColsM2; j < m1.nCols(); ++j)
+				ASSERT_NEAR(_initialM3[i + j * m1.nRows()], _m3[i + j * m1.nRows()], 5e-5);
+		}
+	}
 
 	TEST_F(CuBlasTests, Dot)
 	{

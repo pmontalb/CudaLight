@@ -94,6 +94,41 @@
 		}\
 	}
 
+#define __CREATE_FUNCTION_10_ARG(NAME, TYPE0, ARG0, TYPE1, ARG1, TYPE2, ARG2, TYPE3, ARG3, TYPE4, ARG4, TYPE5, ARG5, TYPE6, ARG6, TYPE7, ARG7, TYPE8, ARG8, TYPE9, ARG9)\
+	namespace dm\
+	{\
+		namespace detail\
+		{\
+			void NAME(TYPE0 ARG0, TYPE1 ARG1, TYPE2 ARG2, TYPE3 ARG3, TYPE4 ARG4, TYPE5 ARG5, TYPE6 ARG6, TYPE7 ARG7, TYPE8 ARG8, TYPE9 ARG9);\
+		}\
+	}
+
+#define __CREATE_FUNCTION_11_ARG(NAME, TYPE0, ARG0, TYPE1, ARG1, TYPE2, ARG2, TYPE3, ARG3, TYPE4, ARG4, TYPE5, ARG5, TYPE6, ARG6, TYPE7, ARG7, TYPE8, ARG8, TYPE9, ARG9, TYPE10, ARG10)\
+	namespace dm\
+	{\
+		namespace detail\
+		{\
+			void NAME(TYPE0 ARG0, TYPE1 ARG1, TYPE2 ARG2, TYPE3 ARG3, TYPE4 ARG4, TYPE5 ARG5, TYPE6 ARG6, TYPE7 ARG7, TYPE8 ARG8, TYPE9 ARG9, TYPE10 ARG10);\
+		}\
+	}
+
+#define __CREATE_FUNCTION_12_ARG(NAME, TYPE0, ARG0, TYPE1, ARG1, TYPE2, ARG2, TYPE3, ARG3, TYPE4, ARG4, TYPE5, ARG5, TYPE6, ARG6, TYPE7, ARG7, TYPE8, ARG8, TYPE9, ARG9, TYPE10, ARG10, TYPE11, ARG11)\
+	namespace dm\
+	{\
+		namespace detail\
+		{\
+			void NAME(TYPE0 ARG0, TYPE1 ARG1, TYPE2 ARG2, TYPE3 ARG3, TYPE4 ARG4, TYPE5 ARG5, TYPE6 ARG6, TYPE7 ARG7, TYPE8 ARG8, TYPE9 ARG9, TYPE10 ARG10, TYPE11 ARG11);\
+		}\
+	}
+
+#define __CREATE_FUNCTION_13_ARG(NAME, TYPE0, ARG0, TYPE1, ARG1, TYPE2, ARG2, TYPE3, ARG3, TYPE4, ARG4, TYPE5, ARG5, TYPE6, ARG6, TYPE7, ARG7, TYPE8, ARG8, TYPE9, ARG9, TYPE10, ARG10, TYPE11, ARG11, TYPE12, ARG12)\
+	namespace dm\
+	{\
+		namespace detail\
+		{\
+			void NAME(TYPE0 ARG0, TYPE1 ARG1, TYPE2 ARG2, TYPE3 ARG3, TYPE4 ARG4, TYPE5 ARG5, TYPE6 ARG6, TYPE7 ARG7, TYPE8 ARG8, TYPE9 ARG9, TYPE10 ARG10, TYPE11 ARG11, TYPE12 ARG12);\
+		}\
+	}
 #pragma endregion
 
 // Device
@@ -133,6 +168,7 @@ __CREATE_FUNCTION_2_ARG(SubtractEqual, MemoryBuffer, z, const MemoryBuffer, x);
 __CREATE_FUNCTION_2_ARG(Scale, MemoryBuffer, z, const double, alpha);
 __CREATE_FUNCTION_4_ARG(ElementwiseProduct, MemoryBuffer, z, const MemoryBuffer, x, const MemoryBuffer, y, const double, alpha = 1.0);
 __CREATE_FUNCTION_9_ARG(Multiply, MemoryTile, A, const MemoryTile, B, const MemoryTile, C, const unsigned, leadingDimensionB, const unsigned, leadingDimensionC, const MatrixOperation, bOperation = MatrixOperation::None, const MatrixOperation, cOperation = MatrixOperation::None, const double, alpha = 1.0, const double, beta = 0.0);
+__CREATE_FUNCTION_13_ARG(SubMultiply, MemoryTile, A, const MemoryTile, B, const MemoryTile, C, const unsigned, leadingDimensionA, const unsigned, leadingDimensionB, const unsigned, leadingDimensionC, const unsigned, nRowsB, const unsigned, nColsB, const unsigned, nColsC, const MatrixOperation, bOperation = MatrixOperation::None, const MatrixOperation, cOperation = MatrixOperation::None, const double, alpha = 1.0, const double, beta = 0.0);
 __CREATE_FUNCTION_6_ARG(Dot, MemoryBuffer, y, const MemoryTile, A, const MemoryBuffer, x, const MatrixOperation, aOperation = MatrixOperation::None, const double, alpha = 1.0, const double, beta = 0.0);
 __CREATE_FUNCTION_1_ARG(CumulativeRowSum, MemoryTile, A);
 __CREATE_FUNCTION_1_ARG(Eye, MemoryTile, A);
@@ -178,5 +214,9 @@ __CREATE_FUNCTION_4_ARG(MakeTriple, MemoryBuffer, v, const MemoryBuffer, x, cons
 #undef __CREATE_FUNCTION_7_ARG
 #undef __CREATE_FUNCTION_8_ARG
 #undef __CREATE_FUNCTION_9_ARG
+#undef __CREATE_FUNCTION_10_ARG
+#undef __CREATE_FUNCTION_11_ARG
+#undef __CREATE_FUNCTION_12_ARG
+#undef __CREATE_FUNCTION_13_ARG
 
 #pragma endregion
