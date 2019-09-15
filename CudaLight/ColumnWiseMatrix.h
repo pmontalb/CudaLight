@@ -89,11 +89,11 @@ namespace cl
 		/**
 		* A = alpha * B * C + beta * A
 		*/
-		ColumnWiseMatrix SubMultiply(const ColumnWiseMatrix& rhs, const size_t nRows, const size_t nCols, const size_t nColsRhs, const MatrixOperation lhsOperation = MatrixOperation::None, const MatrixOperation rhsOperation = MatrixOperation::None, const double alpha = 1.0, const double beta = 0.0) const;
+		ColumnWiseMatrix SubMultiply(const ColumnWiseMatrix& rhs, const size_t rowStart, const size_t colStart, const size_t nRows, const size_t nCols, const size_t rowRhsStart, const size_t colRhsStart, const size_t nColsRhs, const MatrixOperation lhsOperation = MatrixOperation::None, const MatrixOperation rhsOperation = MatrixOperation::None, const double alpha = 1.0, const double beta = 0.0) const;
 		/**
 		 * Same version as above, but gives the possibility of reusing the output buffer
 		 */
-		void SubMultiply(ColumnWiseMatrix& out, const ColumnWiseMatrix& rhs, const size_t nRows, const size_t nCols, const size_t nColsRhs, const MatrixOperation lhsOperation = MatrixOperation::None, const MatrixOperation rhsOperation = MatrixOperation::None, const double alpha = 1.0, const double beta = 0.0) const;
+		void SubMultiply(ColumnWiseMatrix& out, const ColumnWiseMatrix& rhs, const size_t rowStart, const size_t colStart, const size_t nRows, const size_t nCols, const size_t rowRhsStart, const size_t colRhsStart, const size_t nColsRhs, const MatrixOperation lhsOperation = MatrixOperation::None, const MatrixOperation rhsOperation = MatrixOperation::None, const double alpha = 1.0, const double beta = 0.0) const;
 		
 		/**
 		* y = alpha * A * x + beta * y

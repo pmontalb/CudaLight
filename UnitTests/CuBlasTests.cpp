@@ -174,30 +174,37 @@ namespace clt
 		cl::mat m4 = m1 * m2;
 		auto _m4 = m4.Get();
 		
+		const size_t rowStartM1 = 2;
 		const size_t nRowsM1 = 3;
+		
+		const size_t colStartM1 = 4;
 		const size_t nColsM1 = 4;
+		
+		const size_t rowStartM2 = 3;
+		const size_t colStartM2 = 3;
 		const size_t nColsM2 = 5;
-		m1.SubMultiply(m3, m2, nRowsM1, nColsM1, nColsM2);
+		m1.SubMultiply(m3, m2, rowStartM1, colStartM1, nRowsM1, nColsM1, rowStartM2, colStartM2, nColsM2);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _m3 = m3.Get();
 		
-		for (size_t i = 0; i < nRowsM1; ++i)
+		for (size_t i = rowStartM1; i < rowStartM1 + nRowsM1; ++i)
 		{
-			for (size_t j = 0; j < nColsM2; ++j)
+			for (size_t j = colStartM2; j < colStartM2 + nColsM2; ++j)
 			{
 				double m1m2 = 0.0;
 				for (size_t k = 0; k < nColsM1; ++k)
-					m1m2 += _m1[i + k * m1.nRows()] * _m2[k + j * m2.nRows()];
+					m1m2 += _m1[i + (k + colStartM1) * m1.nRows()] * _m2[(k + rowStartM2) + j * m2.nRows()];
 
-				ASSERT_NEAR(m1m2, _m3[i + j * m1.nRows()], 5e-5);
+				ASSERT_NEAR(m1m2, _m3[i + j * m1.nRows()], 5e-5) << "i=" << i << "; j=" << j << "; idx=" << i + j * m1.nRows();
 			}
 		}
 		
-		for (size_t i = nRowsM1; i < m1.nRows(); ++i)
-		{
-			for (size_t j = nColsM2; j < m1.nCols(); ++j)
+		for (size_t i = 0; i < rowStartM1; ++i)
+			for (size_t j = 0; j < colStartM2; ++j)
 				ASSERT_NEAR(_initialM3[i + j * m1.nRows()], _m3[i + j * m1.nRows()], 5e-5);
-		}
+		for (size_t i = rowStartM1 + nRowsM1; i < m1.nRows(); ++i)
+			for (size_t j = colStartM2 + nColsM2; j < m1.nCols(); ++j)
+				ASSERT_NEAR(_initialM3[i + j * m1.nRows()], _m3[i + j * m1.nRows()], 5e-5);
 	}
 
 	TEST_F(CuBlasTests, Dot)

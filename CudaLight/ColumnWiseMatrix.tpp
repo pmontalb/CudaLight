@@ -249,27 +249,47 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::Multiply(ColumnWiseMatrix& out, const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation, const MatrixOperation rhsOperation, const double alpha, const double beta) const
 	{
-		this->SubMultiply(out, rhs, this->nRows(), this->nCols(), rhs.nCols(), lhsOperation, rhsOperation, alpha, beta);
+		this->SubMultiply(out, rhs, 0, 0, this->nRows(), this->nCols(), 0, 0, rhs.nCols(), lhsOperation, rhsOperation, alpha, beta);
 	}
 	
 	template<MemorySpace ms, MathDomain md>
-	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::SubMultiply(const ColumnWiseMatrix& rhs, const size_t nRows, const size_t nCols, const size_t nColsRhs, const MatrixOperation lhsOperation, const MatrixOperation rhsOperation, const double alpha, const double beta) const
+	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::SubMultiply(const ColumnWiseMatrix& rhs, const size_t rowStart, const size_t colStart, const size_t nRows, const size_t nCols, const size_t rowRhsStart, const size_t colRhsStart, const size_t nColsRhs, const MatrixOperation lhsOperation, const MatrixOperation rhsOperation, const double alpha, const double beta) const
 	{
 		ColumnWiseMatrix ret(this->nRows(), rhs.nCols(), 0.0);
-		SubMultiply(ret, rhs, nRows, nCols, nColsRhs, lhsOperation, rhsOperation, alpha, beta);
+		SubMultiply(ret, rhs, rowStart, colStart, nRows, nCols, colRhsStart, nColsRhs, lhsOperation, rhsOperation, alpha, beta);
 		
 		return ret;
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void ColumnWiseMatrix<ms, md>::SubMultiply(ColumnWiseMatrix& out, const ColumnWiseMatrix& rhs, const size_t nRows, const size_t nCols, const size_t nColsRhs, const MatrixOperation lhsOperation, const MatrixOperation rhsOperation, const double alpha, const double beta) const
+	void ColumnWiseMatrix<ms, md>::SubMultiply(ColumnWiseMatrix& out, const ColumnWiseMatrix& rhs, const size_t rowStart, const size_t colStart, const size_t nRows, const size_t nCols, const size_t rowRhsStart, const size_t colRhsStart, const size_t nColsRhs, const MatrixOperation lhsOperation, const MatrixOperation rhsOperation, const double alpha, const double beta) const
 	{
 		if (lhsOperation == MatrixOperation::None)
 			assert(this->nCols() == rhs.nRows());
 		else
 			assert(this->nRows() == rhs.nCols());
 		
-		dm::detail::SubMultiply(out._buffer, this->_buffer, rhs._buffer, out.nRows(), this->nRows(), rhs.nRows(), nRows, nCols, nColsRhs, lhsOperation, rhsOperation, alpha, beta);
+		assert(rowStart <= this->nRows());
+		assert(nRows + rowStart <= this->nRows());
+		assert(colStart <= this->nCols());
+		assert(nCols + colStart <= this->nCols());
+		assert(colRhsStart <= rhs.nCols());
+		assert(colRhsStart + nColsRhs <= rhs.nCols());
+		
+		const size_t rowOffset = rowStart * this->_buffer.ElementarySize();
+		const size_t colOffset = colStart * this->nRows() * this->_buffer.ElementarySize();
+		const size_t rowRhsOffset = rowRhsStart * rhs.GetBuffer().ElementarySize();
+		const size_t colRhsOffset = colRhsStart * rhs.nRows() * rhs.GetBuffer().ElementarySize();
+		
+		MemoryTile shiftedOutBuffer = out._buffer;
+		shiftedOutBuffer.pointer += rowOffset + colRhsOffset;
+		
+		MemoryTile shiftedLhsBuffer = this->_buffer;
+		shiftedLhsBuffer.pointer += rowOffset + colOffset;
+		
+		MemoryTile shiftedRhsBuffer = rhs._buffer;
+		shiftedRhsBuffer.pointer += rowRhsOffset + colRhsOffset;
+		dm::detail::SubMultiply(shiftedOutBuffer, shiftedLhsBuffer, shiftedRhsBuffer, out.nRows(), this->nRows(), rhs.nRows(), nRows, nCols, nColsRhs, lhsOperation, rhsOperation, alpha, beta);
 	}
 
 template<MemorySpace ms, MathDomain md>
