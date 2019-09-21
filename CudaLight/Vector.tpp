@@ -54,7 +54,7 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void Vector<ms, md>::RandomShuffle(const unsigned seed) const
+	void Vector<ms, md>::RandomShuffle(const unsigned seed)
 	{
 		assert(_buffer.pointer != 0);
 		dm::detail::RandShuffle(_buffer, seed);
@@ -134,14 +134,14 @@ namespace cl
 	#pragma endregion
 
 	template<MemorySpace ms, MathDomain md>
-	Vector<ms, md> Copy(const Vector<ms, md>& source)
+	Vector<ms, md> Vector<ms, md>::Copy(const Vector<ms, md>& source)
 	{
 		Vector<ms, md> ret(source);
 		return ret;
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	Vector<ms, md> LinSpace(const typename Traits<md>::stdType x0, const typename Traits<md>::stdType x1, const unsigned size)
+	Vector<ms, md> Vector<ms, md>::LinSpace(const typename Traits<md>::stdType x0, const typename Traits<md>::stdType x1, const unsigned size)
 	{
 		Vector<ms, md> ret(size);
 		ret.LinSpace(x0, x1);
@@ -150,7 +150,7 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	Vector<ms, md> RandomUniform(const unsigned size, const unsigned seed)
+	Vector<ms, md> Vector<ms, md>::RandomUniform(const unsigned size, const unsigned seed)
 	{
 		Vector<ms, md> ret(size);
 		ret.RandomUniform(seed);
@@ -159,7 +159,7 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	Vector<ms, md> RandomGaussian(const unsigned size, const unsigned seed)
+	Vector<ms, md> Vector<ms, md>::RandomGaussian(const unsigned size, const unsigned seed)
 	{
 		Vector<ms, md> ret(size);
 		ret.RandomGaussian(seed);
@@ -168,39 +168,39 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void RandomShuffle(Vector<ms, md>& v, const unsigned seed)
+	void Vector<ms, md>::RandomShuffle(Vector<ms, md>& v, const unsigned seed)
 	{
 		v.RandomShuffle(seed);
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void RandomShufflePair(Vector<ms, md>& v1, Vector<ms, md>& v2, const unsigned seed)
+	void Vector<ms, md>::RandomShufflePair(Vector<ms, md>& v1, Vector<ms, md>& v2, const unsigned seed)
 	{
 		dm::detail::RandShufflePair(v1.GetBuffer(), v2.GetBuffer(), seed);
 	}
 	
-template<MemorySpace ms, MathDomain md>
-	void Print(const Vector<ms, md>& vec, const std::string& label)
+	template<MemorySpace ms, MathDomain md>
+	void Vector<ms, md>::Print(const Vector<ms, md>& vec, const std::string& label)
 	{
 		vec.Print(label);
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	std::ostream& VectorToOutputStream(const Vector<ms, md>& vec, std::ostream& os)
+	std::ostream& Vector<ms, md>::VectorToOutputStream(const Vector<ms, md>& vec, std::ostream& os)
 	{
 		os << cl::VectorToOutputStream(vec.Get(), os);
 		return os;
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void VectorToBinaryFile(const Vector<ms, md>& vec, const std::string& fileName, const bool compressed, const std::string mode)
+	void Vector<ms, md>::VectorToBinaryFile(const Vector<ms, md>& vec, const std::string& fileName, const bool compressed, const std::string mode)
 	{
 		const auto& _vec = vec.Get();
 		cl::VectorToBinaryFile(_vec, fileName, compressed, mode);
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	Vector<ms, md> VectorFromInputStream(std::istream& is)
+	Vector<ms, md> Vector<ms, md>::VectorFromInputStream(std::istream& is)
 	{
 		std::vector<typename Vector<ms, md>::stdType> _vec;
 		cl::VectorFromInputStream(_vec, is);
@@ -212,7 +212,7 @@ template<MemorySpace ms, MathDomain md>
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	Vector<ms, md> VectorFromBinaryFile(const std::string& fileName, const bool compressed, const bool useMemoryMapping)
+	Vector<ms, md> Vector<ms, md>::VectorFromBinaryFile(const std::string& fileName, const bool compressed, const bool useMemoryMapping)
 	{
 		std::vector<typename Vector<ms, md>::stdType> _vec {};
 		cl::VectorFromBinaryFile(_vec, fileName, compressed, useMemoryMapping);
@@ -224,19 +224,19 @@ template<MemorySpace ms, MathDomain md>
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	Vector<ms, md> Add(const Vector<ms, md>& lhs, const Vector<ms, md>& rhs, const double alpha)
+	Vector<ms, md> Vector<ms, md>::Add(const Vector<ms, md>& lhs, const Vector<ms, md>& rhs, const double alpha)
 	{
 		return lhs.Add(rhs, alpha);
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void Scale(Vector<ms, md>& lhs, const double alpha)
+	void Vector<ms, md>::Scale(Vector<ms, md>& lhs, const double alpha)
 	{
 		lhs.Scale(alpha);
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	Vector<ms, MathDomain::Float> MakePair(const Vector<ms, md>& x, const Vector<ms, md>& y)
+	Vector<ms, MathDomain::Float> Vector<ms, md>::MakePair(const Vector<ms, md>& x, const Vector<ms, md>& y)
 	{
 		assert(x.size() == y.size());
 		Vector<ms, MathDomain::Float> pair(2 * x.size());
@@ -246,7 +246,7 @@ template<MemorySpace ms, MathDomain md>
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void MakePair(Vector<ms, MathDomain::Float>& pair, const Vector<ms, md>& x, const Vector<ms, md>& y)
+	void Vector<ms, md>::MakePair(Vector<ms, MathDomain::Float>& pair, const Vector<ms, md>& x, const Vector<ms, md>& y)
 	{
 		dm::detail::MakePair(pair.GetBuffer(), x.GetBuffer(), y.GetBuffer());
 	}

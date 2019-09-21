@@ -28,6 +28,7 @@ namespace cl
 		virtual ~CompressedSparseRowMatrix() = default;
 
 		const MemoryBuffer& GetBuffer() const noexcept override final { return values.GetBuffer(); }
+		MemoryBuffer& GetBuffer() noexcept override final { return values.GetBuffer(); }
 
 		std::vector<typename Traits<mathDomain>::stdType> Get() const override final;
 		void Print(const std::string& label = "") const override final;
@@ -51,8 +52,7 @@ namespace cl
 		
 		Vector<memorySpace, mathDomain> Dot(const Vector<memorySpace, mathDomain>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0) const;
 		void Dot(Vector<memorySpace, mathDomain>& out, const Vector<memorySpace, mathDomain>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0) const;
-
-
+		
 		#pragma endregion 
 
 	protected:

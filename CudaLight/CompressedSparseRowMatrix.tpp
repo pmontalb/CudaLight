@@ -114,7 +114,7 @@ namespace cl
 		assert(nCols() == rhs.nRows());
 
 		ColumnWiseMatrix<ms, md> ret(nRows(), rhs.nCols());
-		dm::detail::SparseMultiply(ret._buffer, this->_buffer, rhs._buffer, this->nRows(), rhs.nRows());
+		dm::detail::SparseMultiply(ret._buffer, this->_buffer, rhs._buffer, MatrixOperation::None, 1.0);
 
 		return ret;
 	}

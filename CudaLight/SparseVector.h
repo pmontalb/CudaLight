@@ -25,6 +25,7 @@ namespace cl
 		virtual ~SparseVector() = default;
 
 		const MemoryBuffer& GetBuffer() const noexcept override final { return values.GetBuffer(); }
+		MemoryBuffer& GetBuffer() noexcept override final { return values.GetBuffer(); }
 
 		std::vector<typename Traits<mathDomain>::stdType> Get() const override final;
 		void Print(const std::string& label = "") const override final;
@@ -41,13 +42,12 @@ namespace cl
 
 		#pragma endregion
 
-		#pragma region Linear Algebra: WARNING: this assumes the same sparsity pattern between operands
+		#pragma region Linear Algebra
 
 		/**
 		 * WARNING: this assumes the same sparsity pattern between operands
 		 * NB: buffer.pointer is the same as values.pointer, so it doesn't require any additional care
 		 */
-
 		SparseVector operator +(const SparseVector& rhs) const;
 		SparseVector operator -(const SparseVector& rhs) const;
 		SparseVector operator %(const SparseVector& rhs) const;  // element-wise product

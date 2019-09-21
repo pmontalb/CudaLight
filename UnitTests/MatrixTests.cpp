@@ -52,7 +52,7 @@ namespace clt
 
 	TEST_F(MatrixTests, Eye)
 	{
-		cl::mat v = cl::Eye(128);
+		cl::mat v = cl::mat::Eye(128);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v = v.Get();
 		for (size_t i = 0; i < v.nRows(); ++i)
@@ -61,7 +61,7 @@ namespace clt
 
 	TEST_F(MatrixTests, Linspace)
 	{
-		cl::mat v = cl::LinSpace(0.0f, 1.0f, 10, 10);
+		cl::mat v = cl::mat::LinSpace(0.0f, 1.0f, 10, 10);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v = v.Get();
 		ASSERT_TRUE(fabs(_v[0] - 0.0) <= 1e-7);
@@ -70,7 +70,7 @@ namespace clt
 
 	TEST_F(MatrixTests, RandomUniform)
 	{
-		cl::mat v = cl::RandomUniform(10, 10, 1234);
+		cl::mat v = cl::mat::RandomUniform(10, 10, 1234);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v = v.Get();
 		for (const auto& iter : _v)
@@ -79,7 +79,7 @@ namespace clt
 
 	TEST_F(MatrixTests, RandomGaussian)
 	{
-		cl::mat v = cl::RandomGaussian(10, 10, 1234);
+		cl::mat v = cl::mat::RandomGaussian(10, 10, 1234);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v = v.Get();
 		for (size_t i = 0; i < _v.size() / 2; ++i)
@@ -136,7 +136,7 @@ namespace clt
 	
 	TEST_F(MatrixTests, RandomShuffle)
 	{
-		cl::mat m = cl::RandomGaussian(10, 20, 1234);
+		cl::mat m = cl::mat::RandomGaussian(10, 20, 1234);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _m1 = m.Get();
 		
@@ -165,13 +165,13 @@ namespace clt
 	
 	TEST_F(MatrixTests, RandomShufflePair)
 	{
-		cl::mat m = cl::RandomGaussian(10, 20, 1234);
-		cl::mat n = cl::RandomGaussian(15, 20, 1234);
+		cl::mat m = cl::mat::RandomGaussian(10, 20, 1234);
+		cl::mat n = cl::mat::RandomGaussian(15, 20, 1234);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _m1 = m.Get();
 		auto _n1 = n.Get();
 		
-		cl::RandomShuffleColumnsPair(m, n, 2345);
+		cl::mat::RandomShuffleColumnsPair(m, n, 2345);
 		auto _m2 = m.Get();
 		auto _n2 = n.Get();
 		
@@ -207,6 +207,29 @@ namespace clt
 			{
 				ASSERT_DOUBLE_EQ(_m2[i + j2 * m.nRows()], _m1[i + j * m.nRows()]);
 				ASSERT_DOUBLE_EQ(_n2[i + j2 * n.nRows()], _n1[i + j * n.nRows()]);
+			}
+		}
+	}
+	
+	TEST_F(MatrixTests, SubMatrix)
+	{
+		cl::mat m = cl::mat::RandomGaussian(10, 20, 1234);
+		
+		const size_t nStart = 4;
+		const size_t nEnd = 17;
+		cl::mat n(m, nStart, nEnd);
+		
+		ASSERT_EQ(n.nRows(), m.nRows());
+		ASSERT_EQ(n.nCols(), nEnd - nStart);
+		
+		auto _m = m.Get();
+		auto _n = n.Get();
+		
+		for (size_t i = 0; i < m.nRows(); ++i)
+		{
+			for (size_t j = nStart; j < nEnd; ++j)
+			{
+				ASSERT_DOUBLE_EQ(_m[i + j * m.nRows()], _n[i + (j - nStart) * n.nRows()]);
 			}
 		}
 	}

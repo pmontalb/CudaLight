@@ -54,7 +54,7 @@ namespace clt
 	
 	TEST_F(VectorTests, Linspace)
 	{
-		cl::vec v = cl::LinSpace(0.0, 1.0, 10);
+		cl::vec v = cl::vec::LinSpace(0.0, 1.0, 10);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v = v.Get();
 		ASSERT_TRUE(fabs(_v[0] - 0.0) <= 1e-7);
@@ -63,7 +63,7 @@ namespace clt
 	
 	TEST_F(VectorTests, RandomUniform)
 	{
-		cl::vec v = cl::RandomUniform(10, 1234);
+		cl::vec v = cl::vec::RandomUniform(10, 1234);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v = v.Get();
 		for (const auto& iter: _v)
@@ -72,7 +72,7 @@ namespace clt
 	
 	TEST_F(VectorTests, RandomGaussian)
 	{
-		cl::vec v = cl::RandomGaussian(10, 1234);
+		cl::vec v = cl::vec::RandomGaussian(10, 1234);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v = v.Get();
 		for (size_t i = 0; i < _v.size() / 2; ++i)
@@ -81,11 +81,11 @@ namespace clt
 	
 	TEST_F(VectorTests, RandomShuffle)
 	{
-		cl::vec v = cl::RandomGaussian(10, 1234);
+		cl::vec v = cl::vec::RandomGaussian(10, 1234);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v1 = v.Get();
 		
-		cl::RandomShuffle(v, 2345);
+		cl::vec::RandomShuffle(v, 2345);
 		auto _v2 = v.Get();
 		auto _v3 = v.Get();
 		
@@ -100,13 +100,13 @@ namespace clt
 	
 	TEST_F(VectorTests, RandomShufflePair)
 	{
-		cl::vec u = cl::RandomGaussian(10, 1234);
-		cl::vec v = cl::RandomGaussian(10, 1234);
+		cl::vec u = cl::vec::RandomGaussian(10, 1234);
+		cl::vec v = cl::vec::RandomGaussian(10, 1234);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _u1 = v.Get();
 		auto _v1 = v.Get();
 		
-		cl::RandomShufflePair(u, v, 2345);
+		cl::vec::RandomShufflePair(u, v, 2345);
 		auto _u2 = u.Get();
 		auto _u3 = u.Get();
 		auto _v2 = v.Get();
@@ -153,7 +153,7 @@ namespace clt
 	
 	TEST_F(VectorTests, EuclideanNorm)
 	{
-		cl::vec u = cl::RandomGaussian(10, 1234);
+		cl::vec u = cl::vec::RandomGaussian(10, 1234);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _u = u.Get();
 		

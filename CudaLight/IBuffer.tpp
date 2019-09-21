@@ -50,7 +50,7 @@ namespace cl
 	template<typename biRhs, MemorySpace msRhs, MathDomain mdRhs>
 	void IBuffer<bi, ms, md>::ReadFrom(const IBuffer<biRhs, msRhs, mdRhs>& rhs)
 	{
-		const MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
+		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 		dm::detail::AutoCopy(buffer, static_cast<const bi*>(&rhs)->_buffer);
 	}
@@ -64,7 +64,7 @@ namespace cl
 					  (std::is_same<T, float>::value && md == MathDomain::Float)
 						||
 					  (std::is_same<T, int>::value && md == MathDomain::Int), "Invalid type");
-		const MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
+		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
 		MemoryBuffer rhsBuf;
@@ -75,33 +75,41 @@ namespace cl
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
-	void IBuffer<bi, ms, md>::Set(const stdType value) const
+	void IBuffer<bi, ms, md>::Set(const stdType value)
 	{
-		const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
+		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 		dm::detail::Initialize(buffer, static_cast<double>(value));
 	}
-
+	
 	template<typename bi, MemorySpace ms, MathDomain md>
-	void IBuffer<bi, ms, md>::LinSpace(const stdType x0, const stdType x1) const
+	void IBuffer<bi, ms, md>::Reciprocal()
 	{
-		const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
+		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
+		assert(buffer.pointer != 0);
+		dm::detail::Reciprocal(buffer);
+	}
+	
+	template<typename bi, MemorySpace ms, MathDomain md>
+	void IBuffer<bi, ms, md>::LinSpace(const stdType x0, const stdType x1)
+	{
+		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 		dm::detail::LinSpace(buffer, x0, x1);
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
-	void IBuffer<bi, ms, md>::RandomUniform(const unsigned seed) const
+	void IBuffer<bi, ms, md>::RandomUniform(const unsigned seed)
 	{
-		const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
+		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 		dm::detail::RandUniform(buffer, seed);
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
-	void IBuffer<bi, ms, md>::RandomGaussian(const unsigned seed) const
+	void IBuffer<bi, ms, md>::RandomGaussian(const unsigned seed)
 	{
-		const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
+		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 		dm::detail::RandNormal(buffer, seed);
 	}
@@ -184,7 +192,7 @@ namespace cl
 		assert(size() == rhs.size());
 		assert(rhs.GetBuffer().pointer != 0);
 
-		const MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
+		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
 		dm::detail::AddEqual(buffer, static_cast<const bi*>(&rhs)->_buffer, 1.0);
@@ -197,7 +205,7 @@ namespace cl
 		assert(size() == rhs.size());
 		assert(static_cast<const bi*>(&rhs)->_buffer.pointer != 0);
 
-		const MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
+		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
 		dm::detail::AddEqual(buffer, static_cast<const bi&>(rhs)._buffer, -1.0);
@@ -210,7 +218,7 @@ namespace cl
 		assert(size() == rhs.size());
 		assert(rhs.GetBuffer().pointer != 0);
 
-		const MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
+		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
 		dm::detail::ElementwiseProduct(buffer, buffer, static_cast<const bi*>(&rhs)->_buffer, 1.0);
@@ -235,7 +243,7 @@ namespace cl
 		assert(size() == rhs.size());
 		assert(rhs.GetBuffer().pointer != 0);
 
-		const MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
+		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
 		dm::detail::AddEqual(buffer, static_cast<const bi*>(&rhs)->_buffer, alpha);
@@ -245,7 +253,7 @@ namespace cl
 	template<typename bi, MemorySpace ms, MathDomain md>
 	IBuffer<bi, ms, md>& IBuffer<bi, ms, md>::Scale(const double alpha)
 	{
-		const MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
+		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
 		dm::detail::Scale(buffer, alpha);

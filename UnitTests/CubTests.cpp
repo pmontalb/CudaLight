@@ -11,7 +11,7 @@ namespace clt
 	TEST_F(CubTests, Sum)
 	{
 		const size_t size = 1024;
-		auto v1 = cl::LinSpace<MemorySpace::Device, MathDomain::Double>(-1.0, 1.0, size);
+		auto v1 = cl::dvec::LinSpace(-1.0, 1.0, size);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v1 = v1.Get();
 
@@ -23,7 +23,7 @@ namespace clt
 
 		ASSERT_NEAR(sumSanity, sum, 1e-12);
 
-		cl::vec v2 = cl::LinSpace(-1.0, 1.0, size + 1);
+		cl::vec v2 = cl::vec::LinSpace(-1.0, 1.0, size + 1);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v2 = v2.Get();
 
@@ -48,7 +48,7 @@ namespace clt
 
 	TEST_F(CubTests, AbsoluteMinMax)
 	{
-		cl::vec x = cl::LinSpace(-1.0f, 1.0f, 128);
+		cl::vec x = cl::vec::LinSpace(-1.0f, 1.0f, 128);
 		auto _x = x.Get();
 
 		float xMin = x.AbsoluteMinimum();
@@ -69,7 +69,7 @@ namespace clt
 
 	TEST_F(CubTests, MinMax)
 	{
-		cl::vec x = cl::LinSpace(-1.0f, 1.0f, 128);
+		cl::vec x = cl::vec::LinSpace(-1.0f, 1.0f, 128);
 		auto _x = x.Get();
 
 		float xMin = x.Minimum();

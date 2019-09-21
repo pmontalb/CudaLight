@@ -31,7 +31,7 @@ namespace cl
 	Tensor<ms, md>::Tensor(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const typename Traits<md>::stdType value)
 		: Tensor(nRows, nCols, nMatrices)
 	{
-		dm::detail::Initialize(static_cast<MemoryBuffer>(_buffer), value);
+		dm::detail::Initialize(_buffer, static_cast<double>(value));
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -71,8 +71,8 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	Tensor<ms, md>::Tensor(const MemoryCube& _buffer)
-		: IBuffer<Tensor<ms, md>, ms, md>(false), _buffer(_buffer)
+	Tensor<ms, md>::Tensor(const MemoryCube& buffer)
+		: IBuffer<Tensor<ms, md>, ms, md>(false), _buffer(buffer)
 	{
 
 	}
@@ -190,22 +190,42 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md> Tensor<ms, md>::CubeWiseSum() const
 	{
-		ColumnWiseMatrix<ms, md> out(nRows(), nCols(), -123456789.0);
+		ColumnWiseMatrix<ms, md> out(nRows(), nCols(), 0.0);
 		CubeWiseSum(out);
 		
 		return out;
 	}
+
 	template<MemorySpace ms, MathDomain md>
 	void Tensor<ms, md>::CubeWiseSum(ColumnWiseMatrix<ms, md>& out) const
 	{
-		Tensor cacheReshape(nRows(), nMatrices(), nCols(), 1.0);
-		Vector<ms, md> cacheOnes(nMatrices(), 1.0);
-		CubeWiseSum(out, cacheReshape, cacheOnes);
+		for (size_t k = 0; k < nMatrices(); ++k)
+			out.AddEqualMatrix(*this->matrices[k]);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	ColumnWiseMatrix<ms, md> Tensor<ms, md>::MatrixSum() const
+	{
+		ColumnWiseMatrix<ms, md> out(nRows(), nCols(), -123456789.0);
+		MatrixSum(out);
+		
+		return out;
 	}
 	template<MemorySpace ms, MathDomain md>
-	void Tensor<ms, md>::CubeWiseSum(ColumnWiseMatrix<ms, md>& out, Tensor<ms, md>& cacheReshape, Vector<ms, md>& cacheOnes) const
+	void Tensor<ms, md>::MatrixSum(ColumnWiseMatrix<ms, md>& out) const
 	{
-		dm::detail::CubeWiseSum(out.GetTile(), _buffer, cacheReshape.GetCube(), cacheOnes.GetBuffer());
+		Vector<ms, md> cacheOnes(nMatrices(), 1.0);
+		MatrixSum(out, cacheOnes);
+	}
+	template<MemorySpace ms, MathDomain md>
+	void Tensor<ms, md>::MatrixSum(ColumnWiseMatrix<ms, md>& out, Vector<ms, md>& cacheOnes) const
+	{
+		MemoryCube tmp1(out.GetBuffer().pointer, out.nRows(), 1, nMatrices(), _buffer.memorySpace, _buffer.mathDomain);
+		MemoryCube tmp2(_buffer.pointer, _buffer.nRows, _buffer.nCols, 0, _buffer.memorySpace, _buffer.mathDomain);
+		MemoryCube tmp3(cacheOnes.GetBuffer().pointer, cacheOnes.size(), 0, 0, _buffer.memorySpace, _buffer.mathDomain);
+		dm::detail::BatchedMultiply(tmp1, tmp2, tmp3,
+									tmp2.nRows * tmp2.nCols,0,
+									MatrixOperation::None, MatrixOperation::None, 1.0, 0.0);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -223,20 +243,12 @@ namespace cl
 		assert(out.nMatrices() == lhs.nCols());
 		assert(out.nMatrices() == rhs.nCols());
 		
-		//#define DO_NOT_USE_STREAMS
-		//#define USE_EXTENDED_KRONECKER_PRODUCT
+		#define DO_NOT_USE_STREAMS
 		#ifdef DO_NOT_USE_STREAMS
 			for (size_t k = 0; k < out.nMatrices(); ++k)
 				dm::detail::KroneckerProduct(out.matrices[k]->GetTile(), lhs.columns[k]->GetBuffer(), rhs.columns[k]->GetBuffer(), alpha);
 		#else
-			#ifdef USE_EXTENDED_KRONECKER_PRODUCT
-			    MemoryTile flattenedOut(out.GetBuffer().pointer, out.nRows() * out.nMatrices(), out.nCols(), out.GetBuffer().memorySpace, out.GetBuffer().mathDomain);
-				MemoryBuffer flattenedLhs(lhs.GetBuffer().pointer, lhs.nRows() * lhs.nCols(), lhs.GetBuffer().memorySpace, lhs.GetBuffer().mathDomain);
-				MemoryBuffer flattenedRhs(rhs.GetBuffer().pointer, rhs.nRows() * rhs.nCols(), rhs.GetBuffer().memorySpace, rhs.GetBuffer().mathDomain);
-				dm::detail::KroneckerProduct(flattenedOut, flattenedLhs, flattenedRhs, alpha);
-			#else
-				dm::detail::BatchedTransposedKroneckerProduct(out.GetCube(), lhs.GetTile(), rhs.GetTile(), alpha);
-			#endif
+			dm::detail::BatchedTransposedKroneckerProduct(out.GetCube(), lhs.GetTile(), rhs.GetTile(), alpha);
 		#endif
 		
 	}

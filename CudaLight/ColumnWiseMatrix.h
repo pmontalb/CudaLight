@@ -21,6 +21,8 @@ namespace cl
 		friend class IBuffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>;
 		template<MemorySpace ms, MathDomain md>
 		friend class CompressedSparseRowMatrix;
+		template<MemorySpace ms, MathDomain md>
+		friend class Tensor;
 		 
 		ColumnWiseMatrix(const unsigned nRows, const unsigned nCols);
 
@@ -29,12 +31,15 @@ namespace cl
 		ColumnWiseMatrix(const unsigned nRows);
 
 		ColumnWiseMatrix(const ColumnWiseMatrix& rhs);
+		
+		// initialise a sub matrix, I don't have a concept of leading dimension, so only sub columns set for now
+		ColumnWiseMatrix(const ColumnWiseMatrix& rhs, const size_t colStart, const size_t colEnd);
 
 		ColumnWiseMatrix(const std::vector<stdType>& rhs, const unsigned nRows, const unsigned nCols);
 		ColumnWiseMatrix(const std::string& fileName, bool useMemoryMapping);
 
-		ColumnWiseMatrix(const Vector<memorySpace, mathDomain>& rhs);		
-
+		ColumnWiseMatrix(const Vector<memorySpace, mathDomain>& rhs);
+		
 		using IBuffer<ColumnWiseMatrix, memorySpace, mathDomain>::ReadFrom;
 		void ReadFrom(const Vector<memorySpace, mathDomain>& rhs);
 
@@ -45,7 +50,7 @@ namespace cl
 
 		Vector<memorySpace, mathDomain> Flatten() const;
 		
-		void RandomShuffleColumns(const unsigned seed) const;
+		void RandomShuffleColumns(const unsigned seed);
 
 		using IBuffer<ColumnWiseMatrix, memorySpace, mathDomain>::Set;
 		void Set(const Vector<memorySpace, mathDomain>& columnVector, const unsigned column);
@@ -55,7 +60,7 @@ namespace cl
 		void ToBinaryFile(const std::string& fileName, const bool compressed = false, const std::string mode = "w") const override final;
 
 		template<MemorySpace ms, MathDomain md>
-		friend std::ostream& operator<<(std::ostream& os, const ColumnWiseMatrix<ms, md>& buffer);
+		friend std::ostream& operator<<(std::ostream& os, const ColumnWiseMatrix& buffer);
 
 		virtual ~ColumnWiseMatrix() = default;
 
@@ -65,6 +70,13 @@ namespace cl
 		std::vector<std::shared_ptr<Vector<memorySpace, mathDomain>>> columns;
 
 		#pragma region Linear Algebra
+		
+		using IBuffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>::LinSpace;
+		using IBuffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>::RandomUniform;
+		using IBuffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>::RandomGaussian;
+		using IBuffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>::Scale;
+		
+		void ScaleColumns(const Vector<memorySpace, mathDomain>& alpha);
 		
 		ColumnWiseMatrix operator +(const ColumnWiseMatrix& rhs) const;
 		ColumnWiseMatrix operator -(const ColumnWiseMatrix& rhs) const;
@@ -76,7 +88,10 @@ namespace cl
 		Vector<memorySpace, mathDomain> operator *(const Vector<memorySpace, mathDomain>& rhs) const;
 		
 		ColumnWiseMatrix& AddEqualMatrix(const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const MatrixOperation rhsOperation = MatrixOperation::None, const double alpha = 1.0, const double beta = 1.0);
-
+		
+		ColumnWiseMatrix& AddEqual(const Vector<memorySpace, mathDomain>& rhs, const bool rowWise = true, const double alpha = 1.0);
+		ColumnWiseMatrix& AddEqual(const Vector<memorySpace, mathDomain>& rhs, const Vector<memorySpace, mathDomain>& cache, const bool rowWise = true, const double alpha = 1.0);
+		
 		/**
 		* A = alpha * B * C + beta * A
 		*/
@@ -89,11 +104,11 @@ namespace cl
 		/**
 		* A = alpha * B * C + beta * A
 		*/
-		ColumnWiseMatrix SubMultiply(const ColumnWiseMatrix& rhs, const size_t rowStart, const size_t colStart, const size_t nRows, const size_t nCols, const size_t rowRhsStart, const size_t colRhsStart, const size_t nColsRhs, const MatrixOperation lhsOperation = MatrixOperation::None, const MatrixOperation rhsOperation = MatrixOperation::None, const double alpha = 1.0, const double beta = 0.0) const;
+		ColumnWiseMatrix SubMultiply(const ColumnWiseMatrix& rhs, const size_t rowStart, const size_t colStart, const size_t nRows, const size_t nCols, const size_t colRhsStart, const size_t nColsRhs, const MatrixOperation lhsOperation = MatrixOperation::None, const MatrixOperation rhsOperation = MatrixOperation::None, const double alpha = 1.0, const double beta = 0.0) const;
 		/**
 		 * Same version as above, but gives the possibility of reusing the output buffer
 		 */
-		void SubMultiply(ColumnWiseMatrix& out, const ColumnWiseMatrix& rhs, const size_t rowStart, const size_t colStart, const size_t nRows, const size_t nCols, const size_t rowRhsStart, const size_t colRhsStart, const size_t nColsRhs, const MatrixOperation lhsOperation = MatrixOperation::None, const MatrixOperation rhsOperation = MatrixOperation::None, const double alpha = 1.0, const double beta = 0.0) const;
+		void SubMultiply(ColumnWiseMatrix& out, const ColumnWiseMatrix& rhs, const size_t rowStart, const size_t colStart, const size_t nRows, const size_t nCols, const size_t colRhsStart, const size_t nColsRhs, const MatrixOperation lhsOperation = MatrixOperation::None, const MatrixOperation rhsOperation = MatrixOperation::None, const double alpha = 1.0, const double beta = 0.0) const;
 		
 		/**
 		* y = alpha * A * x + beta * y
@@ -108,8 +123,8 @@ namespace cl
 		static void KroneckerProduct(ColumnWiseMatrix& out, const Vector<memorySpace, mathDomain>& lhs, const Vector<memorySpace, mathDomain>& rhs, const double alpha = 1.0);
 		
 		/**
-* y = alpha * A * x + beta * y
-*/
+		* y = alpha * A * x + beta * y
+		*/
 		Vector<memorySpace, mathDomain> RowWiseSum() const;
 		/**
 		* Same version as above, but gives the possibility of reusing the output buffer
@@ -119,6 +134,19 @@ namespace cl
 		* Same version as above, but gives the possibility of reusing the output buffer and the cache needed to do the actual sum
 		*/
 		void RowWiseSum(Vector<memorySpace, mathDomain>& out, Vector<memorySpace, mathDomain>& cache) const;
+		
+		/**
+* y = alpha * A * x + beta * y
+*/
+		Vector<memorySpace, mathDomain> ColumnWiseSum() const;
+		/**
+		* Same version as above, but gives the possibility of reusing the output buffer
+		*/
+		void ColumnWiseSum(Vector<memorySpace, mathDomain>& out) const;
+		/**
+		* Same version as above, but gives the possibility of reusing the output buffer and the cache needed to do the actual sum
+		*/
+		void ColumnWiseSum(Vector<memorySpace, mathDomain>& out, Vector<memorySpace, mathDomain>& cache) const;
 		
 		/*
 		* A = alpha * B + beta * A
@@ -133,12 +161,12 @@ namespace cl
 		/**
 		* Solve A * X = B, B is overwritten
 		*/
-		void Solve(const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation = MatrixOperation::None) const;
+		void Solve(ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation = MatrixOperation::None) const;
 
 		/**
 		* Solve A * x = b, b is overwritten
 		*/
-		void Solve(const Vector<memorySpace, mathDomain>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None) const;
+		void Solve(Vector<memorySpace, mathDomain>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None) const;
 
 		Vector<memorySpace, MathDomain::Int> ColumnWiseArgAbsMinimum() const;
 		void ColumnWiseArgAbsMinimum(Vector<memorySpace, MathDomain::Int>& out) const;
@@ -163,78 +191,70 @@ namespace cl
 		}
 
 		#pragma endregion
-
+		
+		MemoryBuffer& GetBuffer() noexcept override final { return _buffer; }
 		const MemoryBuffer& GetBuffer() const noexcept override final { return _buffer; }
-		const MemoryTile& GetTile() const noexcept { return _buffer; }
 	protected:
+		MemoryTile& GetTile() noexcept { return _buffer; }
+		const MemoryTile& GetTile() const noexcept { return _buffer; }
+		
 		explicit ColumnWiseMatrix(const MemoryTile& buffer);
 		
 		MemoryTile _buffer;
+		
+	private:
+		void SetUp(const size_t nCols);
+		
+	public:
+		// static functions
+		static ColumnWiseMatrix Copy(const ColumnWiseMatrix& source);
+		
+		static ColumnWiseMatrix Eye(const unsigned nRows);
+		
+		static ColumnWiseMatrix LinSpace(const typename Traits<mathDomain>::stdType x0, const typename Traits<mathDomain>::stdType x1, const unsigned nRows, const unsigned nCols);
+		
+		static ColumnWiseMatrix RandomUniform(const unsigned nRows, const unsigned nCols, const unsigned seed);
+		
+		static ColumnWiseMatrix RandomGaussian(const unsigned nRows, const unsigned nCols, const unsigned seed);
+		
+		static void RandomShuffleColumns(ColumnWiseMatrix& v, const unsigned seed = 1234);
+		
+		static void RandomShuffleColumnsPair(ColumnWiseMatrix& m1, ColumnWiseMatrix& m2, const unsigned seed = 1234);
+		
+		static void Print(const ColumnWiseMatrix& mat, const std::string& label = "");
+		
+		static std::ostream& MatrixToOutputStream(const ColumnWiseMatrix& mat, std::ostream& os);
+		
+		static void MatrixToBinaryFile(const ColumnWiseMatrix& vec, const std::string& fileName, const bool compressed = false, const std::string mode = "w");
+		
+		static ColumnWiseMatrix MatrixFromInputStream(std::istream& is);
+		
+		static ColumnWiseMatrix MatrixFromBinaryFile(const std::string& fileName, const bool compressed = false, const bool useMemoryMapping = false);
+		
+		static void MatrixFromBinaryFile(ColumnWiseMatrix& out, const std::string& fileName, const bool compressed = false, const std::string mode = "w");
+		
+		static ColumnWiseMatrix Add(const ColumnWiseMatrix& lhs, const ColumnWiseMatrix& rhs, const double alpha = 1.0);
+		
+		static ColumnWiseMatrix Multiply(const ColumnWiseMatrix& lhs, const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const MatrixOperation rhsOperation = MatrixOperation::None, const double alpha = 1.0);
+		/**
+		 * Same version as above, but gives the possibility of reusing the output buffer
+		 */
+		static void Multiply(ColumnWiseMatrix& out, const ColumnWiseMatrix& lhs, const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const MatrixOperation rhsOperation = MatrixOperation::None, const double alpha = 1.0);
+		
+		static Vector<memorySpace, mathDomain> Dot(const ColumnWiseMatrix& lhs, const Vector<memorySpace, mathDomain>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0);
+		/**
+		* Same version as above, but gives the possibility of reusing the output buffer
+		*/
+		static void Dot(Vector<memorySpace, mathDomain>& out, const ColumnWiseMatrix& lhs, const Vector<memorySpace, mathDomain>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0);
+		
+		static void Scale(ColumnWiseMatrix& lhs, const double alpha);
+		
+		static Vector<memorySpace, MathDomain::Float> MakeTriple(const Vector<memorySpace, mathDomain>& x, const Vector<memorySpace, mathDomain>& y, const Vector<memorySpace, mathDomain>& z);
+		
+		static void MakeTriple(Vector<memorySpace, MathDomain::Float>& triple, const Vector<memorySpace, mathDomain>& x, const Vector<memorySpace, mathDomain>& y, const Vector<memorySpace, mathDomain>& z);
+		
 	};
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	ColumnWiseMatrix<ms, md> Copy(const ColumnWiseMatrix<ms, md>& source);
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	ColumnWiseMatrix<ms, md> Eye(const unsigned nRows);
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	ColumnWiseMatrix<ms, md> LinSpace(const typename Traits<md>::stdType x0, const typename Traits<md>::stdType x1, const unsigned nRows, const unsigned nCols);
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	ColumnWiseMatrix<ms, md> RandomUniform(const unsigned nRows, const unsigned nCols, const unsigned seed);
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	ColumnWiseMatrix<ms, md> RandomGaussian(const unsigned nRows, const unsigned nCols, const unsigned seed);
 	
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	void RandomShuffleColumns(ColumnWiseMatrix<ms, md>& v, const unsigned seed = 1234);
-	
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	void RandomShuffleColumnsPair(ColumnWiseMatrix<ms, md>& v1, ColumnWiseMatrix<ms, md>& v2, const unsigned seed = 1234);
-	
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	void Print(const ColumnWiseMatrix<ms, md>& mat, const std::string& label = "");
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	std::ostream& MatrixToOutputStream(const ColumnWiseMatrix<ms, md>& mat, std::ostream& os);
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	void MatrixToBinaryFile(const ColumnWiseMatrix<ms, md>& vec, const std::string& fileName, const bool compressed = false, const std::string mode = "w");
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	ColumnWiseMatrix<ms, md> MatrixFromInputStream(std::istream& is);
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	ColumnWiseMatrix<ms, md> MatrixFromBinaryFile(const std::string& fileName, const bool compressed = false, const bool useMemoryMapping = false);
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	ColumnWiseMatrix<ms, md> Add(const ColumnWiseMatrix<ms, md>& lhs, const ColumnWiseMatrix<ms, md>& rhs, const double alpha = 1.0);
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	ColumnWiseMatrix<ms, md> Multiply(const ColumnWiseMatrix<ms, md>& lhs, const ColumnWiseMatrix<ms, md>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const MatrixOperation rhsOperation = MatrixOperation::None, const double alpha = 1.0);
-	/**
-	 * Same version as above, but gives the possibility of reusing the output buffer
-	 */
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	void Multiply(ColumnWiseMatrix<ms, md>& out, const ColumnWiseMatrix<ms, md>& lhs, const ColumnWiseMatrix<ms, md>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const MatrixOperation rhsOperation = MatrixOperation::None, const double alpha = 1.0);
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Vector<ms, md> Dot(const ColumnWiseMatrix<ms, md>& lhs, const Vector<ms, md>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0);
-	/**
-	* Same version as above, but gives the possibility of reusing the output buffer
-	*/
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	void Dot(Vector<ms, md>& out, const ColumnWiseMatrix<ms, md>& lhs, const Vector<ms, md>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0);
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	void Scale(ColumnWiseMatrix<ms, md>& lhs, const double alpha);
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Vector<ms, MathDomain::Float> MakeTriple(const Vector<ms, md>& x, const Vector<ms, md>& y, const ColumnWiseMatrix<ms, md>& z);
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	void MakeTriple(Vector<ms, MathDomain::Float>& triple, const Vector<ms, md>& x, const Vector<ms, md>& y, const ColumnWiseMatrix<ms, md>& z);
-
 	#pragma region Type aliases
 
 	typedef ColumnWiseMatrix<MemorySpace::Device, MathDomain::Int> GpuIntegerMatrix;

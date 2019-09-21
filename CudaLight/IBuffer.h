@@ -88,13 +88,15 @@ namespace cl
 		template<typename T>
 		void ReadFrom(const std::vector<T>& rhs);
 
-		void Set(const stdType value) const;
+		void Set(const stdType value);
+		
+		void Reciprocal();
 
-		void LinSpace(const stdType x0, const stdType x1) const;
+		void LinSpace(const stdType x0, const stdType x1);
 
-		void RandomUniform(const unsigned seed = 1234) const;
+		void RandomUniform(const unsigned seed = 1234);
 
-		void RandomGaussian(const unsigned seed = 1234) const;
+		void RandomGaussian(const unsigned seed = 1234);
 		
 		virtual std::vector<stdType> Get() const;
 
@@ -137,8 +139,10 @@ namespace cl
 
 		#pragma endregion
 		
-		protected:
+		virtual MemoryBuffer& GetBuffer() noexcept = 0;
 		virtual const MemoryBuffer& GetBuffer() const noexcept = 0;
+	protected:
+		
 		explicit IBuffer(const bool isOwner);
 
 		static constexpr double GetTolerance()

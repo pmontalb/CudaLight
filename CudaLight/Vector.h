@@ -36,22 +36,27 @@ namespace cl
 
 		virtual ~Vector() = default;
 		
-		void RandomShuffle(const unsigned seed = 1234) const;
+		void RandomShuffle(const unsigned seed = 1234);
 		
 		// For avoiding unnecessary checks and overheads, it's not possible to use operator=
 		template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-		Vector& operator=(const Vector<ms, md>& rhs) = delete;
+		Vector& operator=(const Vector& rhs) = delete;
 		template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-		Vector& operator=(Vector<ms, md>&& rhs) = delete;
+		Vector& operator=(Vector&& rhs) = delete;
 
 		void Print(const std::string& label = "") const override final;
 		std::ostream& ToOutputStream(std::ostream& os) const override final;
 		virtual void ToBinaryFile(const std::string& fileName, const bool compressed = false, const std::string mode = "w") const override final;
 
 		template<MemorySpace ms, MathDomain md>
-		friend std::ostream& operator<<(std::ostream& os, const Vector<ms, md>& buffer);
+		friend std::ostream& operator<<(std::ostream& os, const Vector& buffer);
 
 		#pragma region Linear Algebra
+		
+		using IBuffer<Vector<memorySpace, mathDomain>, memorySpace, mathDomain>::LinSpace;
+		using IBuffer<Vector<memorySpace, mathDomain>, memorySpace, mathDomain>::RandomUniform;
+		using IBuffer<Vector<memorySpace, mathDomain>, memorySpace, mathDomain>::RandomGaussian;
+		using IBuffer<Vector<memorySpace, mathDomain>, memorySpace, mathDomain>::Scale;
 
 		Vector operator +(const Vector& rhs) const;
 		Vector operator -(const Vector& rhs) const;
@@ -76,61 +81,50 @@ namespace cl
 			}
 
 		#pragma endregion
-
+		
+		MemoryBuffer& GetBuffer() noexcept override final { return _buffer; }
 		const MemoryBuffer& GetBuffer() const noexcept override final { return _buffer; }
 	protected:
+		
 		using IBuffer<Vector, memorySpace, mathDomain>::IBuffer;
 
 		Vector() : IBuffer<Vector<memorySpace, mathDomain>, memorySpace, mathDomain>(true) {}
 		explicit Vector(const MemoryBuffer& buffer);
 	private:
-
 		MemoryBuffer _buffer;
+		
+	public:
+		// static functions
+		static Vector Copy(const Vector& source);
+		
+		static Vector LinSpace(const typename Traits<mathDomain>::stdType x0, const typename Traits<mathDomain>::stdType x1, const unsigned size);
+		
+		static Vector RandomUniform(const unsigned size, const unsigned seed);
+		
+		static Vector RandomGaussian(const unsigned size, const unsigned seed);
+		
+		static void RandomShuffle(Vector& v, const unsigned seed = 1234);
+		
+		static void RandomShufflePair(Vector& v1, Vector& v2, const unsigned seed = 1234);
+		
+		static void Print(const Vector& vec, const std::string& label = "");
+		
+		static std::ostream& VectorToOutputStream(const Vector& vec, std::ostream& os);
+		
+		static void VectorToBinaryFile(const Vector& vec, const std::string& fileName, const bool compressed = false, const std::string mode = "w");
+		
+		static Vector VectorFromInputStream(std::istream& is);
+		
+		static Vector VectorFromBinaryFile(const std::string& fileName, const bool compressed = false, const bool useMemoryMapping = false);
+		
+		static Vector Add(const Vector& lhs, const Vector& rhs, const double alpha = 1.0);
+		
+		static void Scale(Vector& lhs, const double alpha);
+		
+		static Vector<memorySpace, MathDomain::Float> MakePair(const Vector& x, const Vector& y);
+		
+		static void MakePair(Vector<memorySpace, MathDomain::Float>& pair, const Vector& x, const Vector& y);
 	};
-
-	template<MemorySpace ms, MathDomain md>
-	Vector<ms, md> Copy(const Vector<ms, md>& source);
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Vector<ms, md> LinSpace(const typename Traits<md>::stdType x0, const typename Traits<md>::stdType x1, const unsigned size);
-	
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Vector<ms, md> RandomUniform(const unsigned size, const unsigned seed);
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Vector<ms, md> RandomGaussian(const unsigned size, const unsigned seed);
-	
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	void RandomShuffle(Vector<ms, md>& v, const unsigned seed = 1234);
-	
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	void RandomShufflePair(Vector<ms, md>& v1, Vector<ms, md>& v2, const unsigned seed = 1234);
-	
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	void Print(const Vector<ms, md>& vec, const std::string& label = "");
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	std::ostream& VectorToOutputStream(const Vector<ms, md>& vec, std::ostream& os);
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	void VectorToBinaryFile(const Vector<ms, md>& vec, const std::string& fileName, const bool compressed = false, const std::string mode = "w");
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Vector<ms, md> VectorFromInputStream(std::istream& is);
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Vector<ms, md> VectorFromBinaryFile(const std::string& fileName, const bool compressed = false, const bool useMemoryMapping = false);
-	
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Vector<ms, md> Add(const Vector<ms, md>& lhs, const Vector<ms, md>& rhs, const double alpha = 1.0);
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	void Scale(Vector<ms, md>& lhs, const double alpha);
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Vector<ms, MathDomain::Float> MakePair(const Vector<ms, md>& x, const Vector<ms, md>& y);
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	void MakePair(Vector<ms, MathDomain::Float>& pair, const Vector<ms, md>& x, const Vector<ms, md>& y);
 
 	#pragma region Type aliases
 

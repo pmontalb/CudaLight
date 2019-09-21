@@ -22,7 +22,7 @@ namespace clt
 		cl::vec v(18u, 0.12345f);
 		s << v;
 
-		cl::vec u = cl::VectorFromInputStream(s);
+		cl::vec u = cl::vec::VectorFromInputStream(s);
 
 		ASSERT_TRUE(u == v);
 	}
@@ -32,7 +32,7 @@ namespace clt
 		cl::vec v(18u, 0.12345f);
 		v.ToBinaryFile("v1.npy");
 
-		cl::vec u = cl::VectorFromBinaryFile("v1.npy");
+		cl::vec u = cl::vec::VectorFromBinaryFile("v1.npy");
 
 		ASSERT_TRUE(u == v);
 	}
@@ -42,7 +42,7 @@ namespace clt
 		cl::vec v(18u, 0.12345f);
 		v.ToBinaryFile("v1.npz", true);
 		
-		cl::vec u = cl::VectorFromBinaryFile("v1.npz", true);
+		cl::vec u = cl::vec::VectorFromBinaryFile("v1.npz", true);
 		
 		ASSERT_TRUE(u == v);
 	}
@@ -58,7 +58,7 @@ namespace clt
 		m1.LinSpace(0.0f, 1.0f);
 		s << m1;
 
-		cl::mat m2 = cl::MatrixFromInputStream(s);
+		cl::mat m2 = cl::mat::MatrixFromInputStream(s);
 
 		auto _m1 = m1.Get();
 		auto _m2 = m2.Get();
@@ -75,7 +75,7 @@ namespace clt
 		m1.LinSpace(0.0f, 1.0f);
 		m1.ToBinaryFile("m1.npy");
 
-		cl::mat m2 = cl::MatrixFromBinaryFile("m1.npy");
+		cl::mat m2 = cl::mat::MatrixFromBinaryFile("m1.npy");
 		m1.Print("m1=");
 		m2.Print("m2=");
 
@@ -94,7 +94,7 @@ namespace clt
 		m1.LinSpace(0.0f, 1.0f);
 		m1.ToBinaryFile("m1.npz", true);
 		
-		cl::mat m2 = cl::MatrixFromBinaryFile("m1.npz", true);
+		cl::mat m2 = cl::mat::MatrixFromBinaryFile("m1.npz", true);
 		m1.Print("m1=");
 		m2.Print("m2=");
 		
@@ -124,7 +124,7 @@ namespace clt
 
 		try
 		{
-			cl::vec v = cl::VectorFromInputStream(f);
+			cl::vec v = cl::vec::VectorFromInputStream(f);
 			ASSERT_TRUE(v.size() == 128);
 			v.Print();
 		}
@@ -151,7 +151,7 @@ namespace clt
 
 		try
 		{
-			cl::mat v = cl::MatrixFromInputStream(f);
+			cl::mat v = cl::mat::MatrixFromInputStream(f);
 			ASSERT_TRUE(v.nRows() == 128);
 			ASSERT_EQ(v.nCols(), 64);
 		}

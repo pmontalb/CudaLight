@@ -43,8 +43,8 @@ namespace cl
 		void Set(const Vector<memorySpace, mathDomain>& columnVector, const unsigned column, const unsigned matrix);
 
 		void Print(const std::string& label = "") const override final;
-		std::ostream& ToOutputStream(std::ostream&) const override final { throw std::logic_error("Not Implemented"); };
-		void ToBinaryFile(const std::string&, const bool, const std::string) const override final { throw std::logic_error("Not Implemented"); };
+		std::ostream& ToOutputStream(std::ostream&) const override final { throw std::logic_error("Not Implemented"); }
+		void ToBinaryFile(const std::string&, const bool, const std::string) const override final { throw std::logic_error("Not Implemented"); }
 
 		virtual ~Tensor() = default;
 
@@ -64,7 +64,10 @@ namespace cl
 		
 		ColumnWiseMatrix<memorySpace, mathDomain> CubeWiseSum() const;
 		void CubeWiseSum(ColumnWiseMatrix<memorySpace, mathDomain>& out) const;
-		void CubeWiseSum(ColumnWiseMatrix<memorySpace, mathDomain>& out, Tensor<memorySpace, mathDomain>& cacheReshape, Vector<memorySpace, mathDomain>& cacheOnes) const;
+		
+		ColumnWiseMatrix<memorySpace, mathDomain> MatrixSum() const;
+		void MatrixSum(ColumnWiseMatrix<memorySpace, mathDomain>& out) const;
+		void MatrixSum(ColumnWiseMatrix<memorySpace, mathDomain>& out, Vector<memorySpace, mathDomain>& cacheOnes) const;
 		
 		// NB: this computes KroneckerProduct(lhs->columns[i], rhs->columns[i]) and stores the result in this->matrices[i], so we're transposing the cubes!
 		static Tensor KroneckerProduct(const ColumnWiseMatrix<memorySpace, mathDomain>& lhs, const ColumnWiseMatrix<memorySpace, mathDomain>& rhs, const double alpha = 1.0);
@@ -72,14 +75,14 @@ namespace cl
 		
 		#pragma endregion
 
+		MemoryBuffer& GetBuffer() noexcept override final { return _buffer; }
 		const MemoryBuffer& GetBuffer() const noexcept override final { return _buffer; }
 		const MemoryCube& GetCube() const noexcept { return _buffer; }
 	protected:
-
+		MemoryCube& GetCube() noexcept { return _buffer; }
 		explicit Tensor(const MemoryCube& buffer);
 
 		MemoryCube _buffer;
-
 	};
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
