@@ -3,60 +3,91 @@
 namespace cl
 {
 	template< MemorySpace ms, MathDomain md>
-	CompressedSparseRowMatrix<ms, md>::CompressedSparseRowMatrix(const unsigned nRows, const unsigned nCols, const Vector<ms, MathDomain::Int>& nonZeroColumnIndices, const Vector<ms, MathDomain::Int>& nNonZeroRows)
+	CompressedSparseRowMatrix<ms, md>::CompressedSparseRowMatrix(const unsigned nRows, const unsigned nCols, Vector<ms, MathDomain::Int>&& nonZeroColumnIndices_, Vector<ms, MathDomain::Int>&& nNonZeroRows_)
 		: IBuffer<CompressedSparseRowMatrix<ms, md>, ms, md>(false),  // CompressedSparseRowMatrix doesn't allocate its memory in its _buffer!
-		_buffer(0, nonZeroColumnIndices.size(), 0, 0, nRows, nCols, ms, md),
-		values(nonZeroColumnIndices.size()), nonZeroColumnIndices(nonZeroColumnIndices), nNonZeroRows(nNonZeroRows)
+		_buffer(0, nonZeroColumnIndices_.size(), 0, 0, nRows, nCols, ms, md),
+		values(nonZeroColumnIndices_.size()),
+		nonZeroColumnIndices(std::move(nonZeroColumnIndices_)),
+		nNonZeroRows(std::move(nNonZeroRows_))
 	{
 		SyncPointers();
 	}
-
+	
 	template< MemorySpace ms, MathDomain md>
-	CompressedSparseRowMatrix<ms, md>::CompressedSparseRowMatrix(const unsigned nRows, const unsigned nCols, const Vector<ms, MathDomain::Int>& nonZeroColumnIndices, const Vector<ms, MathDomain::Int>& nNonZeroRows, const typename Traits<md>::stdType value)
-		: CompressedSparseRowMatrix(nRows, nCols, nonZeroColumnIndices, nNonZeroRows)
+	CompressedSparseRowMatrix<ms, md>::CompressedSparseRowMatrix(const unsigned nRows, const unsigned nCols, const Vector<ms, MathDomain::Int>& nonZeroColumnIndices_, const Vector<ms, MathDomain::Int>& nNonZeroRows_)
+		: IBuffer<CompressedSparseRowMatrix<ms, md>, ms, md>(false),  // CompressedSparseRowMatrix doesn't allocate its memory in its _buffer!
+		_buffer(0, nonZeroColumnIndices_.size(), 0, 0, nRows, nCols, ms, md),
+		values(nonZeroColumnIndices_.size()),
+		nonZeroColumnIndices(nonZeroColumnIndices_),
+		nNonZeroRows(nNonZeroRows_)
 	{
-		dm::detail::Initialize(values.GetBuffer(), value);
+		SyncPointers();
+	}
+	
+	template< MemorySpace ms, MathDomain md>
+	CompressedSparseRowMatrix<ms, md>::CompressedSparseRowMatrix(const unsigned nRows, const unsigned nCols, Vector<ms, MathDomain::Int>&& nonZeroColumnIndices_, Vector<ms, MathDomain::Int>&& nNonZeroRows_, const typename Traits<md>::stdType value)
+			: CompressedSparseRowMatrix(nRows, nCols, std::move(nonZeroColumnIndices_), std::move(nNonZeroRows_))
+	{
+		dm::detail::Initialize(values.GetBuffer(), static_cast<double>(value));
+	}
+	
+	template< MemorySpace ms, MathDomain md>
+	CompressedSparseRowMatrix<ms, md>::CompressedSparseRowMatrix(const unsigned nRows, const unsigned nCols, const Vector<ms, MathDomain::Int>& nonZeroColumnIndices_, const Vector<ms, MathDomain::Int>& nNonZeroRows_, const typename Traits<md>::stdType value)
+		: CompressedSparseRowMatrix(nRows, nCols, nonZeroColumnIndices_, nNonZeroRows_)
+	{
+		dm::detail::Initialize(values.GetBuffer(), static_cast<double>(value));
 	}
 
 	template< MemorySpace ms, MathDomain md>
 	CompressedSparseRowMatrix<ms, md>::CompressedSparseRowMatrix(const ColumnWiseMatrix<ms, md>& denseMatrix)
 		: IBuffer<CompressedSparseRowMatrix<ms, md>, ms, md>(false), _buffer(0, 0, 0, 0, denseMatrix.nRows(), denseMatrix.nCols(), ms, md)
 	{
-		const auto hostDenseMatrix = denseMatrix.Get();
+		ReadFrom(denseMatrix.Get(), denseMatrix.nRows(), denseMatrix.nCols());
+	}
+	
+	template< MemorySpace ms, MathDomain md>
+	CompressedSparseRowMatrix<ms, md>::CompressedSparseRowMatrix(const std::vector<stdType>& denseMatrix, const size_t nRows, const size_t nCols)
+		: IBuffer<CompressedSparseRowMatrix<ms, md>, ms, md>(false), _buffer(0, 0, 0, 0, static_cast<unsigned>(nRows), static_cast<unsigned>(nCols), ms, md)
+	{
+		ReadFrom(denseMatrix, nRows, nCols);
+	}
 
-		std::vector<typename Traits<md>::stdType> nonZeroValues;
-		std::vector<int> nonZeroColumnIndices;
-		std::vector<int> nNonZeroRows;
+	template< MemorySpace ms, MathDomain md>
+	void CompressedSparseRowMatrix<ms, md>::ReadFrom(const std::vector<stdType>& denseMatrix, const size_t nRows, const size_t nCols)
+	{
+		std::vector<typename Traits<md>::stdType> nonZeroValues {};
+		std::vector<int> _nonZeroColumnIndices {};
+		std::vector<int> _nNonZeroRows {};
 		int nNonZeros = 0;
-		for (unsigned i = 0; i < denseMatrix.nRows(); i++)
+		for (unsigned i = 0; i < nRows; i++)
 		{
-			for (unsigned j = 0; j < denseMatrix.nCols(); j++)
+			for (unsigned j = 0; j < nCols; j++)
 			{
-				if (fabs(hostDenseMatrix[i + j * nRows()]) > 1e-7)
+				if (fabs(static_cast<double>(denseMatrix[i + j * nRows])) > 1e-7)
 				{
 					nNonZeros++;
-					nonZeroValues.push_back(hostDenseMatrix[i + j * nRows()]);
-					nonZeroColumnIndices.push_back(j);
+					nonZeroValues.push_back(denseMatrix[i + j * nRows]);
+					_nonZeroColumnIndices.push_back(static_cast<int>(j));
 				}
 			}
-
-			nNonZeroRows.push_back(nNonZeros);
+			
+			_nNonZeroRows.push_back(nNonZeros);
 		}
-
-		_buffer.size = nNonZeros;
-
+		
+		_buffer.size = static_cast<unsigned>(nNonZeros);
+		
 		values._buffer = MemoryBuffer(0, static_cast<unsigned>(nonZeroValues.size()), ms, md);
 		Alloc(values._buffer);
 		values.ReadFrom(nonZeroValues);
-
-		this->nonZeroColumnIndices._buffer = MemoryBuffer(0, static_cast<unsigned>(nonZeroColumnIndices.size()), ms, md);
-		Alloc(this->nonZeroColumnIndices._buffer);
-		this->nonZeroColumnIndices.ReadFrom(nonZeroColumnIndices);
-
-		this->nNonZeroRows._buffer = MemoryBuffer(0, static_cast<unsigned>(nNonZeroRows.size()), ms, md);
-		Alloc(this->nNonZeroRows._buffer);
-		this->nNonZeroRows.ReadFrom(nNonZeroRows);
-
+		
+		nonZeroColumnIndices._buffer = MemoryBuffer(0, static_cast<unsigned>(_nonZeroColumnIndices.size()), ms, md);
+		Alloc(nonZeroColumnIndices._buffer);
+		nonZeroColumnIndices.ReadFrom(_nonZeroColumnIndices);
+		
+		nNonZeroRows._buffer = MemoryBuffer(0, static_cast<unsigned>(_nNonZeroRows.size()), ms, md);
+		Alloc(nNonZeroRows._buffer);
+		nNonZeroRows.ReadFrom(_nNonZeroRows);
+		
 		SyncPointers();
 	}
 
@@ -66,6 +97,16 @@ namespace cl
 		_buffer(0, 0, 0, 0, rhs.nRows(), rhs.nCols(), ms, md),
 		values(rhs.values), nonZeroColumnIndices(rhs.nonZeroColumnIndices), nNonZeroRows(rhs.nNonZeroRows)
 	{
+		SyncPointers();
+	}
+
+template< MemorySpace ms, MathDomain md>
+	CompressedSparseRowMatrix<ms, md>::CompressedSparseRowMatrix(CompressedSparseRowMatrix&& rhs) noexcept
+		: IBuffer<CompressedSparseRowMatrix<ms, md>, ms, md>(false),
+		  _buffer(rhs._buffer),
+		  values(std::move(rhs.values)), nonZeroColumnIndices(std::move(rhs.nonZeroColumnIndices)), nNonZeroRows(std::move(rhs.nNonZeroRows))
+	{
+		rhs._isOwner = false;
 		SyncPointers();
 	}
 
@@ -80,18 +121,18 @@ namespace cl
 	template< MemorySpace ms, MathDomain md>
 	std::vector<typename Traits<md>::stdType> CompressedSparseRowMatrix<ms, md>::Get() const
 	{
-		auto values = this->values.Get();
-		auto nonZeroColumnIndices = this->nonZeroColumnIndices.Get();
-		auto nNonZeroRows = this->nNonZeroRows.Get();
+		auto _values = this->values.Get();
+		auto _nonZeroColumnIndices = this->nonZeroColumnIndices.Get();
+		auto _nNonZeroRows = this->nNonZeroRows.Get();
 
 		std::vector<typename Traits<md>::stdType> ret(denseSize());
-		int nz = 0;
-		for (unsigned i = 0; i < nRows(); i++)
+		size_t nz = 0;
+		for (size_t i = 0; i < nRows(); i++)
 		{
-			const int nNonZeroInRow = nNonZeroRows[i + 1] - nNonZeroRows[i];
-			for (int j = 0; j < nNonZeroInRow; j++)
+			const size_t nNonZeroInRow = static_cast<size_t>(_nNonZeroRows[i + 1] - _nNonZeroRows[i]);
+			for (size_t j = 0; j < nNonZeroInRow; j++)
 			{
-				ret[i + nonZeroColumnIndices[nz] * nRows()] = values[nz];
+				ret[i + static_cast<size_t>(_nonZeroColumnIndices[nz]) * nRows()] = _values[nz];
 				nz++;
 			}
 		}
@@ -103,7 +144,20 @@ namespace cl
 	void CompressedSparseRowMatrix<ms, md>::Print(const std::string& label) const
 	{
 		auto mat = Get();
-		cl::Print(mat, label);
+		cl::Print(mat, nRows(), nCols(), label);
+	}
+
+	template< MemorySpace ms, MathDomain md>
+	void CompressedSparseRowMatrix<ms, md>::PrintNonZeros(const std::string& label) const
+	{
+		auto vec = this->values.Get();
+		cl::Print(vec, label + " - values");
+		
+		auto nzci = this->nonZeroColumnIndices.Get();
+		cl::Print(nzci, label + " - nonZeroColumnIndices");
+
+		auto nnz = this->nNonZeroRows.Get();
+		cl::Print(nnz, label + " - nnz");
 	}
 
 #pragma region Linear Algebra
@@ -159,7 +213,7 @@ namespace cl
 	void CompressedSparseRowMatrix<ms, md>::Dot(Vector<ms, md>& out, const Vector<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha) const
 	{
 		assert(nRows() == rhs.size());
-		dm::detail::SparseDot(out._buffer, this->_buffer, rhs._buffer, lhsOperation, 1.0);
+		dm::detail::SparseDot(out._buffer, this->_buffer, rhs._buffer, lhsOperation, alpha);
 	}
 
 #pragma endregion 

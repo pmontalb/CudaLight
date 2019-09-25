@@ -274,7 +274,7 @@ __CREATE_FUNCTION_2_ARG(EuclideanNorm, CuBlasKernelExceptionFactory, double&, no
 //CuSparseWrappers
 __CREATE_FUNCTION_4_ARG(SparseAdd, CuSparseKernelExceptionFactory, MemoryBuffer&, z, const SparseMemoryBuffer&, x, const MemoryBuffer&, y, const double, alpha);
 __CREATE_FUNCTION_3_ARG(SparseSubtract, CuSparseKernelExceptionFactory, MemoryBuffer&, z, const SparseMemoryBuffer&, x, const MemoryBuffer&, y);
-__CREATE_FUNCTION_5_ARG(SparseDot, CuSparseKernelExceptionFactory, MemoryBuffer&, y, const SparseMemoryTile&, A, const MemoryBuffer&, x, const MatrixOperation, aOperation, const double, alpha);
+__CREATE_FUNCTION_6_ARG(SparseDot, CuSparseKernelExceptionFactory, MemoryBuffer&, y, const SparseMemoryTile&, A, const MemoryBuffer&, x, const MatrixOperation, aOperation, const double, alpha,const double, beta);
 __CREATE_FUNCTION_5_ARG(SparseMultiply, CuSparseKernelExceptionFactory, MemoryTile&, A, const SparseMemoryTile&, B, const MemoryTile&, C, const MatrixOperation, bOperation, const double, alpha);
 
 //CubWrappers

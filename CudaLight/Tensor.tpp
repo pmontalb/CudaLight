@@ -1,6 +1,6 @@
 #pragma once
 
-#include <DeviceManager.h>
+#include <CompressedSparseRowMatrix.h>
 
 namespace cl
 {
@@ -25,6 +25,12 @@ namespace cl
 				matrices[i]->columns[j] = Vector<ms, md>::make_shared(colBuffer);
 			}
 		}
+	}
+	
+	template<MemorySpace ms, MathDomain md>
+	Tensor<ms, md>::Tensor(Tensor&& rhs) noexcept
+			: IBuffer<Tensor<ms, md>, ms, md>(std::move(rhs)), matrices(std::move(rhs.matrices)), _buffer(rhs._buffer)
+	{
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -199,8 +205,39 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void Tensor<ms, md>::CubeWiseSum(ColumnWiseMatrix<ms, md>& out) const
 	{
-		for (size_t k = 0; k < nMatrices(); ++k)
-			out.AddEqualMatrix(*this->matrices[k]);
+		#define RUN_MULTIPLE_ADD
+		#ifdef RUN_MULTIPLE_ADD
+			for (size_t k = 0; k < nMatrices(); ++k)
+				out.AddEqualMatrix(*this->matrices[k]);
+		#else
+			Vector<ms, MathDomain::Int> nNonZeroRows(out.size() * nMatrices());
+			nNonZeroRows.LinSpace(0, static_cast<int>(out.size() * nMatrices() - 1));
+			nNonZeroRows.Scale(nMatrices());
+			
+			std::vector<int> nonZeroColumnIndicesCpu(nNonZeroRows.size());
+			for (size_t i = 0; i < out.size(); ++i)
+			{
+				for (size_t k = 0; k < nMatrices(); ++k)
+					nonZeroColumnIndicesCpu[k + nMatrices() * i] = static_cast<int>(k * out.size() + i);
+			}
+			Vector<ms, MathDomain::Int> nonZeroColumnIndices(nonZeroColumnIndicesCpu);
+			CompressedSparseRowMatrix<ms, md> eye(out.size(), out.size() * nMatrices(), nonZeroColumnIndices, nNonZeroRows, 1.0);
+			CubeWiseSum(out, eye);
+		#endif
+	}
+	
+	template<MemorySpace ms, MathDomain md>
+	void Tensor<ms, md>::CubeWiseSum(ColumnWiseMatrix<ms, md>& out, const CompressedSparseRowMatrix<ms, md>&) const
+	{
+		#ifdef RUN_MULTIPLE_ADD
+			for (size_t k = 0; k < nMatrices(); ++k)
+				out.AddEqualMatrix(*this->matrices[k]);
+		#else
+			assert(out.size() == cache.nRows());
+			assert(cache.nCols() == out.size() * nMatrices());
+			assert(cache.size() == out.size() * nMatrices());
+			dm::detail::SparseDot(out.GetBuffer(), cache.GetCsrBuffer(), _buffer, MatrixOperation::None, 1.0, 1.0);
+		#endif
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -243,7 +280,7 @@ namespace cl
 		assert(out.nMatrices() == lhs.nCols());
 		assert(out.nMatrices() == rhs.nCols());
 		
-		#define DO_NOT_USE_STREAMS
+		//#define DO_NOT_USE_STREAMS
 		#ifdef DO_NOT_USE_STREAMS
 			for (size_t k = 0; k < out.nMatrices(); ++k)
 				dm::detail::KroneckerProduct(out.matrices[k]->GetTile(), lhs.columns[k]->GetBuffer(), rhs.columns[k]->GetBuffer(), alpha);
@@ -252,8 +289,7 @@ namespace cl
 		#endif
 		
 	}
-
-
+	
 #pragma endregion
 
 	template<MemorySpace ms, MathDomain md>

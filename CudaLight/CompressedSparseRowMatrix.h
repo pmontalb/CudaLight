@@ -18,22 +18,31 @@ namespace cl
 	public:
 		using stdType = typename Traits<mathDomain>::stdType;
 		friend class IBuffer<CompressedSparseRowMatrix, memorySpace, mathDomain>;
-
+		
+		CompressedSparseRowMatrix(const unsigned nRows, const unsigned nCols, Vector<memorySpace, MathDomain::Int>&& nonZeroColumnIndices, Vector<memorySpace, MathDomain::Int>&& nNonZeroRows);
 		CompressedSparseRowMatrix(const unsigned nRows, const unsigned nCols, const Vector<memorySpace, MathDomain::Int>& nonZeroColumnIndices, const Vector<memorySpace, MathDomain::Int>& nNonZeroRows);
+		CompressedSparseRowMatrix(const unsigned nRows, const unsigned nCols, Vector<memorySpace, MathDomain::Int>&& nonZeroColumnIndices, Vector<memorySpace, MathDomain::Int>&& nNonZeroRows, const stdType value);
 		CompressedSparseRowMatrix(const unsigned nRows, const unsigned nCols, const Vector<memorySpace, MathDomain::Int>& nonZeroColumnIndices, const Vector<memorySpace, MathDomain::Int>& nNonZeroRows, const stdType value);
 		// copy denseVector to host, numerically finds the non-zero indices, and then copy back to device
-		CompressedSparseRowMatrix(const ColumnWiseMatrix<memorySpace, mathDomain>& denseMatrix);
-		CompressedSparseRowMatrix(const CompressedSparseRowMatrix& rhs);
+		explicit CompressedSparseRowMatrix(const ColumnWiseMatrix<memorySpace, mathDomain>& denseMatrix);
+		CompressedSparseRowMatrix(const std::vector<stdType>& denseMatrix, const size_t nRows, const size_t nCols);
+		explicit CompressedSparseRowMatrix(const CompressedSparseRowMatrix& rhs);
+		explicit CompressedSparseRowMatrix(CompressedSparseRowMatrix&& rhs) noexcept;
 
+		void ReadFrom(const std::vector<stdType>& denseMatrix, const size_t nRows, const size_t nCols);
 		virtual ~CompressedSparseRowMatrix() = default;
 
 		const MemoryBuffer& GetBuffer() const noexcept override final { return values.GetBuffer(); }
 		MemoryBuffer& GetBuffer() noexcept override final { return values.GetBuffer(); }
+		
+		const SparseMemoryTile& GetCsrBuffer() const noexcept { return _buffer; }
+		SparseMemoryTile& GetCsrBuffer() noexcept { return _buffer; }
 
 		std::vector<typename Traits<mathDomain>::stdType> Get() const override final;
 		void Print(const std::string& label = "") const override final;
-		std::ostream& ToOutputStream(std::ostream& os) const override final { throw std::logic_error("Not Implemented"); };
-		void ToBinaryFile(const std::string& fileName, const bool compressed, const std::string mode) const override final { throw std::logic_error("Not Implemented"); };
+		void PrintNonZeros(const std::string& label = "") const;
+		std::ostream& ToOutputStream(std::ostream&) const override final { throw std::logic_error("Not Implemented"); }
+		void ToBinaryFile(const std::string&, const bool, const std::string) const override final { throw std::logic_error("Not Implemented"); }
 
 		unsigned denseSize() const noexcept { return nRows() * nCols(); }  // used only when converting to dense
 		unsigned nRows() const noexcept { return _buffer.nRows; }
@@ -53,7 +62,7 @@ namespace cl
 		Vector<memorySpace, mathDomain> Dot(const Vector<memorySpace, mathDomain>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0) const;
 		void Dot(Vector<memorySpace, mathDomain>& out, const Vector<memorySpace, mathDomain>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0) const;
 		
-		#pragma endregion 
+		#pragma endregion
 
 	protected:
 		SparseMemoryTile _buffer;

@@ -11,7 +11,15 @@ namespace cl
 	{
 		SyncPointers();
 	}
-
+	
+	template<MemorySpace ms, MathDomain md>
+	SparseVector<ms, md>::SparseVector(SparseVector&& rhs) noexcept
+			: IBuffer<SparseVector<ms, md>, ms, md>(false), _buffer(rhs._buffer)
+	{
+		rhs._isOwner = false;
+		SyncPointers();
+	}
+	
 	template< MemorySpace ms, MathDomain md>
 	SparseVector<ms, md>::SparseVector(const unsigned size, const Vector<ms, MathDomain::Int>& nonZeroIndices, const typename Traits<md>::stdType value)
 		: SparseVector(size, nonZeroIndices)

@@ -12,6 +12,12 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
+	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(ColumnWiseMatrix&& rhs) noexcept
+			: IBuffer<ColumnWiseMatrix<ms, md>, ms, md>(std::move(rhs)), columns(std::move(rhs.columns)), _buffer(rhs._buffer)
+	{
+	}
+
+	template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::SetUp(const size_t nCols)
 	{
 		columns.resize(nCols);

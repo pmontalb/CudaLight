@@ -31,6 +31,7 @@ namespace cl
 		ColumnWiseMatrix(const unsigned nRows);
 
 		ColumnWiseMatrix(const ColumnWiseMatrix& rhs);
+		ColumnWiseMatrix(ColumnWiseMatrix&& rhs) noexcept;
 		
 		// initialise a sub matrix, I don't have a concept of leading dimension, so only sub columns set for now
 		ColumnWiseMatrix(const ColumnWiseMatrix& rhs, const size_t colStart, const size_t colEnd);

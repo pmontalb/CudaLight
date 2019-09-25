@@ -21,6 +21,7 @@ namespace cl
 		explicit SparseVector(const Vector<memorySpace, mathDomain>& denseVector);
 
 		SparseVector(const SparseVector& rhs);
+		SparseVector(SparseVector&& rhs) noexcept;
 
 		virtual ~SparseVector() = default;
 

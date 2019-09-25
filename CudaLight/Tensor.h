@@ -23,6 +23,8 @@ namespace cl
 		Tensor(const unsigned nRows, const unsigned nMatrices);
 
 		Tensor(const Tensor& rhs);
+		Tensor(Tensor&& rhs) noexcept;
+		
 		template<typename T>
 		Tensor(const std::vector<T>& rhs, const unsigned nRows, const unsigned nCols, const unsigned nMatrices);
 		
@@ -64,6 +66,7 @@ namespace cl
 		
 		ColumnWiseMatrix<memorySpace, mathDomain> CubeWiseSum() const;
 		void CubeWiseSum(ColumnWiseMatrix<memorySpace, mathDomain>& out) const;
+		void CubeWiseSum(ColumnWiseMatrix<memorySpace, mathDomain>& out, const CompressedSparseRowMatrix<memorySpace, mathDomain>& onesCache) const;
 		
 		ColumnWiseMatrix<memorySpace, mathDomain> MatrixSum() const;
 		void MatrixSum(ColumnWiseMatrix<memorySpace, mathDomain>& out) const;

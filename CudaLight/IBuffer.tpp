@@ -15,6 +15,13 @@ namespace cl
 		: _isOwner(isOwner)
 	{
 	}
+	
+	template<typename bi, MemorySpace ms, MathDomain md>
+	IBuffer<bi, ms, md>::IBuffer(IBuffer&& buf) noexcept
+			: _isOwner(true)
+	{
+		buf._isOwner = false;  // otherwise the destructor will destroy the memory
+	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
 	void IBuffer<bi, ms, md>::ctor(MemoryBuffer& buffer)
@@ -139,12 +146,13 @@ namespace cl
 	template<typename bi, MemorySpace ms, MathDomain md>
 	IBuffer<bi, ms, md>::~IBuffer()
 	{
-		const MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
+		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		dtor(buffer);
+		buffer.pointer = 0;
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
-	void IBuffer<bi, ms, md>::dtor(MemoryBuffer buffer)
+	void IBuffer<bi, ms, md>::dtor(MemoryBuffer& buffer)
 	{
 		// if this is not the owner of the buffer, it must not free it
 		if (!_isOwner)

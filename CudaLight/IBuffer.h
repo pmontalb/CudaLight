@@ -144,6 +144,7 @@ namespace cl
 	protected:
 		
 		explicit IBuffer(const bool isOwner);
+		explicit IBuffer(IBuffer&& buffer) noexcept;
 
 		static constexpr double GetTolerance()
 		{
@@ -161,11 +162,11 @@ namespace cl
 		}
 
 		void ctor(MemoryBuffer& buffer);
-		void dtor(MemoryBuffer buffer);
+		void dtor(MemoryBuffer& buffer);
 
 		static void Alloc(MemoryBuffer& buffer);
 
-		const bool _isOwner;
+		bool _isOwner;
 	};
 
 	namespace detail

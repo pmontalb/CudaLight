@@ -31,6 +31,12 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
+	Vector<ms, md>::Vector(Vector&& rhs) noexcept
+		: IBuffer<Vector<ms, md>, ms, md>(std::move(rhs)), _buffer(rhs._buffer)
+	{
+	}
+
+	template<MemorySpace ms, MathDomain md>
 	Vector<ms, md>::Vector(const std::vector<typename Traits<md>::stdType>& rhs)
 		: Vector(static_cast<unsigned>(rhs.size()))
 	{

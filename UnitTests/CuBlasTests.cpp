@@ -409,10 +409,12 @@ namespace clt
 	
 	TEST_F(CuBlasTests, CubeWiseSum)
 	{
-		cl::ten T(11, 17, 29);
+		cl::ten T(64, 128, 32);
 		dm::DeviceManager::CheckDeviceSanity();
+		
+		double x = 0.0;
 		for (auto& matrix: T.matrices)
-			matrix->RandomUniform();
+			matrix->Set(++x);
 		
 		const auto _T = T.Get();
 		dm::DeviceManager::CheckDeviceSanity();
@@ -432,25 +434,61 @@ namespace clt
 				for (size_t k = 0; k < T.nMatrices(); ++k)
 					goldenCubeSum += _T[i + j * T.nRows() + k * T.nRows() * T.nCols()];
 				
-				ASSERT_NEAR(goldenCubeSum / _cubeSum[i + j * T.nRows()] -1.0, 0.0,5e-7)
+				ASSERT_NEAR(goldenCubeSum / _cubeSum[i + j * T.nRows()] - 1.0, 0.0,5e-7)
 				   << "i=" << i << "; j=" << j << "; idx=" << i + j * T.nRows() << "; sum=" << _cubeSum[i + j * T.nRows()];
 			}
+		}
+		
+		const size_t sz = T.nRows() * T.nCols();
+		cl::ivec nNonZeroRows(static_cast<unsigned>(sz * T.nMatrices()));
+		nNonZeroRows.LinSpace(0, static_cast<int>(sz * T.nMatrices() - 1));
+		nNonZeroRows.Scale(T.nMatrices());
+		
+		std::vector<int> nonZeroColumnIndicesCpu(nNonZeroRows.size());
+		for (size_t i = 0; i < sz; ++i)
+		{
+			for (size_t k = 0; k < T.nMatrices(); ++k)
+				nonZeroColumnIndicesCpu[k + T.nMatrices() * i] = static_cast<int>(k * sz + i);
+		}
+		cl::ivec nonZeroColumnIndices(nonZeroColumnIndicesCpu);
+		cl::smat eye(sz, sz * T.nMatrices(), nonZeroColumnIndices, nNonZeroRows, 1.0);
+
+		for (size_t n = 0; n < 10; ++n)
+		{
+			cl::mat out(T.nRows(), T.nCols(), 0.0);
+			T.CubeWiseSum(out, eye);
+			const auto _cubeSum1 = out.Get();
+			dm::DeviceManager::CheckDeviceSanity();
+			
+			ASSERT_EQ(out.nRows(), T.nRows());
+			ASSERT_EQ(out.nCols(), T.nCols());
+			for (size_t i = 0; i < T.nRows(); ++i)
+			{
+				for (size_t j = 0; j < T.nCols(); ++j)
+				{
+					double goldenCubeSum = 0.0;
+					for (size_t k = 0; k < T.nMatrices(); ++k)
+						goldenCubeSum += _T[i + j * T.nRows() + k * T.nRows() * T.nCols()];
+					
+					ASSERT_NEAR(goldenCubeSum / _cubeSum1[i + j * T.nRows()] - 1.0, 0.0,5e-7)
+												<< "i=" << i << "; j=" << j << "; idx=" << i + j * T.nRows() << "; sum=" << _cubeSum1[i + j * T.nRows()] << ";n=" << n;
+				}
+			}
+			
 		}
 	}
 	
 	TEST_F(CuBlasTests, BatchedKroneckerProduct)
 	{
-		unsigned nCubes = 2;
+		unsigned nCubes = 64;
 		
-		cl::mat u(3, nCubes, 1.0);
-		//u.RandomUniform();
-		u.columns[1]->Set(3.0);
+		cl::mat u(128, nCubes, 1.0);
+		u.RandomUniform();
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _u = u.Get();
 		
-		cl::mat v(2, nCubes, 2.0);
-		//v.RandomGaussian();
-		v.columns[1]->Set(4.0);
+		cl::mat v(32, nCubes, 2.0);
+		v.RandomGaussian();
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v = v.Get();
 		
