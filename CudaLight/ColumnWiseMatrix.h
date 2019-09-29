@@ -33,8 +33,10 @@ namespace cl
 		ColumnWiseMatrix(const ColumnWiseMatrix& rhs);
 		ColumnWiseMatrix(ColumnWiseMatrix&& rhs) noexcept;
 		
-		// initialise a sub matrix, I don't have a concept of leading dimension, so only sub columns set for now
+		// initialise a sub matrix
 		ColumnWiseMatrix(const ColumnWiseMatrix& rhs, const size_t colStart, const size_t colEnd);
+		// reshape a vector into a matrix
+		ColumnWiseMatrix(const Vector<memorySpace, mathDomain>& rhs, const size_t startOffset, const size_t nRows, const size_t nCols);
 
 		ColumnWiseMatrix(const std::vector<stdType>& rhs, const unsigned nRows, const unsigned nCols);
 		ColumnWiseMatrix(const std::string& fileName, bool useMemoryMapping);
@@ -195,10 +197,9 @@ namespace cl
 		
 		MemoryBuffer& GetBuffer() noexcept override final { return _buffer; }
 		const MemoryBuffer& GetBuffer() const noexcept override final { return _buffer; }
-	protected:
 		MemoryTile& GetTile() noexcept { return _buffer; }
 		const MemoryTile& GetTile() const noexcept { return _buffer; }
-		
+	protected:
 		explicit ColumnWiseMatrix(const MemoryTile& buffer);
 		
 		MemoryTile _buffer;

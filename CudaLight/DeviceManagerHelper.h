@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Types.h>
+#include <vector>
 
 #pragma region Macro Utilities
 
@@ -196,6 +197,8 @@ __CREATE_FUNCTION_5_ARG(SparseMultiply, MemoryTile&, A, const SparseMemoryTile&,
 
 //CubWrappers
 __CREATE_FUNCTION_2_ARG(Sum, double&, sum, const MemoryBuffer&, v);
+__CREATE_FUNCTION_3_ARG(DetermineSumCache, MemoryBuffer&, cacheBuffer, const MemoryBuffer&, v, const MemoryBuffer&, oneElementCache);
+__CREATE_FUNCTION_4_ARG(SumWithProvidedCache, double&, sum, const MemoryBuffer&, v, MemoryBuffer&, cacheBuffer, const MemoryBuffer&, oneElementCache);
 __CREATE_FUNCTION_2_ARG(AbsMin, double&, min, const MemoryBuffer&, x);
 __CREATE_FUNCTION_2_ARG(AbsMax, double&, max, const MemoryBuffer&, x);
 __CREATE_FUNCTION_2_ARG(Min, double&, min, const MemoryBuffer&, x);

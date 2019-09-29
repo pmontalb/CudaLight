@@ -31,6 +31,8 @@ namespace cl
 		explicit Tensor(const ColumnWiseMatrix<memorySpace, mathDomain>& rhs);
 
 		explicit Tensor(const Vector<memorySpace, mathDomain>& rhs);
+		
+		Tensor(const Vector<memorySpace, mathDomain>& rhs, const size_t startOffset, const size_t nRows, const size_t nCols, const size_t nMatrices) noexcept;
 
 		using IBuffer<Tensor, memorySpace, mathDomain>::ReadFrom;
 		void ReadFrom(const ColumnWiseMatrix<memorySpace, mathDomain>& rhs);
@@ -75,12 +77,16 @@ namespace cl
 		// NB: this computes KroneckerProduct(lhs->columns[i], rhs->columns[i]) and stores the result in this->matrices[i], so we're transposing the cubes!
 		static Tensor KroneckerProduct(const ColumnWiseMatrix<memorySpace, mathDomain>& lhs, const ColumnWiseMatrix<memorySpace, mathDomain>& rhs, const double alpha = 1.0);
 		static void KroneckerProduct(Tensor& out, const ColumnWiseMatrix<memorySpace, mathDomain>& lhs, const ColumnWiseMatrix<memorySpace, mathDomain>& rhs, const double alpha = 1.0);
+		static void AccumulateKroneckerProduct(ColumnWiseMatrix<memorySpace, mathDomain>& out, const ColumnWiseMatrix<memorySpace, mathDomain>& lhs, const ColumnWiseMatrix<memorySpace, mathDomain>& rhs, const double alpha = 1.0);
 		
 		#pragma endregion
 
 		MemoryBuffer& GetBuffer() noexcept override final { return _buffer; }
 		const MemoryBuffer& GetBuffer() const noexcept override final { return _buffer; }
 		const MemoryCube& GetCube() const noexcept { return _buffer; }
+		
+	private:
+		void SetUp(const size_t nMatrices);
 	protected:
 		MemoryCube& GetCube() noexcept { return _buffer; }
 		explicit Tensor(const MemoryCube& buffer);

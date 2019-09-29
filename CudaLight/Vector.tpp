@@ -31,6 +31,16 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
+	Vector<ms, md>::Vector(const Vector& rhs, const size_t start, const size_t end)
+		: IBuffer<Vector<ms, md>, ms, md>(false),  // this is a no-copy operation, this instance doesn't own the original memory!
+		  _buffer(0, static_cast<unsigned>(end - start), ms, md)
+	{
+		assert(end > start);
+		assert(end <= rhs.size());
+		_buffer.pointer = rhs._buffer.pointer + start * rhs._buffer.ElementarySize();
+	}
+
+	template<MemorySpace ms, MathDomain md>
 	Vector<ms, md>::Vector(Vector&& rhs) noexcept
 		: IBuffer<Vector<ms, md>, ms, md>(std::move(rhs)), _buffer(rhs._buffer)
 	{

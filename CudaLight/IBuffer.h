@@ -135,12 +135,15 @@ namespace cl
 		stdType Maximum() const;
 		stdType Sum() const;
 		stdType EuclideanNorm() const;
-		int CountEquals(const IBuffer& rhs, MemoryBuffer cache = MemoryBuffer()) const;
+		int CountEquals(const IBuffer& rhs) const;
+		int CountEquals(const IBuffer& rhs, MemoryBuffer& cacheCount, MemoryBuffer& cacheSum, MemoryBuffer& oneElementCache) const;
 
 		#pragma endregion
 		
 		virtual MemoryBuffer& GetBuffer() noexcept = 0;
 		virtual const MemoryBuffer& GetBuffer() const noexcept = 0;
+		
+		inline bool OwnsMemory() const noexcept { return _isOwner; }
 	protected:
 		
 		explicit IBuffer(const bool isOwner);

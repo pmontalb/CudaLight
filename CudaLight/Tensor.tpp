@@ -9,22 +9,7 @@ namespace cl
 		: IBuffer<Tensor<ms, md>, ms, md>(true), _buffer(MemoryCube(0, nRows, nCols, nMatrices, ms, md))
 	{
 		this->ctor(_buffer);
-
-		matrices.resize(nMatrices);
-		for (size_t i = 0; i < nMatrices; i++)
-		{
-			const size_t matrixShift = i * nRows * nCols * _buffer.ElementarySize();
-			MemoryTile matrixBuffer(_buffer.pointer + matrixShift, _buffer.nRows, _buffer.nCols, ms, md);
-			matrices[i] = ColumnWiseMatrix<ms, md>::make_shared(matrixBuffer);
-
-			matrices[i]->columns.resize(nCols);
-			for (size_t j = 0; j < nCols; ++j)
-			{
-				const size_t colShift = j * nRows * _buffer.ElementarySize();
-				MemoryBuffer colBuffer(_buffer.pointer + colShift, _buffer.nRows, ms, md);
-				matrices[i]->columns[j] = Vector<ms, md>::make_shared(colBuffer);
-			}
-		}
+		SetUp(nMatrices);
 	}
 	
 	template<MemorySpace ms, MathDomain md>
@@ -42,7 +27,7 @@ namespace cl
 
 	template<MemorySpace ms, MathDomain md>
 	Tensor<ms, md>::Tensor(const unsigned nRows, const unsigned nMatrices)
-		: ColumnWiseMatrix<ms, md>(nRows, nRows, nMatrices)
+		: Tensor<ms, md>(nRows, nRows, nMatrices)
 	{
 	}
 
@@ -75,14 +60,45 @@ namespace cl
 	{
 		dm::detail::AutoCopy(matrices[0]->columns[0]->GetBuffer(), rhs.GetBuffer());
 	}
-
+	
+	template<MemorySpace ms, MathDomain md>
+	Tensor<ms, md>::Tensor(const Vector<ms, md>& rhs, const size_t startOffset, const size_t nRows, const size_t nCols, const size_t nMatrices) noexcept
+		: IBuffer<Tensor<ms, md>, ms, md>(false),
+		  _buffer(0, static_cast<unsigned>(nRows), static_cast<unsigned>(nCols), static_cast<unsigned>(nMatrices), ms, md)
+	{
+		assert(startOffset + nRows * nCols * nMatrices <= rhs.size());
+		_buffer.pointer = rhs.GetBuffer().pointer + startOffset * rhs.GetBuffer().ElementarySize();
+		SetUp(nMatrices);
+	}
+	
+	
 	template<MemorySpace ms, MathDomain md>
 	Tensor<ms, md>::Tensor(const MemoryCube& buffer)
 		: IBuffer<Tensor<ms, md>, ms, md>(false), _buffer(buffer)
 	{
 
 	}
-
+	
+	template<MemorySpace ms, MathDomain md>
+	void Tensor<ms, md>::SetUp(const size_t nMatrices)
+	{
+		matrices.resize(nMatrices);
+		for (size_t i = 0; i < nMatrices; i++)
+		{
+			const size_t matrixShift = i * nRows() * nCols() * _buffer.ElementarySize();
+			MemoryTile matrixBuffer(_buffer.pointer + matrixShift, _buffer.nRows, _buffer.nCols, ms, md);
+			matrices[i] = ColumnWiseMatrix<ms, md>::make_shared(matrixBuffer);
+			
+			matrices[i]->columns.resize(nCols());
+			for (size_t j = 0; j < nCols(); ++j)
+			{
+				const size_t colShift = j * nRows() * _buffer.ElementarySize();
+				MemoryBuffer colBuffer(_buffer.pointer + colShift, _buffer.nRows, ms, md);
+				matrices[i]->columns[j] = Vector<ms, md>::make_shared(colBuffer);
+			}
+		}
+	}
+	
 	template<MemorySpace ms, MathDomain md>
 	void Tensor<ms, md>::ReadFrom(const ColumnWiseMatrix<ms, md>& rhs)
 	{
@@ -288,6 +304,15 @@ namespace cl
 			dm::detail::BatchedTransposedKroneckerProduct(out.GetCube(), lhs.GetTile(), rhs.GetTile(), alpha);
 		#endif
 		
+	}
+	
+	template<MemorySpace ms, MathDomain md>
+	void Tensor<ms, md>::AccumulateKroneckerProduct(ColumnWiseMatrix<ms, md>& out, const ColumnWiseMatrix<ms, md>& lhs, const ColumnWiseMatrix<ms, md>& rhs, const double alpha)
+	{
+		assert(lhs.nRows() == out.nRows());
+		assert(out.nCols() == rhs.nRows());
+		for (size_t k = 0; k < lhs.nCols(); ++k)
+			dm::detail::KroneckerProduct(out.GetTile(), lhs.columns[k]->GetBuffer(), rhs.columns[k]->GetBuffer(), alpha);
 	}
 	
 #pragma endregion

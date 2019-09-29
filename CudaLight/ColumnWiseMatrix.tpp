@@ -66,6 +66,16 @@ namespace cl
 
 		SetUp(nCols);
 	}
+
+	template<MemorySpace ms, MathDomain md>
+	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const Vector<ms, md>& rhs, const size_t startOffset, const size_t nRows, const size_t nCols)
+		: IBuffer<ColumnWiseMatrix<ms, md>, ms, md>(false),
+		  _buffer(0, static_cast<unsigned>(nRows), static_cast<unsigned>(nCols), static_cast<unsigned>(nRows), ms, md)
+	{
+		assert(startOffset + nRows * nCols <= rhs.size());
+		_buffer.pointer = rhs.GetBuffer().pointer + startOffset * rhs.GetBuffer().ElementarySize();
+		SetUp(nCols);
+	}
 	
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const std::string& fileName, bool useMemoryMapping)

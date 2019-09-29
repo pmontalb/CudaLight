@@ -1,5 +1,6 @@
 #include <DeviceManagerHelper.h>
 #include <CudaException.h>
+#include <vector>
 
 #pragma region Macro helpers
 
@@ -279,6 +280,8 @@ __CREATE_FUNCTION_5_ARG(SparseMultiply, CuSparseKernelExceptionFactory, MemoryTi
 
 //CubWrappers
 __CREATE_FUNCTION_2_ARG(Sum, CudaKernelExceptionFactory, double&, sum, const MemoryBuffer&, v);
+__CREATE_FUNCTION_3_ARG(DetermineSumCache, CudaKernelExceptionFactory, MemoryBuffer&, cacheBuffer, const MemoryBuffer&, v, const MemoryBuffer&, oneElementCache);
+__CREATE_FUNCTION_4_ARG(SumWithProvidedCache, CudaKernelExceptionFactory, double&, sum, const MemoryBuffer&, v, MemoryBuffer&, cacheBuffer, const MemoryBuffer&, oneElementCache);
 __CREATE_FUNCTION_2_ARG(AbsMin, CuBlasKernelExceptionFactory, double&, min, const MemoryBuffer&, x);
 __CREATE_FUNCTION_2_ARG(AbsMax, CuBlasKernelExceptionFactory, double&, max, const MemoryBuffer&, x);
 __CREATE_FUNCTION_2_ARG(Min, CuBlasKernelExceptionFactory, double&, min, const MemoryBuffer&, x);

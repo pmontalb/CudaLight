@@ -29,6 +29,7 @@ namespace cl
 
 		Vector(const unsigned size, const stdType value);
 		Vector(const Vector& rhs);
+		Vector(const Vector& rhs, const size_t start, const size_t end);
 		Vector(Vector&& rhs) noexcept;
 		explicit Vector(const std::vector<stdType>& rhs);
         explicit Vector(const std::string& fileName, bool useMemoryMapping = false);

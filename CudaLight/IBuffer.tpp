@@ -18,7 +18,7 @@ namespace cl
 	
 	template<typename bi, MemorySpace ms, MathDomain md>
 	IBuffer<bi, ms, md>::IBuffer(IBuffer&& buf) noexcept
-			: _isOwner(true)
+			: _isOwner(buf._isOwner)
 	{
 		buf._isOwner = false;  // otherwise the destructor will destroy the memory
 	}
@@ -363,15 +363,21 @@ namespace cl
 		
 		return static_cast<typename Traits<md>::stdType>(ret);
 	}
-
+	
 	template<typename bi, MemorySpace ms, MathDomain md>
-	int IBuffer<bi, ms, md>::CountEquals(const IBuffer& rhs, MemoryBuffer cache) const
+	int IBuffer<bi, ms, md>::CountEquals(const IBuffer& rhs) const
 	{
+		MemoryBuffer cache;
+		cache.memorySpace = ms;
+		cache.mathDomain = md;
+		cache.size = size();
+		dm::detail::Alloc(cache);
+		
 		const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
 		assert(rhs.size() == size());
 		assert(buffer.pointer != 0);
 		assert(static_cast<const bi*>(&rhs)->_buffer.pointer != 0);
-
+		
 		bool needToFreeCache = cache.pointer == 0;
 		if (needToFreeCache)
 		{
@@ -380,21 +386,44 @@ namespace cl
 			cache.size = size();
 			dm::detail::Alloc(cache);
 		}
-
+		
 		// calculate the difference
 		dm::detail::Subtract(cache, buffer, static_cast<const bi*>(&rhs)->_buffer);
-
+		
 		// calculate how many non-zeros, overriding cache
 		dm::detail::IsNonZero(cache, cache);
-
+		
 		double ret = -1;
 		dm::detail::Sum(ret, cache);
+		
+		// we are counting the zero entries
+		ret = size() - ret;
+		
+		if (needToFreeCache)
+			dm::detail::Free(cache);
+		
+		return static_cast<int>(ret);
+	}
+	
+	template<typename bi, MemorySpace ms, MathDomain md>
+	int IBuffer<bi, ms, md>::CountEquals(const IBuffer& rhs, MemoryBuffer& cacheCount, MemoryBuffer& cacheSum, MemoryBuffer& oneElementCache) const
+	{
+		const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
+		assert(rhs.size() == size());
+		assert(buffer.pointer != 0);
+		assert(static_cast<const bi*>(&rhs)->_buffer.pointer != 0);
+		
+		// calculate the difference
+		dm::detail::Subtract(cacheCount, buffer, static_cast<const bi*>(&rhs)->_buffer);
+
+		// calculate how many non-zeros, overriding cache
+		dm::detail::IsNonZero(cacheCount, cacheCount);
+
+		double ret = -1;
+		dm::detail::SumWithProvidedCache(ret, cacheCount, cacheSum, oneElementCache);
 
 		// we are counting the zero entries
 		ret = size() - ret;
-
-		if (needToFreeCache)
-			dm::detail::Free(cache);
 
 		return static_cast<int>(ret);
 	}
