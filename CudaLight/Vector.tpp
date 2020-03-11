@@ -11,7 +11,7 @@ namespace cl
 {
 	template<MemorySpace ms, MathDomain md>
 	Vector<ms, md>::Vector(const unsigned size)
-		: IBuffer<Vector<ms, md>, ms, md>(true), _buffer(MemoryBuffer(0, size, ms, md))
+		: IBuffer<Vector<ms, md>, ms, md>(true), _buffer(0, size, ms, md)
 	{
 		this->ctor(_buffer);
 	}

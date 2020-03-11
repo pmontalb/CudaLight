@@ -115,7 +115,7 @@ namespace cl
 
 		unsigned size() const noexcept { return GetBuffer().size; }
 
-		virtual ~IBuffer();
+		virtual ~IBuffer() = default;
 
 		#pragma region Linear Algebra
 

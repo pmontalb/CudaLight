@@ -51,5 +51,5 @@ create_test(
         gtest pthread
 )
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    target_compile_options(CLTests PRIVATE -Wno-absolute-value -Wno-unknown-cuda-version)
+    target_compile_options(CLTests PRIVATE -Wno-absolute-value)
 endif()

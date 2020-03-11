@@ -36,7 +36,11 @@ namespace cl
 
 		using IBuffer<Vector, memorySpace, mathDomain>::Set;
 
-		virtual ~Vector() override = default;
+		inline ~Vector() override
+		{
+            this->dtor(_buffer);
+            _buffer.pointer = 0;
+		}
 		
 		void RandomShuffle(const unsigned seed = 1234);
 		

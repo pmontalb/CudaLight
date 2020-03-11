@@ -30,7 +30,12 @@ namespace cl
 		explicit CompressedSparseRowMatrix(CompressedSparseRowMatrix&& rhs) noexcept;
 
 		void ReadFrom(const std::vector<stdType>& denseMatrix, const size_t nRows, const size_t nCols);
-		virtual ~CompressedSparseRowMatrix() override = default;
+
+		inline ~CompressedSparseRowMatrix() override
+        {
+            this->dtor(_buffer);
+            _buffer.pointer = 0;
+        }
 
 		const MemoryBuffer& GetBuffer() const noexcept override final { return values.GetBuffer(); }
 		MemoryBuffer& GetBuffer() noexcept override final { return values.GetBuffer(); }

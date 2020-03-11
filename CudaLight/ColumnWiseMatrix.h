@@ -65,7 +65,11 @@ namespace cl
 		template<MemorySpace ms, MathDomain md>
 		friend std::ostream& operator<<(std::ostream& os, const ColumnWiseMatrix& buffer);
 
-		virtual ~ColumnWiseMatrix() override = default;
+        inline ~ColumnWiseMatrix() override
+        {
+            this->dtor(_buffer);
+            _buffer.pointer = 0;
+        }
 
 		unsigned nRows() const noexcept { return _buffer.nRows; }
 		unsigned nCols() const noexcept { return _buffer.nCols; }

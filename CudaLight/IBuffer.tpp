@@ -144,14 +144,6 @@ namespace cl
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
-	IBuffer<bi, ms, md>::~IBuffer()
-	{
-		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
-		dtor(buffer);
-		buffer.pointer = 0;
-	}
-
-	template<typename bi, MemorySpace ms, MathDomain md>
 	void IBuffer<bi, ms, md>::dtor(MemoryBuffer& buffer)
 	{
 		// if this is not the owner of the buffer, it must not free it

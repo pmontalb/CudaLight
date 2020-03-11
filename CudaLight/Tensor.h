@@ -50,7 +50,11 @@ namespace cl
 		std::ostream& ToOutputStream(std::ostream&) const override final { throw std::logic_error("Not Implemented"); }
 		void ToBinaryFile(const std::string&, const bool, const std::string) const override final { throw std::logic_error("Not Implemented"); }
 
-		virtual ~Tensor() override = default;
+        inline ~Tensor() override
+        {
+            this->dtor(_buffer);
+            _buffer.pointer = 0;
+        }
 
 		unsigned nRows() const noexcept { return _buffer.nRows; }
 		unsigned nCols() const noexcept { return _buffer.nCols; }

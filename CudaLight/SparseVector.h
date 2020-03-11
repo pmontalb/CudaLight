@@ -23,7 +23,11 @@ namespace cl
 		SparseVector(const SparseVector& rhs);
 		SparseVector(SparseVector&& rhs) noexcept;
 
-		virtual ~SparseVector() override = default;
+        inline ~SparseVector() override
+        {
+            this-> dtor(_buffer);
+            _buffer.pointer = 0;
+        }
 
 		const MemoryBuffer& GetBuffer() const noexcept override final { return values.GetBuffer(); }
 		MemoryBuffer& GetBuffer() noexcept override final { return values.GetBuffer(); }
