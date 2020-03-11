@@ -154,7 +154,7 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void Tensor<ms, md>::Print(const std::string& label) const
 	{
-		auto ten = Get();
+		auto t = Get();
 
 		std::cout << "********* " << label << " ***********" << std::endl;
 		for (size_t k = 0; k < nCols(); k++)
@@ -164,7 +164,7 @@ namespace cl
 			{
 				std::cout << "\t";
 				for (size_t i = 0; i < nRows(); i++)
-					std::cout << " t[" << i << "][" << j << "][" << k << "] = " << ten[i + nRows() * (j + nMatrices() * k)];
+					std::cout << " t[" << i << "][" << j << "][" << k << "] = " << t[i + nRows() * (j + nMatrices() * k)];
 				std::cout << std::endl;
 			}
 		}
@@ -352,9 +352,9 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void Print(const Tensor<ms, md>& ten, const std::string& label)
+	void Print(const Tensor<ms, md>& t, const std::string& label)
 	{
-		ten.Print(label);
+		t.Print(label);
 	}
 
 	template<MemorySpace ms, MathDomain md>

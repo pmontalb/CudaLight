@@ -6,9 +6,9 @@
 class Exception : public std::exception
 {
 public:
-    explicit Exception(const std::string& message_ = "") : message(message_) {}
-    explicit Exception(const char* message_ = "") : message(message_) {}
-	virtual ~Exception() = default;
+    explicit Exception(const std::string& message = "") : _message(message) {}
+    explicit Exception(const char* message = "") : _message(message) {}
+	virtual ~Exception() override = default;
 
 	Exception(const Exception& rhs) = default;
 	Exception(Exception&& rhs) = default;
@@ -17,11 +17,11 @@ public:
 
 	char const* what() const noexcept override final
 	{
-		return message.c_str();
+		return _message.c_str();
 	}
 
 protected:
-	const std::string message;
+	const std::string _message;
 };
 
 class InternalErrorException : public Exception

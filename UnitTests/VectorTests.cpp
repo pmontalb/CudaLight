@@ -57,8 +57,8 @@ namespace clt
 		cl::vec v = cl::vec::LinSpace(0.0, 1.0, 10);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v = v.Get();
-		ASSERT_TRUE(fabs(_v[0] - 0.0) <= 1e-7);
-		ASSERT_TRUE(fabs(_v[_v.size() - 1] - 1.0) <= 1e-7);
+		ASSERT_TRUE(std::fabs(_v[0] - 0.0f) <= 1e-7f);
+		ASSERT_TRUE(std::fabs(_v[_v.size() - 1] - 1.0f) <= 1e-7f);
 	}
 	
 	TEST_F(VectorTests, RandomUniform)
@@ -67,7 +67,7 @@ namespace clt
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v = v.Get();
 		for (const auto& iter: _v)
-			ASSERT_TRUE(iter >= 0.0 && iter <= 1.0);
+			ASSERT_TRUE(iter >= 0.0f && iter <= 1.0f);
 	}
 	
 	TEST_F(VectorTests, RandomGaussian)
@@ -76,7 +76,7 @@ namespace clt
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v = v.Get();
 		for (size_t i = 0; i < _v.size() / 2; ++i)
-			ASSERT_TRUE(fabs(_v[2 * i] + _v[2 * i + 1]) <= 1e-7);
+			ASSERT_TRUE(std::fabs(_v[2 * i] + _v[2 * i + 1]) <= 1e-7f);
 	}
 	
 	TEST_F(VectorTests, RandomShuffle)
@@ -124,11 +124,11 @@ namespace clt
 			ASSERT_NE(_v1[i], _v3[i]);
 			
 			// check permutation used the same indices
-			int j = 0;
+			unsigned j = 0;
 			bool found = false;
 			for (; j < _u2.size(); ++j)
 			{
-				if (fabs(_u3[j] - _u1[i]) < 1e-12)
+				if (std::fabs(_u3[j] - _u1[i]) < 1e-12f)
 				{
 					found = true;
 					break;
@@ -136,11 +136,11 @@ namespace clt
 			}
 			ASSERT_TRUE(found);
 			
-			int k = 0;
+			unsigned k = 0;
 			found = false;
 			for (; k < _v2.size(); ++k)
 			{
-				if (fabs(_v3[k] - _v1[i]) < 1e-12)
+				if (std::fabs(_v3[k] - _v1[i]) < 1e-12f)
 				{
 					found = true;
 					break;

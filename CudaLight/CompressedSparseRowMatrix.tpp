@@ -63,7 +63,7 @@ namespace cl
 		{
 			for (unsigned j = 0; j < nCols; j++)
 			{
-				if (fabs(static_cast<double>(denseMatrix[i + j * nRows])) > 1e-7)
+				if (std::fabs(static_cast<double>(denseMatrix[i + j * nRows])) > 1e-7)
 				{
 					nNonZeros++;
 					nonZeroValues.push_back(denseMatrix[i + j * nRows]);
@@ -129,7 +129,7 @@ template< MemorySpace ms, MathDomain md>
 		size_t nz = 0;
 		for (size_t i = 0; i < nRows(); i++)
 		{
-			const size_t nNonZeroInRow = static_cast<size_t>(_nNonZeroRows[i + 1] - _nNonZeroRows[i]);
+			const auto nNonZeroInRow = static_cast<size_t>(_nNonZeroRows[i + 1] - _nNonZeroRows[i]);
 			for (size_t j = 0; j < nNonZeroInRow; j++)
 			{
 				ret[i + static_cast<size_t>(_nonZeroColumnIndices[nz]) * nRows()] = _values[nz];
@@ -143,15 +143,15 @@ template< MemorySpace ms, MathDomain md>
 	template< MemorySpace ms, MathDomain md>
 	void CompressedSparseRowMatrix<ms, md>::Print(const std::string& label) const
 	{
-		auto mat = Get();
-		cl::Print(mat, nRows(), nCols(), label);
+		auto m = Get();
+		cl::Print(m, nRows(), nCols(), label);
 	}
 
 	template< MemorySpace ms, MathDomain md>
 	void CompressedSparseRowMatrix<ms, md>::PrintNonZeros(const std::string& label) const
 	{
-		auto vec = this->values.Get();
-		cl::Print(vec, label + " - values");
+		auto v = this->values.Get();
+		cl::Print(v, label + " - values");
 		
 		auto nzci = this->nonZeroColumnIndices.Get();
 		cl::Print(nzci, label + " - nonZeroColumnIndices");

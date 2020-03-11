@@ -65,7 +65,7 @@ namespace clt
 		for (size_t i = 0; i < m1.nRows(); i++)
 		{
 			for (size_t j = 0; j < m1.nCols(); j++)
-				ASSERT_TRUE(fabs(_m1[i + m1.nRows() * j] - _m2[i + m1.nRows() * j]) < 1e-6);
+				ASSERT_TRUE(std::fabs(_m1[i + m1.nRows() * j] - _m2[i + m1.nRows() * j]) < 1e-6f);
 		}
 	}
 
@@ -84,7 +84,7 @@ namespace clt
 		for (size_t i = 0; i < m1.nRows(); i++)
 		{
 			for (size_t j = 0; j < m1.nCols(); j++)
-				ASSERT_TRUE(fabs(_m1[i + m1.nRows() * j] - _m2[i + m1.nRows() * j]) < 1e-6);
+				ASSERT_TRUE(std::fabs(_m1[i + m1.nRows() * j] - _m2[i + m1.nRows() * j]) < 1e-6f);
 		}
 	}
 	
@@ -103,7 +103,7 @@ namespace clt
 		for (size_t i = 0; i < m1.nRows(); i++)
 		{
 			for (size_t j = 0; j < m1.nCols(); j++)
-				ASSERT_TRUE(fabs(_m1[i + m1.nRows() * j] - _m2[i + m1.nRows() * j]) < 1e-6);
+				ASSERT_TRUE(std::fabs(_m1[i + m1.nRows() * j] - _m2[i + m1.nRows() * j]) < 1e-6f);
 		}
 	}
 

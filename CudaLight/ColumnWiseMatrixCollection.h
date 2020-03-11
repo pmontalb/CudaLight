@@ -37,7 +37,7 @@ namespace cl
 	private:
 		Vector<memorySpace, mathDomain> data;
 		const std::vector<std::pair<size_t, size_t>> sizes;
-		std::vector<ColumnWiseMatrix<memorySpace, mathDomain>> matrices;
+		std::vector<ColumnWiseMatrix<memorySpace, mathDomain>> matrices {};
 	};
 }
 

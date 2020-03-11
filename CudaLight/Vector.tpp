@@ -31,7 +31,7 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	Vector<ms, md>::Vector(const Vector& rhs, const size_t start, const size_t end)
+	Vector<ms, md>::Vector(const Vector& rhs, const size_t start, const size_t end) noexcept
 		: IBuffer<Vector<ms, md>, ms, md>(false),  // this is a no-copy operation, this instance doesn't own the original memory!
 		  _buffer(0, static_cast<unsigned>(end - start), ms, md)
 	{
@@ -56,10 +56,10 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	Vector<ms, md>::Vector(const std::string& fileName, bool useMemoryMapping)
 	{
-		std::vector<typename Traits<md>::stdType> vec;
-		cl::VectorFromBinaryFile(vec, fileName, useMemoryMapping);
+		std::vector<typename Traits<md>::stdType> v;
+		cl::VectorFromBinaryFile(v, fileName, useMemoryMapping);
 
-        this->ReadFrom(vec);
+        this->ReadFrom(v);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -79,8 +79,8 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void Vector<ms, md>::Print(const std::string& label) const
 	{
-		auto vec = this->Get();
-		cl::Print(vec, label);
+		auto v = this->Get();
+		cl::Print(v, label);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -196,22 +196,22 @@ namespace cl
 	}
 	
 	template<MemorySpace ms, MathDomain md>
-	void Vector<ms, md>::Print(const Vector<ms, md>& vec, const std::string& label)
+	void Vector<ms, md>::Print(const Vector<ms, md>& v, const std::string& label)
 	{
-		vec.Print(label);
+		v.Print(label);
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	std::ostream& Vector<ms, md>::VectorToOutputStream(const Vector<ms, md>& vec, std::ostream& os)
+	std::ostream& Vector<ms, md>::VectorToOutputStream(const Vector<ms, md>& v, std::ostream& os)
 	{
-		os << cl::VectorToOutputStream(vec.Get(), os);
+		os << cl::VectorToOutputStream(v.Get(), os);
 		return os;
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void Vector<ms, md>::VectorToBinaryFile(const Vector<ms, md>& vec, const std::string& fileName, const bool compressed, const std::string mode)
+	void Vector<ms, md>::VectorToBinaryFile(const Vector<ms, md>& v, const std::string& fileName, const bool compressed, const std::string mode)
 	{
-		const auto& _vec = vec.Get();
+		const auto& _vec = v.Get();
 		cl::VectorToBinaryFile(_vec, fileName, compressed, mode);
 	}
 

@@ -102,7 +102,7 @@ namespace cl
 	{
 		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
-		dm::detail::LinSpace(buffer, x0, x1);
+		dm::detail::LinSpace(buffer, static_cast<double>(x0), static_cast<double>(x1));
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
@@ -185,7 +185,7 @@ namespace cl
 		constexpr double tolerance = GetTolerance();
 		for (size_t i = 0; i < thisBuffer.size(); ++i)
 		{
-			if (fabs(thisBuffer[i] - thatBuffer[i]) > tolerance)
+			if (std::fabs(thisBuffer[i] - thatBuffer[i]) > static_cast<stdType>(tolerance))
 				return false;
 		}
 
@@ -301,7 +301,7 @@ namespace cl
 		double ret = 0.0;
 		dm::detail::AbsMin(ret, buffer);
 
-		return ret;
+		return static_cast<typename Traits<md>::stdType>(ret);
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
@@ -313,7 +313,7 @@ namespace cl
 		double ret = 0.0;
 		dm::detail::AbsMax(ret, buffer);
 
-		return ret;
+		return static_cast<typename Traits<md>::stdType>(ret);
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
@@ -325,7 +325,7 @@ namespace cl
 		double ret = 0.0;
 		dm::detail::Min(ret, buffer);
 
-		return ret;
+		return static_cast<typename Traits<md>::stdType>(ret);
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
@@ -337,7 +337,7 @@ namespace cl
 		double ret = 0.0;
 		dm::detail::Max(ret, buffer);
 
-		return ret;
+		return static_cast<typename Traits<md>::stdType>(ret);
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
@@ -349,7 +349,7 @@ namespace cl
 		double ret = -1;
 		dm::detail::Sum(ret, buffer);
 
-		return ret;
+		return static_cast<typename Traits<md>::stdType>(ret);
 	}
 	
 	template<typename bi, MemorySpace ms, MathDomain md>
@@ -523,7 +523,7 @@ namespace cl
 				matTranspose.push_back(value);
 			++nRows;
 		}
-		nCols = matTranspose.size() / nRows;
+		nCols = static_cast<unsigned>(matTranspose.size()) / nRows;
 
 		// transpose matrix
 		mat.resize(matTranspose.size());

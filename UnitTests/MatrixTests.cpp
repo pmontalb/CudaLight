@@ -56,7 +56,7 @@ namespace clt
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v = v.Get();
 		for (size_t i = 0; i < v.nRows(); ++i)
-			ASSERT_TRUE(fabs(_v[i + v.nRows() * i] - 1.0) <= 5e-16);
+			ASSERT_TRUE(std::fabs(_v[i + v.nRows() * i] - 1.0f) <= 5e-16f);
 	}
 
 	TEST_F(MatrixTests, Linspace)
@@ -64,8 +64,8 @@ namespace clt
 		cl::mat v = cl::mat::LinSpace(0.0f, 1.0f, 10, 10);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v = v.Get();
-		ASSERT_TRUE(fabs(_v[0] - 0.0) <= 1e-7);
-		ASSERT_TRUE(fabs(_v[_v.size() - 1] - 1.0) <= 1e-7);
+		ASSERT_TRUE(std::fabs(_v[0] - 0.0f) <= 1e-7f);
+		ASSERT_TRUE(std::fabs(_v[_v.size() - 1] - 1.0f) <= 1e-7f);
 	}
 
 	TEST_F(MatrixTests, RandomUniform)
@@ -74,7 +74,7 @@ namespace clt
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v = v.Get();
 		for (const auto& iter : _v)
-			ASSERT_TRUE(iter >= 0.0 && iter <= 1.0);
+			ASSERT_TRUE(iter >= 0.0f && iter <= 1.0f);
 	}
 
 	TEST_F(MatrixTests, RandomGaussian)
@@ -83,7 +83,7 @@ namespace clt
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v = v.Get();
 		for (size_t i = 0; i < _v.size() / 2; ++i)
-			ASSERT_TRUE(fabs(_v[2 * i] + _v[2 * i + 1]) <= 1e-7);
+			ASSERT_TRUE(std::fabs(_v[2 * i] + _v[2 * i + 1]) <= 1e-7f);
 	}
 
 	TEST_F(MatrixTests, GetColumn)
@@ -98,7 +98,7 @@ namespace clt
 				
 			ASSERT_EQ(static_cast<unsigned>(col.size()), m1.nRows());
 			for (size_t i = 0; i < col.size(); ++i)
-				ASSERT_TRUE(fabs(col[i] - 1.2345) <= 1e-7);
+				ASSERT_TRUE(std::fabs(col[i] - 1.2345f) <= 1e-7f);
 		}
 
 	}
@@ -124,12 +124,12 @@ namespace clt
 			if (j != 3)
 			{
 				for (size_t i = 0; i < col.size(); ++i)
-					ASSERT_TRUE(fabs(col[i] - _m1[i + m1.nRows() * j]) <= 1e-7);
+					ASSERT_TRUE(std::fabs(col[i] - _m1[i + m1.nRows() * j]) <= 1e-7f);
 			}
 			else
 			{
 				for (size_t i = 0; i < col.size(); ++i)
-					ASSERT_TRUE(fabs(col[i] - _v1[i]) <= 1e-7);
+					ASSERT_TRUE(std::fabs(col[i] - _v1[i]) <= 1e-7f);
 			}
 		}
 	}
@@ -150,7 +150,7 @@ namespace clt
 			bool found = false;
 			for (; j2 < m.nCols(); ++j2)
 			{
-				if (fabs(_m2[0 + j2 * m.nRows()] - _m1[0 + j * m.nRows()]) < 1e-12)
+				if (std::fabs(_m2[0 + j2 * m.nRows()] - _m1[0 + j * m.nRows()]) < 1e-12f)
 				{
 					found = true;
 					break;
@@ -182,7 +182,7 @@ namespace clt
 			bool found = false;
 			for (; j2 < m.nCols(); ++j2)
 			{
-				if (fabs(_m2[0 + j2 * m.nRows()] - _m1[0 + j * m.nRows()]) < 1e-12)
+				if (std::fabs(_m2[0 + j2 * m.nRows()] - _m1[0 + j * m.nRows()]) < 1e-12f)
 				{
 					found = true;
 					break;
@@ -194,7 +194,7 @@ namespace clt
 			found = false;
 			for (; k2 < m.nCols(); ++k2)
 			{
-				if (fabs(_n2[0 + k2 * n.nRows()] - _n1[0 + j * n.nRows()]) < 1e-12)
+				if (std::fabs(_n2[0 + k2 * n.nRows()] - _n1[0 + j * n.nRows()]) < 1e-12f)
 				{
 					found = true;
 					break;

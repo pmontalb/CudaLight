@@ -37,7 +37,7 @@ namespace cl
 	private:
 		Vector<memorySpace, mathDomain> data;
 		const std::vector<std::tuple<size_t, size_t, size_t>> sizes;
-		std::vector<Tensor<memorySpace, mathDomain>> tensors;
+		std::vector<Tensor<memorySpace, mathDomain>> tensors {};
 	};
 }
 

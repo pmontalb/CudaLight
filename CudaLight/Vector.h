@@ -29,14 +29,14 @@ namespace cl
 
 		Vector(const unsigned size, const stdType value);
 		Vector(const Vector& rhs);
-		Vector(const Vector& rhs, const size_t start, const size_t end);
+		Vector(const Vector& rhs, const size_t start, const size_t end) noexcept;
 		Vector(Vector&& rhs) noexcept;
 		explicit Vector(const std::vector<stdType>& rhs);
         explicit Vector(const std::string& fileName, bool useMemoryMapping = false);
 
 		using IBuffer<Vector, memorySpace, mathDomain>::Set;
 
-		virtual ~Vector() = default;
+		virtual ~Vector() override = default;
 		
 		void RandomShuffle(const unsigned seed = 1234);
 		
@@ -93,7 +93,7 @@ namespace cl
 		Vector() : IBuffer<Vector<memorySpace, mathDomain>, memorySpace, mathDomain>(true) {}
 		explicit Vector(const MemoryBuffer& buffer);
 	private:
-		MemoryBuffer _buffer;
+		MemoryBuffer _buffer {};
 		
 	public:
 		// static functions

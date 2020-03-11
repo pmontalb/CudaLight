@@ -23,17 +23,15 @@ namespace cl
 		SparseVector(const SparseVector& rhs);
 		SparseVector(SparseVector&& rhs) noexcept;
 
-		virtual ~SparseVector() = default;
+		virtual ~SparseVector() override = default;
 
 		const MemoryBuffer& GetBuffer() const noexcept override final { return values.GetBuffer(); }
 		MemoryBuffer& GetBuffer() noexcept override final { return values.GetBuffer(); }
 
 		std::vector<typename Traits<mathDomain>::stdType> Get() const override final;
 		void Print(const std::string& label = "") const override final;
-		std::ostream& ToOutputStream(std::ostream& os) const override final { throw std::logic_error("Not Implemented"); };
-		void ToBinaryFile(const std::string& fileName, const bool compressed, const std::string mode) const override final	{ throw std::logic_error("Not Implemented"); };
-
-		unsigned denseSize;  // used only when converting to dense
+		std::ostream& ToOutputStream(std::ostream&) const override final { throw std::logic_error("Not Implemented"); }
+		void ToBinaryFile(const std::string&, const bool, const std::string) const override final	{ throw std::logic_error("Not Implemented"); }
 
 		#pragma region Dense-Sparse Linear Algebra
 
@@ -58,13 +56,15 @@ namespace cl
 	protected:
 		SparseVector(const unsigned size, const unsigned nNonZeros);
 		SparseVector(const unsigned size, const unsigned nNonZeros, const stdType value);
+        using IBuffer<SparseVector, memorySpace, mathDomain>::Alloc;
 
-		SparseMemoryBuffer _buffer;
 
-		Vector<memorySpace, mathDomain> values;
-		Vector<memorySpace, MathDomain::Int> nonZeroIndices;
-
-		using IBuffer<SparseVector, memorySpace, mathDomain>::Alloc;
+    public:
+        unsigned denseSize;  // used only when converting to dense
+    protected:
+        SparseMemoryBuffer _buffer {};
+        Vector<memorySpace, mathDomain> values {};
+        Vector<memorySpace, MathDomain::Int> nonZeroIndices {};
 
 	private:
 		/**

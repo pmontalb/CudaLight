@@ -28,7 +28,7 @@ namespace clt
 		auto _v3 = v3.Get();
 
 		for (size_t i = 0; i < v1.size(); ++i)
-			ASSERT_TRUE(fabs(_v3[i] - _v1[i] - _v2[i]) <= 1e-7);
+			ASSERT_TRUE(std::fabs(_v3[i] - _v1[i] - _v2[i]) <= 1e-7f);
 	}
 
 	TEST_F(CuSparseTests, Multiply)
@@ -59,8 +59,8 @@ namespace clt
 			{
 				double m1m2 = 0.0;
 				for (size_t k = 0; k < m1.nCols(); ++k)
-					m1m2 += _m1[i + k * m1.nRows()] * _m2[k + j * m2.nRows()];
-				ASSERT_TRUE(fabs(m1m2 - _m3[i + j * m1.nRows()]) <= 5e-5);
+					m1m2 += static_cast<double>(_m1[i + k * m1.nRows()] * _m2[k + j * m2.nRows()]);
+				ASSERT_TRUE(std::fabs(m1m2 - static_cast<double>(_m3[i + j * m1.nRows()])) <= 5e-5);
 			}
 		}
 	}

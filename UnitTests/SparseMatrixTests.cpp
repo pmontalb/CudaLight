@@ -87,7 +87,7 @@ namespace clt
 
 		for (size_t i = 0; i < _dv.size(); ++i)
 		{
-			ASSERT_TRUE(fabs(_dv[i] - _sv[i]) <= 1e-7);
+			ASSERT_TRUE(std::fabs(_dv[i] - _sv[i]) <= 1e-7f);
 		}
 	}
 }

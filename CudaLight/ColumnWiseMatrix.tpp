@@ -4,7 +4,7 @@ namespace cl
 {
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const unsigned nRows, const unsigned nCols)
-		: IBuffer<ColumnWiseMatrix<ms, md>, ms, md>(true), _buffer(MemoryTile(0, nRows, nCols, ms, md))
+		: IBuffer<ColumnWiseMatrix<ms, md>, ms, md>(true), _buffer(0, nRows, nCols, ms, md)
 	{
 		this->ctor(_buffer);
 	
@@ -80,11 +80,11 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const std::string& fileName, bool useMemoryMapping)
 	{
-		std::vector<typename Traits<md>::stdType> mat {};
+		std::vector<typename Traits<md>::stdType> m {};
 		unsigned nRows = 0, nCols = 0;
-		cl::MatrixFromBinaryFile(mat, nRows, nCols, fileName, useMemoryMapping);
+		cl::MatrixFromBinaryFile(m, nRows, nCols, fileName, useMemoryMapping);
 		
-		ReadFrom(mat, nRows, nCols);
+		ReadFrom(m, nRows, nCols);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -157,8 +157,8 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::Print(const std::string& label) const
 	{
-		auto mat = Get();
-		cl::Print(mat, nRows(), nCols(), label);
+		auto m = Get();
+		cl::Print(m, nRows(), nCols(), label);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -312,7 +312,7 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::Multiply(const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation, const MatrixOperation rhsOperation, const double alpha, const double beta) const
 	{
-		size_t nRows, nCols;
+		unsigned nRows, nCols;
 		if (lhsOperation == MatrixOperation::None)
 			nRows = this->nRows();
 		else
@@ -612,15 +612,15 @@ template<MemorySpace ms, MathDomain md>
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void ColumnWiseMatrix<ms, md>::Print(const ColumnWiseMatrix<ms, md>& mat, const std::string& label)
+	void ColumnWiseMatrix<ms, md>::Print(const ColumnWiseMatrix<ms, md>& m, const std::string& label)
 	{
-		mat.Print(label);
+		m.Print(label);
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	std::ostream& ColumnWiseMatrix<ms, md>::MatrixToOutputStream(const ColumnWiseMatrix<ms, md>& mat, std::ostream& os)
+	std::ostream& ColumnWiseMatrix<ms, md>::MatrixToOutputStream(const ColumnWiseMatrix<ms, md>& m, std::ostream& os)
 	{
-		cl::MatrixToOutputStream(mat.Get(), mat.nRows(), mat.nCols(), os);
+		cl::MatrixToOutputStream(m.Get(), m.nRows(), m.nCols(), os);
 
 		return os;
 	}
@@ -632,10 +632,10 @@ template<MemorySpace ms, MathDomain md>
 		unsigned nRows = 0, nCols = 0;
 		cl::MatrixFromInputStream(_mat, nRows, nCols, is);
 		
-		ColumnWiseMatrix<ms, md> mat(nRows, nCols);
-		mat.ReadFrom(_mat);
+		ColumnWiseMatrix<ms, md> m(nRows, nCols);
+		m.ReadFrom(_mat);
 
-		return mat;
+		return m;
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -652,10 +652,10 @@ template<MemorySpace ms, MathDomain md>
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void ColumnWiseMatrix<ms, md>::MatrixToBinaryFile(const ColumnWiseMatrix<ms, md>& mat, const std::string& fileName, const bool compressed, const std::string mode)
+	void ColumnWiseMatrix<ms, md>::MatrixToBinaryFile(const ColumnWiseMatrix<ms, md>& m, const std::string& fileName, const bool compressed, const std::string mode)
 	{
-		const auto& _mat = mat.Get();
-		cl::MatrixToBinaryFile(_mat, mat.nRows(), mat.nCols(), fileName, compressed, mode);
+		const auto& _mat = m.Get();
+		cl::MatrixToBinaryFile(_mat, m.nRows(), m.nCols(), fileName, compressed, mode);
 	}
 
 	template<MemorySpace ms, MathDomain md>

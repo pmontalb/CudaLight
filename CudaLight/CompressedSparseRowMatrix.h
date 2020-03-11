@@ -30,7 +30,7 @@ namespace cl
 		explicit CompressedSparseRowMatrix(CompressedSparseRowMatrix&& rhs) noexcept;
 
 		void ReadFrom(const std::vector<stdType>& denseMatrix, const size_t nRows, const size_t nCols);
-		virtual ~CompressedSparseRowMatrix() = default;
+		virtual ~CompressedSparseRowMatrix() override = default;
 
 		const MemoryBuffer& GetBuffer() const noexcept override final { return values.GetBuffer(); }
 		MemoryBuffer& GetBuffer() noexcept override final { return values.GetBuffer(); }
@@ -65,11 +65,11 @@ namespace cl
 		#pragma endregion
 
 	protected:
-		SparseMemoryTile _buffer;
+		SparseMemoryTile _buffer = SparseMemoryTile(0, 0, 0, 0, 0, 0, memorySpace, mathDomain);
 
-		Vector<memorySpace, mathDomain> values;
-		Vector<memorySpace, MathDomain::Int> nonZeroColumnIndices;
-		Vector<memorySpace, MathDomain::Int> nNonZeroRows;
+		Vector<memorySpace, mathDomain> values {};
+		Vector<memorySpace, MathDomain::Int> nonZeroColumnIndices {};
+		Vector<memorySpace, MathDomain::Int> nNonZeroRows {};
 
 		using IBuffer<CompressedSparseRowMatrix, memorySpace, mathDomain>::Alloc;
 

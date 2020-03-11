@@ -3,11 +3,11 @@
 namespace cl
 {
 	template< MemorySpace ms, MathDomain md>
-	SparseVector<ms, md>::SparseVector(const unsigned size, const Vector<ms, MathDomain::Int>& nonZeroIndices)
+	SparseVector<ms, md>::SparseVector(const unsigned size, const Vector<ms, MathDomain::Int>& nonZeroIndices_)
 		: IBuffer<SparseVector<ms, md>, ms, md>(false),  // SparseVector doesn't allocate its memory in its _buffer!
 		denseSize(size),
-		_buffer(0, nonZeroIndices.size(), 0, ms, md),
-		values(nonZeroIndices.size()), nonZeroIndices(nonZeroIndices)
+		_buffer(0, nonZeroIndices_.size(), 0, ms, md),
+		values(nonZeroIndices_.size()), nonZeroIndices(nonZeroIndices_)
 	{
 		SyncPointers();
 	}
@@ -21,10 +21,10 @@ namespace cl
 	}
 	
 	template< MemorySpace ms, MathDomain md>
-	SparseVector<ms, md>::SparseVector(const unsigned size, const Vector<ms, MathDomain::Int>& nonZeroIndices, const typename Traits<md>::stdType value)
-		: SparseVector(size, nonZeroIndices)
+	SparseVector<ms, md>::SparseVector(const unsigned size, const Vector<ms, MathDomain::Int>& nonZeroIndices_, const typename Traits<md>::stdType value)
+		: SparseVector(size, nonZeroIndices_)
 	{
-		dm::detail::Initialize(values.GetBuffer(), value);
+		dm::detail::Initialize(values.GetBuffer(), static_cast<double>(value));
 	}
 
 	template< MemorySpace ms, MathDomain md>
@@ -52,13 +52,13 @@ namespace cl
 	{
 		const auto hostDenseVector = denseVector.Get();
 
-		std::vector<int> nonZeroIndices;
+		std::vector<int> _nonZeroIndices;
 		std::vector<typename Traits<md>::stdType> nonZeroValues;
-		for (int i = 0; i < hostDenseVector.size(); ++i)
+		for (size_t i = 0; i < hostDenseVector.size(); ++i)
 		{
-			if (fabs(hostDenseVector[i]) > 1e-7)
+			if (std::fabs(hostDenseVector[i]) > static_cast<typename Traits<md>::stdType>(1e-7))
 			{
-				nonZeroIndices.push_back(i);
+                _nonZeroIndices.push_back(static_cast<int>(i));
 				nonZeroValues.push_back(hostDenseVector[i]);
 			}
 		}
@@ -67,9 +67,9 @@ namespace cl
 		Alloc(values._buffer);
 		values.ReadFrom(nonZeroValues);
 
-		this->nonZeroIndices._buffer = MemoryBuffer(0, static_cast<unsigned>(nonZeroIndices.size()), ms, md);
+		nonZeroIndices._buffer = MemoryBuffer(0, static_cast<unsigned>(_nonZeroIndices.size()), ms, md);
 		Alloc(this->nonZeroIndices._buffer);
-		this->nonZeroIndices.ReadFrom(nonZeroIndices);
+		nonZeroIndices.ReadFrom(_nonZeroIndices);
 
 		SyncPointers();
 	}
@@ -77,8 +77,8 @@ namespace cl
 	template< MemorySpace ms, MathDomain md>
 	SparseVector<ms, md>::SparseVector(const SparseVector& rhs)
 		: IBuffer<SparseVector<ms, md>, ms, md>(false), // SparseVector doesn't allocate its memory in its _buffer!
-		values(rhs.values), nonZeroIndices(rhs.nonZeroIndices), denseSize(rhs.denseSize)
-	{
+		denseSize(rhs.denseSize), values(rhs.values), nonZeroIndices(rhs.nonZeroIndices)
+{
 		SyncPointers();
 	}
 
@@ -92,12 +92,12 @@ namespace cl
 	template< MemorySpace ms, MathDomain md>
 	std::vector<typename Traits<md>::stdType> SparseVector<ms, md>::Get() const
 	{
-		auto values = this->values.Get();
+		auto _values = this->values.Get();
 		auto indices = this->nonZeroIndices.Get();
 
 		std::vector<typename Traits<md>::stdType> ret(denseSize);
-		for (int i = 0; i < indices.size(); i++)
-			ret[indices[i]] = values[i];
+		for (size_t i = 0; i < indices.size(); i++)
+			ret[static_cast<size_t>(indices[i])] = _values[i];
 
 		return ret;
 	}
@@ -105,8 +105,8 @@ namespace cl
 	template< MemorySpace ms, MathDomain md>
 	void SparseVector<ms, md>::Print(const std::string& label) const
 	{
-		auto vec = Get();
-		cl::Print(vec, label);
+		auto v = Get();
+		cl::Print(v, label);
 	}
 
 	#pragma region Dense-Sparse Linear Algebra

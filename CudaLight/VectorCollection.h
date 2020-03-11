@@ -36,7 +36,7 @@ namespace cl
 	private:
 		Vector<memorySpace, mathDomain> data;
 		const std::vector<size_t> sizes;
-		std::vector<Vector<memorySpace, mathDomain>> vectors;
+		std::vector<Vector<memorySpace, mathDomain>> vectors {};
 	};
 }
 

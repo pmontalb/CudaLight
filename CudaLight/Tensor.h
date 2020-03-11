@@ -50,13 +50,13 @@ namespace cl
 		std::ostream& ToOutputStream(std::ostream&) const override final { throw std::logic_error("Not Implemented"); }
 		void ToBinaryFile(const std::string&, const bool, const std::string) const override final { throw std::logic_error("Not Implemented"); }
 
-		virtual ~Tensor() = default;
+		virtual ~Tensor() override = default;
 
 		unsigned nRows() const noexcept { return _buffer.nRows; }
 		unsigned nCols() const noexcept { return _buffer.nCols; }
 		unsigned nMatrices() const noexcept { return _buffer.nCubes; }
 
-		std::vector<std::shared_ptr<ColumnWiseMatrix<memorySpace, mathDomain>>> matrices;
+		std::vector<std::shared_ptr<ColumnWiseMatrix<memorySpace, mathDomain>>> matrices {};
 	
 		#pragma region Linear Algebra
 

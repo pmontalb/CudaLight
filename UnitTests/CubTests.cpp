@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <Vector.h>
+#include <cmath>
 
 namespace clt
 {
@@ -27,23 +28,23 @@ namespace clt
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v2 = v2.Get();
 
-		sum = v2.Sum();
-		sumSanity = 0.0;
+		float sum2 = v2.Sum();
+		float sumSanity2 = 0.0;
 		for (size_t i = 0; i < v2.size(); ++i)
-			sumSanity += _v2[i];
+			sumSanity2 += _v2[i];
 
-		ASSERT_NEAR(sumSanity, sum, 1e-7);
+		ASSERT_NEAR(sumSanity2, sum2, 1e-7);
 
 		cl::ivec v3(size, 1);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v3 = v3.Get();
 
-		sum = v3.Sum();
-		sumSanity = 0.0;
+		int sum3 = v3.Sum();
+		int sumSanity3 = 0.0;
 		for (size_t i = 0; i < v3.size(); ++i)
-			sumSanity += _v3[i];
+			sumSanity3 += _v3[i];
 
-		ASSERT_NEAR(sumSanity, sum, 0);
+		ASSERT_NEAR(sumSanity3, sum3, 0);
 	}
 
 	TEST_F(CubTests, AbsoluteMinMax)
@@ -57,14 +58,14 @@ namespace clt
 		float _min = 1e9, _max = 0.0;
 		for (size_t i = 0; i < x.size(); i++)
 		{
-			if (fabs(_x[i]) < fabs(_min))
-				_min = fabs(_x[i]);
-			if (fabs(_x[i]) > fabs(_max))
-				_max = fabs(_x[i]);
+			if (std::fabs(_x[i]) < std::fabs(_min))
+				_min = std::fabs(_x[i]);
+			if (std::fabs(_x[i]) > std::fabs(_max))
+				_max = std::fabs(_x[i]);
 		}
 
-		ASSERT_TRUE(fabs(_min - xMin) <= 1e-7);
-		ASSERT_TRUE(fabs(_max - xMax) <= 1e-7);
+		ASSERT_TRUE(std::fabs(_min - xMin) <= 1e-7f);
+		ASSERT_TRUE(std::fabs(_max - xMax) <= 1e-7f);
 	}
 
 	TEST_F(CubTests, MinMax)
@@ -78,13 +79,13 @@ namespace clt
 		float _min = 1e9, _max = 0.0;
 		for (size_t i = 0; i < x.size(); i++)
 		{
-			if (fabs(_x[i]) < _min)
+			if (std::fabs(_x[i]) < _min)
 				_min = _x[i];
-			if (fabs(_x[i]) > _max)
+			if (std::fabs(_x[i]) > _max)
 				_max = _x[i];
 		}
 
-		ASSERT_TRUE(fabs(_min - xMin) <= 1e-7);
-		ASSERT_TRUE(fabs(_max - xMax) <= 1e-7);
+		ASSERT_TRUE(std::fabs(_min - xMin) <= 1e-7f);
+		ASSERT_TRUE(std::fabs(_max - xMax) <= 1e-7f);
 	}
 }

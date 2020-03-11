@@ -65,12 +65,12 @@ namespace cl
 		template<MemorySpace ms, MathDomain md>
 		friend std::ostream& operator<<(std::ostream& os, const ColumnWiseMatrix& buffer);
 
-		virtual ~ColumnWiseMatrix() = default;
+		virtual ~ColumnWiseMatrix() override = default;
 
 		unsigned nRows() const noexcept { return _buffer.nRows; }
 		unsigned nCols() const noexcept { return _buffer.nCols; }
 
-		std::vector<std::shared_ptr<Vector<memorySpace, mathDomain>>> columns;
+		std::vector<std::shared_ptr<Vector<memorySpace, mathDomain>>> columns {};
 
 		#pragma region Linear Algebra
 		
@@ -202,7 +202,7 @@ namespace cl
 	protected:
 		explicit ColumnWiseMatrix(const MemoryTile& buffer);
 		
-		MemoryTile _buffer;
+		MemoryTile _buffer = MemoryTile(0, 0, 0, memorySpace, mathDomain);
 		
 	private:
 		void SetUp(const size_t nCols);

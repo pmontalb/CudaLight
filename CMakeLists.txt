@@ -3,86 +3,35 @@ include_guard()
 cmake_minimum_required(VERSION 3.14)
 project(CudaLight)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CUDA_COMPILER /usr/local/cuda-10.1/bin/nvcc CACHE PATH "" FORCE)
-enable_language(CUDA)
-
-find_package(GTest REQUIRED)
-include_directories(${GTEST_INCLUDE_DIR})
+include(cmake/All.cmake)
+set(LANGUAGES_USE_CUDA ON CACHE BOOL "" FORCE)
 
 # Npy++
-include_directories(../NpyCpp/MemoryMapping)
-include_directories(../NpyCpp/Npy++)
 add_subdirectory(../NpyCpp ${CMAKE_BINARY_DIR}/Npy++ EXCLUDE_FROM_ALL)
 
 # CudaLightKernels
-include_directories(../CudaLightKernels)
 add_subdirectory(../CudaLightKernels ${CMAKE_BINARY_DIR}/CudaLightKernels EXCLUDE_FROM_ALL)
 
-include_directories(CudaLight)
-include_directories(UnitTests)
-
-# set warnings
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(WARNINGS -Weverything -Werror
-            -Wno-c++98-compat -Wno-c++98-compat-pedantic
-            -Wno-reserved-id-macro -Wno-switch-enum -Wno-unknown-pragmas -Wno-disabled-macro-expansion
-            -Wno-unneeded-internal-declaration -Wno-weak-vtables -Wno-unused-function -Wno-padded -Wno-unused-macros)
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    set(WARNINGS -Wall -Wextra -Werror -Wno-unknown-pragmas -Wno-unused-function)
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-    set(WARNINGS -Wall -Wextra -Werror -Wno-unknown-pragmas -Wfatal-errors -fstrict-aliasing -pedantic -pedantic-errors)
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    message(FATAL "MSVC not supported")
-endif()
-
-set(DEBUG_FLAGS "")
-if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    set(DEBUG_FLAGS "-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC")
-endif()
-
-add_library(
+create_library(
+    NAME
         CudaLight
-
-        CudaLight/CudaException.h
-
+    SOURCES
         CudaLight/DeviceManager.cpp
-        CudaLight/DeviceManager.h
-
         CudaLight/DeviceManagerHelper.cpp
-        CudaLight/DeviceManagerHelper.h
-
         CudaLight/Exception.cpp
-        CudaLight/Exception.h
-
-        CudaLight/IBuffer.h
-        CudaLight/IBuffer.tpp
-
-        CudaLight/Vector.h
-        CudaLight/Vector.tpp
-
-        CudaLight/SparseVector.h
-        CudaLight/SparseVector.tpp
-
-        CudaLight/ColumnWiseMatrix.h
-        CudaLight/ColumnWiseMatrix.tpp
-
-        CudaLight/CompressedSparseRowMatrix.h
-        CudaLight/CompressedSparseRowMatrix.tpp
-
-        CudaLight/Tensor.h
-        CudaLight/Tensor.tpp
+    PUBLIC_INCLUDE_DIRECTORIES
+        CudaLight
+    DEPENDENCIES
+        Npy++ CudaLightKernels
 )
-target_compile_options(CudaLight PRIVATE ${WARNINGS} ${DEBUG_FLAGS})
-target_link_libraries(CudaLight Npy++ CudaLightKernels)
 
-add_executable(
+find_package(GTest REQUIRED)
+create_test(
+    NAME
         CLTests
-
+    SOURCES
         UnitTests/main.cpp
         UnitTests/stdafx.cpp
-        UnitTests/stdafx.h
-        UnitTests/targetver.h
 
         UnitTests/CuBlasTests.cpp
         UnitTests/CubTests.cpp
@@ -94,9 +43,13 @@ add_executable(
         UnitTests/SparseVectorTests.cpp
         UnitTests/TensorTests.cpp
         UnitTests/VectorTests.cpp
+    PUBLIC_INCLUDE_DIRECTORIES
+        ${GTEST_INCLUDE_DIR}
+    DEPENDENCIES
+        CudaLight
+    SYSTEM_DEPENDENCIES
+        gtest pthread
 )
-target_compile_options(CLTests PRIVATE ${DEBUG_FLAGS})
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    target_compile_options(CLTests PRIVATE -Wno-absolute-value)
+    target_compile_options(CLTests PRIVATE -Wno-absolute-value -Wno-unknown-cuda-version)
 endif()
-target_link_libraries(CLTests CudaLight gtest pthread)
