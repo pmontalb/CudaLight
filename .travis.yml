@@ -34,7 +34,7 @@ before_install:
   - CLANG_XX_PATH=`which clang++`
   - CMAKE=`which cmake`
  
-  # Install CUDA 9.2
+  # Install CUDA 9.2 [https://gist.github.com/luncliff/4bd515d1dd56044c83bed1889bfe01fb]
   - sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
   - wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.2.148-1_amd64.deb
   - sudo dpkg -i cuda-repo-ubuntu1604_9.2.148-1_amd64.deb
