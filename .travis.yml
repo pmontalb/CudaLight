@@ -32,6 +32,6 @@ before_install:
 script:
  - mkdir cmake-build-gcc-debug
  - cd cmake-build-gcc-debug
- - cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=$GCC_PATH -DCMAKE_CXX_COMPILER=$GPP_PATH ../
+ - /usr/local/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=$GCC_PATH -DCMAKE_CXX_COMPILER=$GPP_PATH ../
  - make
  - make test
