@@ -3,16 +3,14 @@ language: cpp
 
 addons:
   apt:
-    sources:
-     - sourceline: 'deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial main'
-       key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
     packages:
-     - ninja-build
      - llvm-dev
      - libclang-dev
-     - clang
+     - build-essential
 
 before_install:
+ # Last stable clang
+ - bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
  # Install a supported cmake version (>= 3.4.3)
  - wget -O cmake.sh https://cmake.org/files/v3.16/cmake-3.16.4-Linux-x86_64.sh
  - sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local
