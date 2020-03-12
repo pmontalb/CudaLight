@@ -48,4 +48,4 @@ script:
   - cd cmake-build-gcc-debug
   - $CMAKE -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=$GCC_PATH -DCMAKE_CXX_COMPILER=$GXX_PATH -DLANGUAGES_CUDA_VERSION=9.2 ../
   - make
-  - make test
+  #- make test # cannot run as it requires a GPU
