@@ -4,35 +4,35 @@ language: cpp
 addons:
   apt:
     sources:
-    - ubuntu-toolchain-r-test
-    - llvm-toolchain-xenial-6.0
+      - ubuntu-toolchain-r-test
+      - llvm-toolchain-xenial-6.0
     
     packages:
-     - llvm-dev
-     - libclang-dev
-     - build-essential
-     - wget
-     - unzip
-     - tree
+      - llvm-dev
+      - libclang-dev
+      - build-essential
+      - wget
+      - unzip
+      - tree
 
 # Handle git submodules yourself
 git:
-    submodules: false
+  submodules: false
     
 before_install:
- # [https://stackoverflow.com/questions/15674064/how-to-fix-a-permission-denied-publickey-error-for-a-git-submodule-update-in-t]
- # Use sed to replace the SSH URL with the public URL, then initialize submodules
- - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
- - git submodule update --init --recursive
+  # [https://stackoverflow.com/questions/15674064/how-to-fix-a-permission-denied-publickey-error-for-a-git-submodule-update-in-t] 
+  # Use sed to replace the SSH URL with the public URL, then initialize submodules
+  - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
+  - git submodule update --init --recursive
     
- # Last stable clang
- - sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+  # Last stable clang
+  - sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
  
- - GCC_PATH=`which gcc`
- - GXX_PATH=`which g++`
- - CLANG_PATH=`which clang`
- - CLANG_XX_PATH=`which clang++`
- - CMAKE=`which cmake`
+  - GCC_PATH=`which gcc`
+  - GXX_PATH=`which g++`
+  - CLANG_PATH=`which clang`
+  - CLANG_XX_PATH=`which clang++`
+  - CMAKE=`which cmake`
  
   # Install CUDA 9.2
   - sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
@@ -44,8 +44,8 @@ install:
   - sudo apt-get install -y -qq --no-install-recommends cuda-9-2
 
 script:
- - mkdir cmake-build-gcc-debug
- - cd cmake-build-gcc-debug
- - $CMAKE -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=$GCC_PATH -DCMAKE_CXX_COMPILER=$GXX_PATH -DLANGUAGES_CUDA_VERSION=9.2 ../
- - make
- - make test
+  - mkdir cmake-build-gcc-debug
+  - cd cmake-build-gcc-debug
+  - $CMAKE -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=$GCC_PATH -DCMAKE_CXX_COMPILER=$GXX_PATH -DLANGUAGES_CUDA_VERSION=9.2 ../
+  - make
+  - make test
