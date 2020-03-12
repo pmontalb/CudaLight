@@ -11,7 +11,6 @@ addons:
      - llvm-dev
      - libclang-dev
      - clang
-     - gcc-9
 
 before_install:
  # Install a supported cmake version (>= 3.4.3)
