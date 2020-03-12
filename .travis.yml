@@ -8,7 +8,16 @@ addons:
      - libclang-dev
      - build-essential
 
+# Handle git submodules yourself
+git:
+    submodules: false
+    
 before_install:
+ # https://stackoverflow.com/questions/15674064/how-to-fix-a-permission-denied-publickey-error-for-a-git-submodule-update-in-t
+ # Use sed to replace the SSH URL with the public URL, then initialize submodules
+ - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
+ - git submodule update --init --recursive
+    
  # Last stable clang
  - bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
  # Install a supported cmake version (>= 3.4.3)
