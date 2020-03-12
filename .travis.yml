@@ -1,0 +1,51 @@
+dist: xenial
+language: cpp
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+      - llvm-toolchain-xenial-6.0
+    
+    packages:
+      - llvm-dev
+      - libclang-dev
+      - build-essential
+      - wget
+      - unzip
+      - tree
+
+# Handle git submodules yourself
+git:
+  submodules: false
+    
+before_install:
+  # [https://stackoverflow.com/questions/15674064/how-to-fix-a-permission-denied-publickey-error-for-a-git-submodule-update-in-t] 
+  # Use sed to replace the SSH URL with the public URL, then initialize submodules
+  - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
+  - git submodule update --init --recursive
+    
+  # Last stable clang
+  - sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+ 
+  - GCC_PATH=`which gcc`
+  - GXX_PATH=`which g++`
+  - CLANG_PATH=`which clang`
+  - CLANG_XX_PATH=`which clang++`
+  - CMAKE=`which cmake`
+ 
+  # Install CUDA 9.2 [https://gist.github.com/luncliff/4bd515d1dd56044c83bed1889bfe01fb]
+  - sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
+  - wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.2.148-1_amd64.deb
+  - sudo dpkg -i cuda-repo-ubuntu1604_9.2.148-1_amd64.deb
+  - sudo apt-get update -qq
+ 
+install:
+  - sudo apt-get install -y -qq --no-install-recommends cuda-9-2
+
+script:
+  - mkdir cmake-build-gcc-debug
+  - cd cmake-build-gcc-debug
+  - $CMAKE -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=$GCC_PATH -DCMAKE_CXX_COMPILER=$GXX_PATH -DLANGUAGES_CUDA_VERSION=9.2 ../
+  - make
+  #- make test # cannot run as it requires a GPU
