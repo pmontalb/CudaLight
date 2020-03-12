@@ -19,15 +19,15 @@ before_install:
  - git submodule update --init --recursive
     
  # Last stable clang
- - bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+ - sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
  # Install a supported cmake version (>= 3.4.3)
  - wget -O cmake.sh https://cmake.org/files/v3.16/cmake-3.16.4-Linux-x86_64.sh
  - sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local
  
- - GCC_PATH=`which gcc-9`
- - GPP_PATH=`which g++-9`
- - CLANG_PATH=`which clang-10.0`
- - CLANG_PP_PATH=`which clang++-10.0`
+ - GCC_PATH=`which gcc`
+ - GPP_PATH=`which g++`
+ - CLANG_PATH=`which clang`
+ - CLANG_PP_PATH=`which clang++`
 
 script:
  - mkdir cmake-build-gcc-debug
