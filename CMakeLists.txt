@@ -1,6 +1,5 @@
 include_guard()
 
-cmake_minimum_required(VERSION 3.14)
 project(CudaLight)
 
 include(cmake/All.cmake)
