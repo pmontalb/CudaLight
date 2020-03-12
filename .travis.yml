@@ -27,14 +27,6 @@ before_install:
  # Last stable clang
  - sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
  
- # Install a supported cmake version [https://anglehit.com/how-to-install-the-latest-version-of-cmake-via-command-line/]
- #- wget https://cmake.org/files/v3.16/cmake-3.16.5.tar.gz
- #- tar -xzvf cmake-3.16.5.tar.gz 1>/dev/null
- #- cd cmake-3.16.5/
- #- ./bootstrap 1>/dev/null
- #- make -j12 1>/dev/null
- #- sudo make install
- 
  - GCC_PATH=`which gcc`
  - GXX_PATH=`which g++`
  - CLANG_PATH=`which clang`
