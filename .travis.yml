@@ -13,25 +13,29 @@ git:
     submodules: false
     
 before_install:
- # https://stackoverflow.com/questions/15674064/how-to-fix-a-permission-denied-publickey-error-for-a-git-submodule-update-in-t
+ # [https://stackoverflow.com/questions/15674064/how-to-fix-a-permission-denied-publickey-error-for-a-git-submodule-update-in-t]
  # Use sed to replace the SSH URL with the public URL, then initialize submodules
  - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
  - git submodule update --init --recursive
     
  # Last stable clang
  - sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
- # Install a supported cmake version (>= 3.4.3)
- - wget -O cmake.sh https://cmake.org/files/v3.16/cmake-3.16.4-Linux-x86_64.sh
- - sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local
+ # Install a supported cmake version [https://anglehit.com/how-to-install-the-latest-version-of-cmake-via-command-line/]
+ - wget https://cmake.org/files/v3.16/cmake-3.16.5.tar.gz
+ - tar -xzvf cmake-3.16.5.tar.gz
+ - cd cmake-3.16.5/
+ - ./bootstrap
+ - make -j4
+ - sudo make install
  
  - GCC_PATH=`which gcc`
- - GPP_PATH=`which g++`
+ - GXX_PATH=`which g++`
  - CLANG_PATH=`which clang`
- - CLANG_PP_PATH=`which clang++`
+ - CLANG_XX_PATH=`which clang++`
 
 script:
  - mkdir cmake-build-gcc-debug
  - cd cmake-build-gcc-debug
- - /usr/local/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=$GCC_PATH -DCMAKE_CXX_COMPILER=$GPP_PATH ../
+ - /usr/local/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=$GCC_PATH -DCMAKE_CXX_COMPILER=$GXX_PATH ../
  - make
  - make test
