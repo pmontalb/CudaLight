@@ -197,7 +197,7 @@ template< MemorySpace ms, MathDomain md>
 	void CompressedSparseRowMatrix<ms, md>::Multiply(ColumnWiseMatrix<ms, md>& out, const ColumnWiseMatrix<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha) const
 	{
 		assert(nCols() == rhs.nRows());
-		dm::detail::SparseMultiply(out._buffer, this->_buffer, rhs._buffer, this->nRows(), rhs.nRows(), lhsOperation, alpha);
+		dm::detail::SparseMultiply(out._buffer, this->_buffer, rhs._buffer, lhsOperation, alpha);
 	}
 
 	template< MemorySpace ms, MathDomain md>

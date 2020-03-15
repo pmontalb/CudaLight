@@ -198,40 +198,46 @@ namespace cl
 	static void Scale(IBuffer<BufferImpl, ms, md>& lhs, const double alpha);
 
 	template<typename BufferImpl, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	void Print(const IBuffer<BufferImpl, ms, md>& vec, const std::string& label = "");
+	void Print(const IBuffer<BufferImpl, ms, md>& v, const std::string& label = "");
 
 	template<typename T>
-	static void Print(const std::vector<T>& vec, const std::string& label = "");
+	static void Print(const std::vector<T>& v, const std::string& label = "");
 
 	template<typename T>
-	static void Print(const std::vector<T>& mat, const unsigned nRows, const unsigned nCols, const std::string& label = "");
+	static void Print(const std::vector<T>& m, const unsigned nRows, const unsigned nCols, const std::string& label = "");
 
     #pragma region Serialization
 
 	template<typename T>
-	static std::ostream& VectorToOutputStream(const std::vector<T>& vec, std::ostream& os);
+	static std::ostream& VectorToOutputStream(const std::vector<T>& v, std::ostream& os);
 
 	template<typename T>
-	static std::istream& VectorFromInputStream(std::vector<T>& vec, std::istream& is);
+	static std::istream& VectorFromInputStream(std::vector<T>& v, std::istream& is);
 
 	template<typename T>
-	static std::ostream& MatrixToOutputStream(const std::vector<T>& mat, const unsigned nRows, const unsigned nCols, std::ostream& os);
+	static std::ostream& MatrixToOutputStream(const std::vector<T>& m, const unsigned nRows, const unsigned nCols, std::ostream& os);
 
 	template<typename T>
-	static std::istream& MatrixFromInputStream(std::vector<T>& mat, unsigned& nRows, unsigned& nCols, std::istream& is);
+	static std::istream& MatrixFromInputStream(std::vector<T>& m, unsigned& nRows, unsigned& nCols, std::istream& is);
 
 	template<typename T>
-	static void VectorToBinaryFile(const std::vector<T>& vec, const std::string& fileName, const bool compressed = false, const std::string mode = "w");
+	static void VectorToBinaryFile(const std::vector<T>& v, const std::string& fileName, const bool compressed = false, const std::string mode = "w");
 
 	template<typename T>
-	static void VectorFromBinaryFile(std::vector<T>& vec, const std::string& fileName, const bool compressed = false, const bool useMemoryMapping = false);
+	static void VectorFromBinaryFile(std::vector<T>& v, const std::string& fileName, const bool compressed = false, const bool useMemoryMapping = false);
 
 	template<typename T>
-	static void MatrixToBinaryFile(const std::vector<T>& mat, const unsigned nRows, const unsigned nCols, const std::string& fileName, const bool compressed = false, const std::string mode = "w");
+	static std::vector<T> VectorFromBinaryFile(const std::string& fileName, const bool compressed = false, const bool useMemoryMapping = false);
 
 	template<typename T>
-	static void MatrixFromBinaryFile(std::vector<T>& mat, unsigned& nRows, unsigned& nCols, const std::string& fileName, const bool compressed = false, const bool useMemoryMapping = false);
+	static void MatrixToBinaryFile(const std::vector<T>& m, unsigned nRows, unsigned nCols, const std::string& fileName, const bool tranpose=true, const bool compressed = false, const std::string mode = "w");
 
+	template<typename T>
+	static void MatrixFromBinaryFile(std::vector<T>& m, unsigned& nRows, unsigned& nCols, const std::string& fileName, const bool compressed = false, const bool useMemoryMapping = false);
+
+	template<typename T>
+	static std::vector<T> MatrixFromBinaryFile(unsigned& nRows, unsigned& nCols, const std::string& fileName, const bool compressed = false, const bool useMemoryMapping = false);
+	
     #pragma endregion
 }
 

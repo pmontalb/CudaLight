@@ -106,7 +106,7 @@ namespace cl
 		assert(rhs._buffer.pointer != 0);
 		assert(rhs.size() != 0);
 
-		dm::detail::AutoCopy(static_cast<MemoryBuffer>(matrices[0]->_buffer), rhs._buffer);
+		dm::detail::AutoCopy(matrices[0]->_buffer, rhs._buffer);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -157,7 +157,7 @@ namespace cl
 		auto t = Get();
 
 		std::cout << "********* " << label << " ***********" << std::endl;
-		for (size_t k = 0; k < nCols(); k++)
+		for (size_t k = 0; k < nMatrices(); k++)
 		{
 			std::cout << std::endl;
 			for (size_t j = 0; j < nCols(); j++)
@@ -318,54 +318,54 @@ namespace cl
 #pragma endregion
 
 	template<MemorySpace ms, MathDomain md>
-	Tensor<ms, md> Copy(const Tensor<ms, md>& source)
+	Tensor<ms, md> Tensor<ms, md>::Copy(const Tensor<ms, md>& source)
 	{
 		Tensor<ms, md> ret(source);
 		return ret;
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	Tensor<ms, md> LinSpace(const typename Traits<md>::stdType x0, const typename Traits<md>::stdType x1, const unsigned nRows, const unsigned nCols, const unsigned nMatrices)
+	Tensor<ms, md> Tensor<ms, md>::LinSpace(const typename Traits<md>::stdType x0, const typename Traits<md>::stdType x1, const unsigned nRows, const unsigned nCols, const unsigned nMatrices)
 	{
 		Tensor<ms, md> ret(nRows, nCols, nMatrices);
-		ret.LinSpace(x0, x1);
+		static_cast<IBuffer<Tensor<ms, md>, ms, md>>(ret).LinSpace(x0, x1);
 
 		return ret;
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	Tensor<ms, md> RandomUniform(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const unsigned seed)
+	Tensor<ms, md> Tensor<ms, md>::RandomUniform(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const unsigned seed)
 	{
 		Tensor<ms, md> ret(nRows, nCols, nMatrices);
-		ret.RandomUniform(seed);
+		static_cast<IBuffer<Tensor<ms, md>, ms, md>>(ret).RandomUniform(seed);
 
 		return ret;
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	Tensor<ms, md> RandomGaussian(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const unsigned seed)
+	Tensor<ms, md> Tensor<ms, md>::RandomGaussian(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const unsigned seed)
 	{
 		Tensor<ms, md> ret(nRows, nCols, nMatrices);
-		ret.RandomGaussian(seed);
+		static_cast<IBuffer<Tensor<ms, md>, ms, md>>(ret).RandomGaussian(seed);
 
 		return ret;
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void Print(const Tensor<ms, md>& t, const std::string& label)
+	void Tensor<ms, md>::Print(const Tensor<ms, md>& t, const std::string& label)
 	{
 		t.Print(label);
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	Tensor<ms, md> Add(const Tensor<ms, md>& lhs, const Tensor<ms, md>& rhs, const double alpha)
+	Tensor<ms, md> Tensor<ms, md>::Add(const Tensor<ms, md>& lhs, const Tensor<ms, md>& rhs, const double alpha)
 	{
 		return lhs.Add(rhs, alpha);
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void Scale(Tensor<ms, md>& lhs, const double alpha)
+	void Tensor<ms, md>::Scale(Tensor<ms, md>& lhs, const double alpha)
 	{
-		lhs.Scale(alpha);
+		static_cast<IBuffer<Tensor<ms, md>, ms, md>>(lhs).Scale(alpha);
 	}
 }

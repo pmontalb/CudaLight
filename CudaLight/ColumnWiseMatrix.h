@@ -90,7 +90,7 @@ namespace cl
 		ColumnWiseMatrix operator %(const ColumnWiseMatrix& rhs) const;
 
 		ColumnWiseMatrix operator *(const ColumnWiseMatrix& rhs) const;
-		ColumnWiseMatrix operator *=(const ColumnWiseMatrix& rhs) const;
+		ColumnWiseMatrix operator *=(const ColumnWiseMatrix& rhs);
 
 		Vector<memorySpace, mathDomain> operator *(const Vector<memorySpace, mathDomain>& rhs) const;
 		
@@ -230,9 +230,9 @@ namespace cl
 		static void Print(const ColumnWiseMatrix& mat, const std::string& label = "");
 		
 		static std::ostream& MatrixToOutputStream(const ColumnWiseMatrix& mat, std::ostream& os);
-		
-		static void MatrixToBinaryFile(const ColumnWiseMatrix& vec, const std::string& fileName, const bool compressed = false, const std::string mode = "w");
-		
+
+		static void MatrixToBinaryFile(const ColumnWiseMatrix& vec, const std::string& fileName, const bool tranposed = true, const bool compressed = false, const std::string mode = "w");
+
 		static ColumnWiseMatrix MatrixFromInputStream(std::istream& is);
 		
 		static ColumnWiseMatrix MatrixFromBinaryFile(const std::string& fileName, const bool compressed = false, const bool useMemoryMapping = false);

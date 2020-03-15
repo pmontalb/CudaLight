@@ -229,10 +229,10 @@ namespace cl
 	template<typename bi, MemorySpace ms, MathDomain md>
 	IBuffer<bi, ms, md>& IBuffer<bi, ms, md>::ElementWiseProduct(const IBuffer& rhs, const double alpha)
 	{
-		const MemoryBuffer& buffer = static_cast<bi*>(this)->buffer;
+		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 		
-		dm::detail::ElementwiseProduct(buffer, buffer, static_cast<const bi*>(&rhs)->buffer, alpha);
+		dm::detail::ElementwiseProduct(buffer, buffer, static_cast<const bi*>(&rhs)->_buffer, alpha);
 		return *this;
 	}
 	
@@ -442,16 +442,16 @@ namespace cl
 	}
 
 	template<typename T>
-	static void Print(const std::vector<T>& vec, const std::string& label)
+	void Print(const std::vector<T>& v, const std::string& label)
 	{
 		std::cout << "********* " << label << " ***********" << std::endl;
-		for (size_t i = 0; i < vec.size(); i++)
-			std::cout << "\tv[" << i << "] \t=\t " << vec[i] << std::endl;
+		for (size_t i = 0; i < v.size(); i++)
+			std::cout << "\tv[" << i << "] \t=\t " << v[i] << std::endl;
 		std::cout << "**********************" << std::endl;
 	}
 
 	template<typename T>
-	static void Print(const std::vector<T>& mat, const unsigned nRows, const unsigned nCols, const std::string& label)
+	void Print(const std::vector<T>& m, const unsigned nRows, const unsigned nCols, const std::string& label)
 	{
 		std::cout << "********* " << label << " ***********" << std::endl;
 		
@@ -459,7 +459,7 @@ namespace cl
 		{
 			std::cout << "\t";
 			for (size_t j = 0; j < nCols; j++)
-				std::cout << " m[" << i << "][" << j << "] = " << mat[i + nRows * j];
+				std::cout << " m[" << i << "][" << j << "] = " << m[i + nRows * j];
 			std::cout << std::endl;
 		}
 		std::cout << "**********************" << std::endl;
@@ -468,31 +468,31 @@ namespace cl
     #pragma region Serialization
 
 	template<typename T>
-	static std::ostream& VectorToOutputStream(const std::vector<T>& vec, std::ostream& os)
+	std::ostream& VectorToOutputStream(const std::vector<T>& v, std::ostream& os)
 	{
-		for (size_t i = 0; i < vec.size(); i++)
-			os << std::setprecision(16) << vec[i] << std::endl;
+		for (size_t i = 0; i < v.size(); i++)
+			os << std::setprecision(16) << v[i] << std::endl;
 
 		return os;
 	}
 
 	template<typename T>
-	static std::istream& VectorFromInputStream(std::vector<T>& vec, std::istream& is)
+	std::istream& VectorFromInputStream(std::vector<T>& v, std::istream& is)
 	{
 		T value;
 		while (is >> value)
-			vec.push_back(value);
+			v.push_back(value);
 
 		return is;
 	}
 
 	template<typename T>
-	static std::ostream& MatrixToOutputStream(const std::vector<T>& mat, const unsigned nRows, const unsigned nCols, std::ostream& os)
+	std::ostream& MatrixToOutputStream(const std::vector<T>& m, const unsigned nRows, const unsigned nCols, std::ostream& os)
 	{
 		for (size_t i = 0; i < nRows; i++)
 		{
 			for (size_t j = 0; j < nCols; j++)
-				os << std::setprecision(16) << mat[i + nRows * j] << " ";
+				os << std::setprecision(16) << m[i + nRows * j] << " ";
 			os << std::endl;
 		}
 
@@ -500,7 +500,7 @@ namespace cl
 	}
 
 	template<typename T>
-	static std::istream& MatrixFromInputStream(std::vector<T>& mat, unsigned& nRows, unsigned& nCols, std::istream& is)
+	std::istream& MatrixFromInputStream(std::vector<T>& m, unsigned& nRows, unsigned& nCols, std::istream& is)
 	{
 		std::string line;
 		
@@ -518,43 +518,64 @@ namespace cl
 		nCols = static_cast<unsigned>(matTranspose.size()) / nRows;
 
 		// transpose matrix
-		mat.resize(matTranspose.size());
+		m.resize(matTranspose.size());
 		for (size_t i = 0; i < nRows; i++)
 		{
 			for (size_t j = 0; j < nCols; j++)
-				mat[i + nRows * j] = matTranspose[j + nCols * i];
+				m[i + nRows * j] = matTranspose[j + nCols * i];
 		}
 
 		return is;
 	}
 
 	template<typename T>
-	static void VectorToBinaryFile(const std::vector<T>& vec, const std::string& fileName,  const bool compressed, const std::string mode)
+	void VectorToBinaryFile(const std::vector<T>& v, const std::string& fileName,  const bool compressed, const std::string mode)
 	{
 		if (!compressed)
-			npypp::Save(fileName, vec, { vec.size() }, mode);
+			npypp::Save(fileName, v, { v.size() }, mode);
 		else
-			npypp::SaveCompressed(fileName, vec, { vec.size() }, mode);
+			npypp::SaveCompressed(fileName, v, { v.size() }, mode);
 	}
 
 	template<typename T>
-	static void VectorFromBinaryFile(std::vector<T>& vec, const std::string& fileName, const bool compressed, const bool useMemoryMapping)
+	void VectorFromBinaryFile(std::vector<T>& v, const std::string& fileName, const bool compressed, const bool useMemoryMapping)
 	{
 		if (!compressed)
-			vec = npypp::Load<T>(fileName, useMemoryMapping);
+			v = npypp::Load<T>(fileName, useMemoryMapping);
 		else
-			vec = npypp::LoadCompressed<T>(fileName).begin()->second;
+			v = npypp::LoadCompressed<T>(fileName).begin()->second;
 	}
 
 	template<typename T>
-	static void MatrixToBinaryFile(const std::vector<T>& mat, const unsigned nRows, const unsigned nCols, const std::string& fileName,  const bool compressed, const std::string mode)
+	std::vector<T> VectorFromBinaryFile(const std::string& fileName, const bool compressed, const bool useMemoryMapping)
 	{
-		std::vector<T> matTranspose(mat.size());
-		for (size_t i = 0; i < nRows; ++i)
+		std::vector<T> v;
+		VectorFromBinaryFile(v, fileName, compressed, useMemoryMapping);
+		
+		return v;
+	}
+
+	template<typename T>
+	void MatrixToBinaryFile(const std::vector<T>& m, unsigned nRows, unsigned nCols, const std::string& fileName, const bool tranpose, const bool compressed, const std::string mode)
+	{
+		std::vector<T> matTranspose {};
+		if (tranpose)
 		{
-			for (size_t j = 0; j < nCols; ++j)
-				matTranspose[i + j * nRows] = mat[j + i * nCols];
+			matTranspose.resize(m.size());
+			for (size_t i = 0; i < nRows; ++i)
+			{
+				for (size_t j = 0; j < nCols; ++j)
+					matTranspose[i + j * nRows] = m[j + i * nCols];
+			}
 		}
+		else
+		{
+			// cannot use std::swap, as this code might be compiled with nvcc
+			auto tmp = nCols;
+			nCols = nRows;
+			nRows = tmp;
+		}
+		matTranspose = m;
 		
 		if (!compressed)
 			npypp::Save(fileName, matTranspose, { static_cast<size_t>(nCols), static_cast<size_t>(nRows) }, mode);
@@ -563,7 +584,7 @@ namespace cl
 	}
 
 	template<typename T>
-	static void MatrixFromBinaryFile(std::vector<T>& mat, unsigned& nRows, unsigned& nCols, const std::string& fileName, const bool compressed, const bool useMemoryMapping)
+	void MatrixFromBinaryFile(std::vector<T>& m, unsigned& nRows, unsigned& nCols, const std::string& fileName, const bool compressed, const bool useMemoryMapping)
 	{
 		const auto& fullExtract = !compressed ? npypp::LoadFull<T>(fileName, useMemoryMapping) : npypp::LoadCompressedFull<T>(fileName).begin()->second;
 		
@@ -571,12 +592,21 @@ namespace cl
 		nRows = static_cast<unsigned>(fullExtract.shape[0]);
 		nCols = static_cast<unsigned>(fullExtract.shape[1]);
 		
-		mat.resize(fullExtract.data.size());
+		m.resize(fullExtract.data.size());
 		for (size_t i = 0; i < nRows; ++i)
 		{
 			for (size_t j = 0; j < nCols; ++j)
-				mat[i + j * nRows] = fullExtract.data[j + i * nCols];
+				m[i + j * nRows] = fullExtract.data[j + i * nCols];
 		}
+	}
+
+	template<typename T>
+	std::vector<T> MatrixFromBinaryFile(unsigned& nRows, unsigned& nCols, const std::string& fileName, const bool compressed, const bool useMemoryMapping)
+	{
+		std::vector<T> m;
+		MatrixFromBinaryFile(m, nRows, nCols, fileName, compressed, useMemoryMapping);
+
+		return m;
 	}
 
     #pragma endregion

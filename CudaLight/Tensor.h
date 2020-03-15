@@ -85,39 +85,31 @@ namespace cl
 		
 		#pragma endregion
 
+		static Tensor Copy(const Tensor& source);
+
+		static Tensor LinSpace(const typename Traits<mathDomain>::stdType x0, const typename Traits<mathDomain>::stdType x1, const unsigned nRows, const unsigned nCols, const unsigned nMatrices);
+
+		static Tensor RandomUniform(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const unsigned seed);
+
+		static Tensor RandomGaussian(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const unsigned seed);
+
+		static void Print(const Tensor& vec, const std::string& label = "");
+
+		static Tensor Add(const Tensor& lhs, const Tensor& rhs, const double alpha = 1.0);
+
+		static void Scale(Tensor& lhs, const double alpha);
+
 		MemoryBuffer& GetBuffer() noexcept override final { return _buffer; }
 		const MemoryBuffer& GetBuffer() const noexcept override final { return _buffer; }
 		const MemoryCube& GetCube() const noexcept { return _buffer; }
-		
+		MemoryCube& GetCube() noexcept { return _buffer; }
 	private:
 		void SetUp(const size_t nMatrices);
 	protected:
-		MemoryCube& GetCube() noexcept { return _buffer; }
 		explicit Tensor(const MemoryCube& buffer);
 
 		MemoryCube _buffer;
 	};
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Tensor<ms, md> Copy(const Tensor<ms, md>& source);
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Tensor<ms, md> LinSpace(const typename Traits<md>::stdType x0, const typename Traits<md>::stdType x1, const unsigned nRows, const unsigned nCols, const unsigned nMatrices);
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Tensor<ms, md> RandomUniform(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const unsigned seed);
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Tensor<ms, md> RandomGaussian(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const unsigned seed);
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	void Print(const Tensor<ms, md>& vec, const std::string& label = "");
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Tensor<ms, md> Add(const Tensor<ms, md>& lhs, const Tensor<ms, md>& rhs, const double alpha = 1.0);
-
-	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	void Scale(Tensor<ms, md>& lhs, const double alpha);
 
 	#pragma region Type aliases
 

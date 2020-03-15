@@ -171,7 +171,7 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::ToBinaryFile(const std::string& fileName, const bool compressed, const std::string mode) const
 	{
-		cl::MatrixToBinaryFile(Get(), nRows(), nCols(), fileName, compressed, mode);
+		cl::MatrixToBinaryFile(Get(), nRows(), nCols(), fileName, true, compressed, mode);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -251,12 +251,12 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::operator *=(const ColumnWiseMatrix& rhs) const
+	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::operator *=(const ColumnWiseMatrix& rhs)
 	{
 		assert(nCols() == rhs.nRows());
 
 		ColumnWiseMatrix ret(nRows(), rhs.nCols());
-		dm::detail::Multiply(ret.buffer, this->buffer, rhs.buffer, this->nRows(), rhs.nRows());
+		dm::detail::Multiply(ret.buffer, this->buffer, rhs.buffer, MatrixOperation::None, MatrixOperation::None, this->nRows(), rhs.nRows());
 
 		dm::detail::AutoCopy(_buffer, ret.buffer);
 		return *this;
@@ -652,10 +652,10 @@ template<MemorySpace ms, MathDomain md>
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void ColumnWiseMatrix<ms, md>::MatrixToBinaryFile(const ColumnWiseMatrix<ms, md>& m, const std::string& fileName, const bool compressed, const std::string mode)
+	void ColumnWiseMatrix<ms, md>::MatrixToBinaryFile(const ColumnWiseMatrix<ms, md>& m, const std::string& fileName, const bool tranposed, const bool compressed, const std::string mode)
 	{
 		const auto& _mat = m.Get();
-		cl::MatrixToBinaryFile(_mat, m.nRows(), m.nCols(), fileName, compressed, mode);
+		cl::MatrixToBinaryFile(_mat, m.nRows(), m.nCols(), fileName, tranposed, compressed, mode);
 	}
 
 	template<MemorySpace ms, MathDomain md>
