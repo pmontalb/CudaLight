@@ -4,7 +4,7 @@ namespace cl
 {
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const unsigned nRows, const unsigned nCols)
-		: IBuffer<ColumnWiseMatrix<ms, md>, ms, md>(true), _buffer(0, nRows, nCols, ms, md)
+		: Buffer<ColumnWiseMatrix < ms, md>, ms, md>(true), _buffer(0, nRows, nCols, ms, md)
 	{
 		this->ctor(_buffer);
 	
@@ -13,7 +13,7 @@ namespace cl
 
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(ColumnWiseMatrix&& rhs) noexcept
-			: IBuffer<ColumnWiseMatrix<ms, md>, ms, md>(std::move(rhs)), columns(std::move(rhs.columns)), _buffer(rhs._buffer)
+			: Buffer<ColumnWiseMatrix<ms, md>, ms, md>(std::move(rhs)), columns(std::move(rhs.columns)), _buffer(rhs._buffer)
 	{
 	}
 
@@ -51,7 +51,7 @@ namespace cl
 
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const ColumnWiseMatrix& rhs, const size_t colStart, const size_t colEnd)
-		: IBuffer<ColumnWiseMatrix<ms, md>, ms, md>(false),
+		: Buffer<ColumnWiseMatrix<ms, md>, ms, md>(false),
 		  _buffer(rhs.GetTile())
 	{
 		assert(colStart < colEnd);
@@ -69,7 +69,7 @@ namespace cl
 
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const Vector<ms, md>& rhs, const size_t startOffset, const size_t nRows, const size_t nCols)
-		: IBuffer<ColumnWiseMatrix<ms, md>, ms, md>(false),
+		: Buffer<ColumnWiseMatrix<ms, md>, ms, md>(false),
 		  _buffer(0, static_cast<unsigned>(nRows), static_cast<unsigned>(nCols), static_cast<unsigned>(nRows), ms, md)
 	{
 		assert(startOffset + nRows * nCols <= rhs.size());
@@ -104,7 +104,7 @@ namespace cl
 
 	template<MemorySpace ms, MathDomain md>
 	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const MemoryTile& buffer)
-		: IBuffer<ColumnWiseMatrix<ms, md>, ms, md>(false), _buffer(buffer)
+		: Buffer<ColumnWiseMatrix<ms, md>, ms, md>(false), _buffer(buffer)
 	{
 
 	}
@@ -171,7 +171,7 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::ToBinaryFile(const std::string& fileName, const bool compressed, const std::string mode) const
 	{
-		cl::MatrixToBinaryFile(Get(), nRows(), nCols(), fileName, true, compressed, mode);
+		cl::MatrixToBinaryFile(Get(), nRows(), nCols(), fileName, false, compressed, mode);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -286,17 +286,17 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	ColumnWiseMatrix<ms, md>& ColumnWiseMatrix<ms, md>::AddEqual(const Vector<ms, md>& rhs, const bool rowWise, const double alpha)
+	ColumnWiseMatrix<ms, md>& ColumnWiseMatrix<ms, md>::AddEqualBroadcast(const Vector<ms, md>& rhs, const bool rowWise, const double alpha)
 	{
 		const size_t onesSize = !rowWise ? nCols() : nRows();
 		Vector<ms, md> ones(static_cast<unsigned>(onesSize), 1.0);
-		AddEqual(rhs, ones, rowWise, alpha);
+		AddEqualBroadcast(rhs, ones, rowWise, alpha);
 		
 		return *this;
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	ColumnWiseMatrix<ms, md>& ColumnWiseMatrix<ms, md>::AddEqual(const Vector<ms, md>& rhs, const Vector<ms, md>& ones, const bool rowWise, const double alpha)
+	ColumnWiseMatrix<ms, md>& ColumnWiseMatrix<ms, md>::AddEqualBroadcast(const Vector<ms, md>& rhs, const Vector<ms, md>& ones, const bool rowWise, const double alpha)
 	{
 		assert((rowWise && rhs.size() == nCols()) || (!rowWise && rhs.size() == nRows()));
 		assert((rowWise && ones.size() == nRows()) || (!rowWise && ones.size() == nCols()));
@@ -573,7 +573,7 @@ template<MemorySpace ms, MathDomain md>
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::LinSpace(const typename Traits<md>::stdType x0, const typename Traits<md>::stdType x1, const unsigned nRows, const unsigned nCols)
+	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::LinSpace(const stdType x0, const stdType x1, const unsigned nRows, const unsigned nCols)
 	{
 		ColumnWiseMatrix<ms, md> ret(nRows, nCols);
 		ret.LinSpace(x0, x1);
@@ -643,7 +643,7 @@ template<MemorySpace ms, MathDomain md>
 	{
 		std::vector<typename Vector<ms, md>::stdType> _mat {};
 		unsigned nRows = 0, nCols = 0;
-		cl::MatrixFromBinaryFile(_mat, nRows, nCols, fileName, compressed, useMemoryMapping);
+		cl::MatrixFromBinaryFile(_mat, nRows, nCols, fileName, false, compressed, useMemoryMapping);
 
 		ColumnWiseMatrix<ms, md> ret(nRows, nCols);
 		ret.ReadFrom(_mat);

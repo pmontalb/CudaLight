@@ -3,7 +3,7 @@
 #include <string>
 #include <memory>
 
-#include <IBuffer.h>
+#include <Buffer.h>
 #include <ColumnWiseMatrix.h>
 #include <Types.h>
 

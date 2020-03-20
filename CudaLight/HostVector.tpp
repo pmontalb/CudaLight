@@ -5,9 +5,10 @@
 #include <Types.h>
 #include <Exception.h>
 
-#include <Vector.h>
+#include <HostVector.h>
+#include <BufferInitializer.h>
 
-namespace cl
+namespace cl { namespace host
 {
 	template<MemorySpace ms, MathDomain md>
 	Vector<ms, md>::Vector(const unsigned size)
@@ -20,7 +21,7 @@ namespace cl
 	Vector<ms, md>::Vector(const unsigned size, const typename Traits<md>::stdType value)
 		: Vector(size)
 	{
-		dm::detail::Initialize(_buffer, static_cast<double>(value));
+		routines::Initialize(_buffer, static_cast<double>(value));
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -57,7 +58,7 @@ namespace cl
 	Vector<ms, md>::Vector(const std::string& fileName, bool useMemoryMapping)
 	{
 		std::vector<typename Traits<md>::stdType> v;
-		cl::VectorFromBinaryFile(v, fileName, useMemoryMapping);
+		cl::host::VectorFromBinaryFile(v, fileName, useMemoryMapping);
 
         this->ReadFrom(v);
 	}
@@ -73,27 +74,27 @@ namespace cl
 	void Vector<ms, md>::RandomShuffle(const unsigned seed)
 	{
 		assert(_buffer.pointer != 0);
-		dm::detail::RandShuffle(_buffer, seed);
+		routines::RandShuffle(_buffer, seed);
 	}
 
 	template<MemorySpace ms, MathDomain md>
 	void Vector<ms, md>::Print(const std::string& label) const
 	{
 		auto v = this->Get();
-		cl::Print(v, label);
+		cl::host::Print(v, label);
 	}
 
 	template<MemorySpace ms, MathDomain md>
 	std::ostream& Vector<ms, md>::ToOutputStream(std::ostream& os) const
 	{
-		cl::VectorToOutputStream(this->Get(), os);
+		cl::host::VectorToOutputStream(this->Get(), os);
 		return os;
 	}
 
 	template<MemorySpace ms, MathDomain md>
 	void Vector<ms, md>::ToBinaryFile(const std::string& fileName, const bool compressed, const std::string mode) const
 	{
-		cl::VectorToBinaryFile(this->Get(), fileName, compressed, mode);
+		cl::host::VectorToBinaryFile(this->Get(), fileName, compressed, mode);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -192,7 +193,7 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void Vector<ms, md>::RandomShufflePair(Vector<ms, md>& v1, Vector<ms, md>& v2, const unsigned seed)
 	{
-		dm::detail::RandShufflePair(v1.GetBuffer(), v2.GetBuffer(), seed);
+		routines::RandShufflePair(v1.GetBuffer(), v2.GetBuffer(), seed);
 	}
 	
 	template<MemorySpace ms, MathDomain md>
@@ -204,7 +205,7 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	std::ostream& Vector<ms, md>::VectorToOutputStream(const Vector<ms, md>& v, std::ostream& os)
 	{
-		os << cl::VectorToOutputStream(v.Get(), os);
+		os << cl::host::VectorToOutputStream(v.Get(), os);
 		return os;
 	}
 
@@ -212,14 +213,14 @@ namespace cl
 	void Vector<ms, md>::VectorToBinaryFile(const Vector<ms, md>& v, const std::string& fileName, const bool compressed, const std::string mode)
 	{
 		const auto& _vec = v.Get();
-		cl::VectorToBinaryFile(_vec, fileName, compressed, mode);
+		cl::host::VectorToBinaryFile(_vec, fileName, compressed, mode);
 	}
 
 	template<MemorySpace ms, MathDomain md>
 	Vector<ms, md> Vector<ms, md>::VectorFromInputStream(std::istream& is)
 	{
 		std::vector<typename Vector<ms, md>::stdType> _vec;
-		cl::VectorFromInputStream(_vec, is);
+		cl::host::VectorFromInputStream(_vec, is);
 
 		Vector<ms, md> ret(static_cast<unsigned>(_vec.size()));
 		ret.ReadFrom(_vec);
@@ -231,7 +232,7 @@ namespace cl
 	Vector<ms, md> Vector<ms, md>::VectorFromBinaryFile(const std::string& fileName, const bool compressed, const bool useMemoryMapping)
 	{
 		std::vector<typename Vector<ms, md>::stdType> _vec {};
-		cl::VectorFromBinaryFile(_vec, fileName, compressed, useMemoryMapping);
+		cl::host::VectorFromBinaryFile(_vec, fileName, compressed, useMemoryMapping);
 
 		Vector<ms, md> ret(static_cast<unsigned>(_vec.size()));
 		ret.ReadFrom(_vec);
@@ -261,9 +262,9 @@ namespace cl
 		return pair;
 	}
 
-	template<MemorySpace ms, MathDomain md>
-	void Vector<ms, md>::MakePair(Vector<ms, MathDomain::Float>& pair, const Vector<ms, md>& x, const Vector<ms, md>& y)
-	{
-		dm::detail::MakePair(pair.GetBuffer(), x.GetBuffer(), y.GetBuffer());
-	}
-}
+//	template<MemorySpace ms, MathDomain md>
+//	void Vector<ms, md>::MakePair(Vector<ms, MathDomain::Float>& pair, const Vector<ms, md>& x, const Vector<ms, md>& y)
+//	{
+//		dm::detail::MakePair(pair.GetBuffer(), x.GetBuffer(), y.GetBuffer());
+//	}
+}}

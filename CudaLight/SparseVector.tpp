@@ -4,7 +4,7 @@ namespace cl
 {
 	template< MemorySpace ms, MathDomain md>
 	SparseVector<ms, md>::SparseVector(const unsigned size, const Vector<ms, MathDomain::Int>& nonZeroIndices_)
-		: IBuffer<SparseVector<ms, md>, ms, md>(false),  // SparseVector doesn't allocate its memory in its _buffer!
+		: Buffer<SparseVector < ms, md>, ms, md>(false),  // SparseVector doesn't allocate its memory in its _buffer!
 		denseSize(size),
 		_buffer(0, nonZeroIndices_.size(), 0, ms, md),
 		values(nonZeroIndices_.size()), nonZeroIndices(nonZeroIndices_)
@@ -14,7 +14,7 @@ namespace cl
 	
 	template<MemorySpace ms, MathDomain md>
 	SparseVector<ms, md>::SparseVector(SparseVector&& rhs) noexcept
-			: IBuffer<SparseVector<ms, md>, ms, md>(false), _buffer(rhs._buffer)
+			: Buffer<SparseVector < ms, md>, ms, md>(false), _buffer(rhs._buffer)
 	{
 		rhs._isOwner = false;
 		SyncPointers();
@@ -29,7 +29,7 @@ namespace cl
 
 	template< MemorySpace ms, MathDomain md>
 	SparseVector<ms, md>::SparseVector(const unsigned size, const unsigned nNonZeros)
-		: IBuffer<SparseVector<ms, md>, ms, md>(false), // SparseVector doesn't allocate its memory in its _buffer!
+		: Buffer<SparseVector < ms, md>, ms, md>(false), // SparseVector doesn't allocate its memory in its _buffer!
 		  denseSize(size), values(nNonZeros), nonZeroIndices(nNonZeros)
 		{
 			assert(size != 0);
@@ -48,7 +48,7 @@ namespace cl
 
 	template< MemorySpace ms, MathDomain md>
 	SparseVector<ms, md>::SparseVector(const Vector<ms, md>& denseVector)
-		: IBuffer<SparseVector<ms, md>, ms, md>(false), denseSize(denseVector.size())
+		: Buffer<SparseVector < ms, md>, ms, md>(false), denseSize(denseVector.size())
 	{
 		const auto hostDenseVector = denseVector.Get();
 
@@ -76,7 +76,7 @@ namespace cl
 
 	template< MemorySpace ms, MathDomain md>
 	SparseVector<ms, md>::SparseVector(const SparseVector& rhs)
-		: IBuffer<SparseVector<ms, md>, ms, md>(false), // SparseVector doesn't allocate its memory in its _buffer!
+		: Buffer<SparseVector < ms, md>, ms, md>(false), // SparseVector doesn't allocate its memory in its _buffer!
 		denseSize(rhs.denseSize), values(rhs.values), nonZeroIndices(rhs.nonZeroIndices)
 {
 		SyncPointers();

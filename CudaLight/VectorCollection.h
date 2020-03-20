@@ -3,7 +3,7 @@
 #include <string>
 #include <memory>
 
-#include <IBuffer.h>
+#include <Buffer.h>
 #include <Vector.h>
 #include <Types.h>
 

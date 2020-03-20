@@ -4,7 +4,7 @@
 #include <string>
 #include <memory>
 
-#include <IBuffer.h>
+#include <Buffer.h>
 #include <Types.h>
 #include <Vector.h>
 
@@ -14,11 +14,11 @@ namespace cl
 	class CompressedSparseRowMatrix;
 
 	template<MemorySpace memorySpace, MathDomain mathDomain>
-	class ColumnWiseMatrix : public IBuffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>
+	class ColumnWiseMatrix : public Buffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>
 	{
 	public:
 		using stdType = typename Traits<mathDomain>::stdType;
-		friend class IBuffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>;
+		friend class Buffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>;
 		template<MemorySpace ms, MathDomain md>
 		friend class CompressedSparseRowMatrix;
 		template<MemorySpace ms, MathDomain md>
@@ -43,11 +43,11 @@ namespace cl
 
 		ColumnWiseMatrix(const Vector<memorySpace, mathDomain>& rhs);
 		
-		using IBuffer<ColumnWiseMatrix, memorySpace, mathDomain>::ReadFrom;
+		using Buffer<ColumnWiseMatrix, memorySpace, mathDomain>::ReadFrom;
 		void ReadFrom(const Vector<memorySpace, mathDomain>& rhs);
 
-		using IBuffer<ColumnWiseMatrix, memorySpace, mathDomain>::Get;
-		std::vector<typename Traits<mathDomain>::stdType> Get(const unsigned column) const;
+		using Buffer<ColumnWiseMatrix, memorySpace, mathDomain>::Get;
+		std::vector<stdType> Get(const unsigned column) const;
 
 		void MakeIdentity();
 
@@ -55,12 +55,12 @@ namespace cl
 		
 		void RandomShuffleColumns(const unsigned seed);
 
-		using IBuffer<ColumnWiseMatrix, memorySpace, mathDomain>::Set;
+		using Buffer<ColumnWiseMatrix, memorySpace, mathDomain>::Set;
 		void Set(const Vector<memorySpace, mathDomain>& columnVector, const unsigned column);
 
-		void Print(const std::string& label = "") const override final;
-		std::ostream& ToOutputStream(std::ostream& os) const override final;
-		void ToBinaryFile(const std::string& fileName, const bool compressed = false, const std::string mode = "w") const override final;
+		void Print(const std::string& label = "") const final;
+		std::ostream& ToOutputStream(std::ostream& os) const final;
+		void ToBinaryFile(const std::string& fileName, const bool compressed = false, const std::string mode = "w") const final;
 
 		template<MemorySpace ms, MathDomain md>
 		friend std::ostream& operator<<(std::ostream& os, const ColumnWiseMatrix& buffer);
@@ -78,10 +78,10 @@ namespace cl
 
 		#pragma region Linear Algebra
 		
-		using IBuffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>::LinSpace;
-		using IBuffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>::RandomUniform;
-		using IBuffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>::RandomGaussian;
-		using IBuffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>::Scale;
+		using Buffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>::LinSpace;
+		using Buffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>::RandomUniform;
+		using Buffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>::RandomGaussian;
+		using Buffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>::Scale;
 		
 		void ScaleColumns(const Vector<memorySpace, mathDomain>& alpha);
 		
@@ -96,8 +96,8 @@ namespace cl
 		
 		ColumnWiseMatrix& AddEqualMatrix(const ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const MatrixOperation rhsOperation = MatrixOperation::None, const double alpha = 1.0, const double beta = 1.0);
 		
-		ColumnWiseMatrix& AddEqual(const Vector<memorySpace, mathDomain>& rhs, const bool rowWise = true, const double alpha = 1.0);
-		ColumnWiseMatrix& AddEqual(const Vector<memorySpace, mathDomain>& rhs, const Vector<memorySpace, mathDomain>& cache, const bool rowWise = true, const double alpha = 1.0);
+		ColumnWiseMatrix& AddEqualBroadcast(const Vector<memorySpace, mathDomain>& rhs, const bool rowWise = true, const double alpha = 1.0);
+		ColumnWiseMatrix& AddEqualBroadcast(const Vector<memorySpace, mathDomain>& rhs, const Vector<memorySpace, mathDomain>& cache, const bool rowWise = true, const double alpha = 1.0);
 		
 		/**
 		* A = alpha * B * C + beta * A
@@ -199,8 +199,8 @@ namespace cl
 
 		#pragma endregion
 		
-		MemoryBuffer& GetBuffer() noexcept override final { return _buffer; }
-		const MemoryBuffer& GetBuffer() const noexcept override final { return _buffer; }
+		MemoryBuffer& GetBuffer() noexcept final { return _buffer; }
+		const MemoryBuffer& GetBuffer() const noexcept final { return _buffer; }
 		MemoryTile& GetTile() noexcept { return _buffer; }
 		const MemoryTile& GetTile() const noexcept { return _buffer; }
 	protected:
@@ -217,7 +217,7 @@ namespace cl
 		
 		static ColumnWiseMatrix Eye(const unsigned nRows);
 		
-		static ColumnWiseMatrix LinSpace(const typename Traits<mathDomain>::stdType x0, const typename Traits<mathDomain>::stdType x1, const unsigned nRows, const unsigned nCols);
+		static ColumnWiseMatrix LinSpace(const stdType x0, const stdType x1, const unsigned nRows, const unsigned nCols);
 		
 		static ColumnWiseMatrix RandomUniform(const unsigned nRows, const unsigned nCols, const unsigned seed);
 		

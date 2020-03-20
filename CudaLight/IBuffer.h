@@ -4,74 +4,13 @@
 #include <string>
 #include <iostream>
 
-#include <DeviceManager.h>
-#include <DeviceManagerHelper.h>
-#include <Exception.h>
 #include <Types.h>
+#include <Traits.h>
 
 namespace cl
 {
-	// This is required for using types defined in children classes (which are incomplete types)
-	#pragma region Type mapping from MathDomain to C++ type
 
-	template <MathDomain mathDomain>
-	struct Traits 
-	{
-		using stdType = void;
-	};
-
-	template <>
-	struct Traits<MathDomain::Double> 
-	{
-		using stdType = double;
-	};
-
-	template <>
-	struct Traits<MathDomain::Float> 
-	{
-		using stdType = float;
-	};
-
-	template <>
-	struct Traits<MathDomain::Int> 
-	{
-		using stdType = int;
-	};
-
-	#pragma endregion 
-
-	#pragma region Type mapping from C++ type to MathDomain
-
-	template <typename T>
-	struct _Traits
-	{
-		static constexpr MathDomain clType = MathDomain::Null;
-	};
-
-	template <>
-	struct _Traits<double> 
-	{
-		static constexpr MathDomain clType = MathDomain::Double;
-	};
-
-	template <>
-	struct _Traits<float> 
-	{
-		static constexpr MathDomain clType = MathDomain::Float;
-	};
-
-	template <>
-	struct _Traits<int> 
-	{
-		static constexpr MathDomain clType = MathDomain::Int;
-	};
-
-	#pragma endregion 
-
-	/*
-	 * CRTP implementation
-	 */
-	template<typename BufferImpl, MemorySpace memorySpace = MemorySpace::Device, MathDomain mathDomain = MathDomain::Float>
+	template<MemorySpace memorySpace = MemorySpace::Device, MathDomain mathDomain = MathDomain::Float>
 	class IBuffer
 	{
 	public:
@@ -79,167 +18,53 @@ namespace cl
 
 		// For avoiding unnecessary checks and overheads, it's not possible to use operator=
 		template<typename bi, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-		IBuffer& operator=(const IBuffer<BufferImpl, ms, md>& rhs) = delete;
+		IBuffer& operator=(const IBuffer<ms, md>& rhs) = delete;
 		template<typename bi, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-		IBuffer& operator=(IBuffer<BufferImpl, ms, md>&& rhs) = delete;
+		IBuffer& operator=(IBuffer<ms, md>&& rhs) = delete;
 
-		template<typename bi, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-		void ReadFrom(const IBuffer<bi, ms, md>& rhs);
-		template<typename T>
-		void ReadFrom(const std::vector<T>& rhs);
+		virtual void Set(const stdType value) = 0;
 
-		void Set(const stdType value);
-		
-		void Reciprocal();
+		virtual void Reciprocal() = 0;
 
-		void LinSpace(const stdType x0, const stdType x1);
+		virtual void LinSpace(const stdType x0, const stdType x1) = 0;
 
-		void RandomUniform(const unsigned seed = 1234);
+		virtual void RandomUniform(const unsigned seed = 1234) = 0;
 
-		void RandomGaussian(const unsigned seed = 1234);
-		
-		virtual std::vector<stdType> Get() const;
+		virtual void RandomGaussian(const unsigned seed = 1234) = 0;
+
+		virtual std::vector<stdType> Get() const = 0;
 
 		virtual void Print(const std::string& label = "") const = 0;
 
 		virtual std::ostream& ToOutputStream(std::ostream& os) const = 0;
 		virtual void ToBinaryFile(const std::string& fileName, const bool compressed = false, const std::string mode = "w") const = 0;
 
-		template<typename bi, MemorySpace ms, MathDomain md>
-		friend std::ostream& operator<<(std::ostream& os, const IBuffer<bi, ms, md>& buffer);
-
-		template<typename bi, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-		bool operator==(const IBuffer<bi, ms, md>& rhs) const;
-		template<typename bi, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-		bool operator!=(const IBuffer<bi, ms, md>& rhs) const { return !(*this == rhs); }
-
-		unsigned size() const noexcept { return GetBuffer().size; }
+		virtual unsigned size() const noexcept = 0;
 
 		virtual ~IBuffer() = default;
 
-		#pragma region Linear Algebra
+		virtual IBuffer& operator +=(const IBuffer& rhs) = 0;
+		virtual IBuffer& operator -=(const IBuffer& rhs) = 0;
+		virtual IBuffer& operator %=(const IBuffer& rhs) = 0;  // element-wise product
 
-		IBuffer& operator +=(const IBuffer& rhs);
-		IBuffer& operator -=(const IBuffer& rhs);
-		IBuffer& operator %=(const IBuffer& rhs);  // element-wise product
+		virtual IBuffer& AddEqual(const IBuffer& rhs, const double alpha = 1.0) = 0;
+		virtual IBuffer& Scale(const double alpha) = 0;
+		virtual IBuffer& ElementWiseProduct(const IBuffer& rhs, const double alpha = 1.0) = 0;
 
-		IBuffer& AddEqual(const IBuffer& rhs, const double alpha = 1.0);
-		IBuffer& Scale(const double alpha);
-		IBuffer& ElementWiseProduct(const IBuffer& rhs, const double alpha = 1.0);
+		virtual int AbsoluteMinimumIndex() const = 0;
+		virtual int AbsoluteMaximumIndex() const = 0;
+		virtual stdType AbsoluteMinimum() const = 0;
+		virtual stdType AbsoluteMaximum() const = 0;
+		virtual stdType Minimum() const = 0;
+		virtual stdType Maximum() const = 0;
+		virtual stdType Sum() const = 0;
+		virtual stdType EuclideanNorm() const = 0;
+		virtual int CountEquals(const IBuffer& rhs) const = 0;
+		virtual int CountEquals(const IBuffer& rhs, MemoryBuffer& cacheCount, MemoryBuffer& cacheSum, MemoryBuffer& oneElementCache) const = 0;
 
-		int AbsoluteMinimumIndex() const;
-		int AbsoluteMaximumIndex() const;
-		stdType AbsoluteMinimum() const;
-		stdType AbsoluteMaximum() const;
-		stdType Minimum() const;
-		stdType Maximum() const;
-		stdType Sum() const;
-		stdType EuclideanNorm() const;
-		int CountEquals(const IBuffer& rhs) const;
-		int CountEquals(const IBuffer& rhs, MemoryBuffer& cacheCount, MemoryBuffer& cacheSum, MemoryBuffer& oneElementCache) const;
-
-		#pragma endregion
-		
 		virtual MemoryBuffer& GetBuffer() noexcept = 0;
 		virtual const MemoryBuffer& GetBuffer() const noexcept = 0;
-		
-		inline bool OwnsMemory() const noexcept { return _isOwner; }
-	protected:
-		
-		explicit IBuffer(const bool isOwner);
-		explicit IBuffer(IBuffer&& buffer) noexcept;
-
-		static constexpr double GetTolerance()
-		{
-			switch (mathDomain)
-			{
-			case MathDomain::Int:
-				return 0;
-			case MathDomain::Float:
-				return 1e-7;
-			case MathDomain::Double:
-				return 1e-15;
-			default:
-				return 0;
-			}
-		}
-
-		void ctor(MemoryBuffer& buffer);
-		void dtor(MemoryBuffer& buffer);
-
-		static void Alloc(MemoryBuffer& buffer);
-
-		bool _isOwner;
 	};
-
-	namespace detail
-	{
-		template<MathDomain md>
-		void Fill(std::vector<typename Traits<md>::stdType>& dest, const MemoryBuffer& source)
-		{
-			using stdType = typename Traits<md>::stdType;
-			const auto* ptr = reinterpret_cast<const stdType*>(source.pointer);
-			for (size_t i = 0; i < dest.size(); i++)
-				dest[i] = ptr[i];
-		}
-
-		template<MathDomain md>
-		void Fill(std::vector<typename Traits<md>::stdType>& dest, const MemoryTile& source)
-		{
-			using stdType = typename Traits<md>::stdType;
-			const auto* ptr = reinterpret_cast<const stdType*>(source.pointer);
-			for (size_t j = 0; j < source.nCols; j++)
-				for (size_t i = 0; i < source.nRows; i++)
-					dest[i + source.nRows * j] = ptr[i + source.nRows * j];
-		}
-	}
-
-	template<typename BufferImpl, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	static void Scale(IBuffer<BufferImpl, ms, md>& lhs, const double alpha);
-
-	template<typename BufferImpl, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	void Print(const IBuffer<BufferImpl, ms, md>& v, const std::string& label = "");
-
-	template<typename T>
-	static void Print(const std::vector<T>& v, const std::string& label = "");
-
-	template<typename T>
-	static void Print(const std::vector<T>& m, const unsigned nRows, const unsigned nCols, const std::string& label = "");
-
-    #pragma region Serialization
-
-	template<typename T>
-	static std::ostream& VectorToOutputStream(const std::vector<T>& v, std::ostream& os);
-
-	template<typename T>
-	static std::istream& VectorFromInputStream(std::vector<T>& v, std::istream& is);
-
-	template<typename T>
-	static std::ostream& MatrixToOutputStream(const std::vector<T>& m, const unsigned nRows, const unsigned nCols, std::ostream& os);
-
-	template<typename T>
-	static std::istream& MatrixFromInputStream(std::vector<T>& m, unsigned& nRows, unsigned& nCols, std::istream& is);
-
-	template<typename T>
-	static void VectorToBinaryFile(const std::vector<T>& v, const std::string& fileName, const bool compressed = false, const std::string mode = "w");
-
-	template<typename T>
-	static void VectorFromBinaryFile(std::vector<T>& v, const std::string& fileName, const bool compressed = false, const bool useMemoryMapping = false);
-
-	template<typename T>
-	static std::vector<T> VectorFromBinaryFile(const std::string& fileName, const bool compressed = false, const bool useMemoryMapping = false);
-
-	template<typename T>
-	static void MatrixToBinaryFile(const std::vector<T>& m, unsigned nRows, unsigned nCols, const std::string& fileName, const bool tranpose=true, const bool compressed = false, const std::string mode = "w");
-
-	template<typename T>
-	static void MatrixFromBinaryFile(std::vector<T>& m, unsigned& nRows, unsigned& nCols, const std::string& fileName, const bool compressed = false, const bool useMemoryMapping = false);
-
-	template<typename T>
-	static std::vector<T> MatrixFromBinaryFile(unsigned& nRows, unsigned& nCols, const std::string& fileName, const bool compressed = false, const bool useMemoryMapping = false);
-	
-    #pragma endregion
 }
 
-#include <IBuffer.tpp>
 

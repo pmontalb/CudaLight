@@ -2,18 +2,18 @@
 
 #include <string>
 
-#include <IBuffer.h>
+#include <Buffer.h>
 #include <Types.h>
 #include <Vector.h>
 
 namespace cl
 {
 	template<MemorySpace memorySpace = MemorySpace::Device, MathDomain mathDomain = MathDomain::Float>
-	class SparseVector : public IBuffer<SparseVector<memorySpace, mathDomain>, memorySpace, mathDomain>
+	class SparseVector : public Buffer<SparseVector<memorySpace, mathDomain>, memorySpace, mathDomain>
 	{
 	public:
 		using stdType = typename Traits<mathDomain>::stdType;
-		friend class IBuffer<SparseVector, memorySpace, mathDomain>;
+		friend class Buffer<SparseVector, memorySpace, mathDomain>;
 
 		SparseVector(const unsigned size, const Vector<memorySpace, MathDomain::Int>& nonZeroIndices);
 		SparseVector(const unsigned size, const Vector<memorySpace, MathDomain::Int>& nonZeroIndices, const stdType value);
@@ -29,13 +29,13 @@ namespace cl
             _buffer.pointer = 0;
         }
 
-		const MemoryBuffer& GetBuffer() const noexcept override final { return values.GetBuffer(); }
-		MemoryBuffer& GetBuffer() noexcept override final { return values.GetBuffer(); }
+		const MemoryBuffer& GetBuffer() const noexcept final { return values.GetBuffer(); }
+		MemoryBuffer& GetBuffer() noexcept final { return values.GetBuffer(); }
 
-		std::vector<typename Traits<mathDomain>::stdType> Get() const override final;
-		void Print(const std::string& label = "") const override final;
-		std::ostream& ToOutputStream(std::ostream&) const override final { throw std::logic_error("Not Implemented"); }
-		void ToBinaryFile(const std::string&, const bool, const std::string) const override final	{ throw std::logic_error("Not Implemented"); }
+		std::vector<stdType> Get() const final;
+		void Print(const std::string& label = "") const final;
+		std::ostream& ToOutputStream(std::ostream&) const final { throw std::logic_error("Not Implemented"); }
+		void ToBinaryFile(const std::string&, const bool, const std::string) const final	{ throw std::logic_error("Not Implemented"); }
 
 		#pragma region Dense-Sparse Linear Algebra
 
@@ -60,7 +60,7 @@ namespace cl
 	protected:
 		SparseVector(const unsigned size, const unsigned nNonZeros);
 		SparseVector(const unsigned size, const unsigned nNonZeros, const stdType value);
-        using IBuffer<SparseVector, memorySpace, mathDomain>::Alloc;
+        using Buffer<SparseVector, memorySpace, mathDomain>::Alloc;
 
 
     public:

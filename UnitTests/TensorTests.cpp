@@ -52,7 +52,7 @@ namespace clt
 
 	TEST_F(TensorTests, Linspace)
 	{
-		cl::ten v = cl::LinSpace(0.0f, 1.0f, 10, 10, 10);
+		cl::ten v = cl::ten::LinSpace(0.0f, 1.0f, 10, 10, 10);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v = v.Get();
 		ASSERT_TRUE(std::fabs(_v[0] - 0.0f) <= 1e-7f);
@@ -61,7 +61,7 @@ namespace clt
 
 	TEST_F(TensorTests, RandomUniform)
 	{
-		cl::ten v = cl::RandomUniform(10, 10, 10, 1234);
+		cl::ten v = cl::ten::RandomUniform(10, 10, 10, 1234);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v = v.Get();
 		for (const auto& iter : _v)
@@ -70,7 +70,7 @@ namespace clt
 
 	TEST_F(TensorTests, RandomGaussian)
 	{
-		cl::ten v = cl::RandomGaussian(10, 10, 10, 1234);
+		cl::ten v = cl::ten::RandomGaussian(10, 10, 10, 1234);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v = v.Get();
 		for (size_t i = 0; i < _v.size() / 2; ++i)

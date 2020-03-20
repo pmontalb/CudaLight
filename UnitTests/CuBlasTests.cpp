@@ -117,11 +117,11 @@ namespace clt
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v2 = v2.Get();
 		
-		auto m2 = m1.AddEqual(v1, false, 2.5);
+		auto m2 = m1.AddEqualBroadcast(v1, false, 2.5);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _m2 = m2.Get();
 		
-		auto m3 = m1Copy.AddEqual(v2, true, 5.2);
+		auto m3 = m1Copy.AddEqualBroadcast(v2, true, 5.2);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _m3 = m3.Get();
 		

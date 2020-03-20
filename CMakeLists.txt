@@ -14,6 +14,20 @@ add_subdirectory(../CudaLightKernels ${CMAKE_BINARY_DIR}/CudaLightKernels EXCLUD
 
 create_library(
     NAME
+        HostRoutines
+    SOURCES
+        HostRoutines/BufferInitializer.cpp
+        HostRoutines/MemoryManager.cpp
+
+        HostRoutines/BlasWrappers.cpp
+        HostRoutines/Extra.cpp
+
+    PUBLIC_INCLUDE_DIRECTORIES
+        HostRoutines ../CudaLightKernels .
+)
+
+create_library(
+    NAME
         CudaLight
     SOURCES
         CudaLight/DeviceManager.cpp
@@ -22,7 +36,7 @@ create_library(
     PUBLIC_INCLUDE_DIRECTORIES
         CudaLight
     DEPENDENCIES
-        Npy++ CudaLightKernels
+        Npy++ CudaLightKernels HostRoutines
 )
 
 find_package(GTest REQUIRED)
@@ -43,6 +57,11 @@ create_test(
         UnitTests/SparseVectorTests.cpp
         UnitTests/TensorTests.cpp
         UnitTests/VectorTests.cpp
+
+        UnitTests/HostVectorTests.cpp
+        UnitTests/HostBlasTests.cpp
+        UnitTests/HostExtraRoutinesTests.cpp
+        UnitTests/HostSerializationTests.cpp
     PUBLIC_INCLUDE_DIRECTORIES
         ${GTEST_INCLUDE_DIR}
     DEPENDENCIES

@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <IBuffer.h>
+#include <Buffer.h>
 #include <Types.h>
 #include <Vector.h>
 #include <ColumnWiseMatrix.h>
@@ -13,11 +13,11 @@ namespace cl
 	 * CSR Matrix implementation
 	 */
 	template<MemorySpace memorySpace = MemorySpace::Device, MathDomain mathDomain = MathDomain::Float>
-	class CompressedSparseRowMatrix : public IBuffer<CompressedSparseRowMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>
+	class CompressedSparseRowMatrix : public Buffer<CompressedSparseRowMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>
 	{
 	public:
 		using stdType = typename Traits<mathDomain>::stdType;
-		friend class IBuffer<CompressedSparseRowMatrix, memorySpace, mathDomain>;
+		friend class Buffer<CompressedSparseRowMatrix, memorySpace, mathDomain>;
 		
 		CompressedSparseRowMatrix(const unsigned nRows, const unsigned nCols, Vector<memorySpace, MathDomain::Int>&& nonZeroColumnIndices, Vector<memorySpace, MathDomain::Int>&& nNonZeroRows);
 		CompressedSparseRowMatrix(const unsigned nRows, const unsigned nCols, const Vector<memorySpace, MathDomain::Int>& nonZeroColumnIndices, const Vector<memorySpace, MathDomain::Int>& nNonZeroRows);
@@ -37,17 +37,17 @@ namespace cl
             _buffer.pointer = 0;
         }
 
-		const MemoryBuffer& GetBuffer() const noexcept override final { return values.GetBuffer(); }
-		MemoryBuffer& GetBuffer() noexcept override final { return values.GetBuffer(); }
+		const MemoryBuffer& GetBuffer() const noexcept final { return values.GetBuffer(); }
+		MemoryBuffer& GetBuffer() noexcept final { return values.GetBuffer(); }
 		
 		const SparseMemoryTile& GetCsrBuffer() const noexcept { return _buffer; }
 		SparseMemoryTile& GetCsrBuffer() noexcept { return _buffer; }
 
-		std::vector<typename Traits<mathDomain>::stdType> Get() const override final;
-		void Print(const std::string& label = "") const override final;
+		std::vector<typename Traits<mathDomain>::stdType> Get() const final;
+		void Print(const std::string& label = "") const final;
 		void PrintNonZeros(const std::string& label = "") const;
-		std::ostream& ToOutputStream(std::ostream&) const override final { throw std::logic_error("Not Implemented"); }
-		void ToBinaryFile(const std::string&, const bool, const std::string) const override final { throw std::logic_error("Not Implemented"); }
+		std::ostream& ToOutputStream(std::ostream&) const final { throw std::logic_error("Not Implemented"); }
+		void ToBinaryFile(const std::string&, const bool, const std::string) const final { throw std::logic_error("Not Implemented"); }
 
 		unsigned denseSize() const noexcept { return nRows() * nCols(); }  // used only when converting to dense
 		unsigned nRows() const noexcept { return _buffer.nRows; }
@@ -76,7 +76,7 @@ namespace cl
 		Vector<memorySpace, MathDomain::Int> nonZeroColumnIndices {};
 		Vector<memorySpace, MathDomain::Int> nNonZeroRows {};
 
-		using IBuffer<CompressedSparseRowMatrix, memorySpace, mathDomain>::Alloc;
+		using Buffer<CompressedSparseRowMatrix, memorySpace, mathDomain>::Alloc;
 
 	private:
 		/**

@@ -10,11 +10,11 @@
 namespace cl
 {
 	template<MemorySpace memorySpace = MemorySpace::Device, MathDomain mathDomain = MathDomain::Float>
-	class Tensor : public IBuffer<Tensor<memorySpace, mathDomain>, memorySpace, mathDomain>
+	class Tensor : public Buffer<Tensor<memorySpace, mathDomain>, memorySpace, mathDomain>
 	{
 	public:
 		using stdType = typename Traits<mathDomain>::stdType;
-		friend class IBuffer<Tensor<memorySpace, mathDomain>, memorySpace, mathDomain>;
+		friend class Buffer<Tensor<memorySpace, mathDomain>, memorySpace, mathDomain>;
 
 		Tensor(const unsigned nRows, const unsigned nCols, const unsigned nMatrices);
 
@@ -34,21 +34,21 @@ namespace cl
 		
 		Tensor(const Vector<memorySpace, mathDomain>& rhs, const size_t startOffset, const size_t nRows, const size_t nCols, const size_t nMatrices) noexcept;
 
-		using IBuffer<Tensor, memorySpace, mathDomain>::ReadFrom;
+		using Buffer<Tensor, memorySpace, mathDomain>::ReadFrom;
 		void ReadFrom(const ColumnWiseMatrix<memorySpace, mathDomain>& rhs);
 		void ReadFrom(const Vector<memorySpace, mathDomain>& rhs);
 
-		using IBuffer<Tensor, memorySpace, mathDomain>::Get;
+		using Buffer<Tensor, memorySpace, mathDomain>::Get;
 		std::vector<typename Traits<mathDomain>::stdType> Get(const unsigned matrix) const;
 		std::vector<typename Traits<mathDomain>::stdType> Get(const unsigned matrix, const unsigned column) const;
 
-		using IBuffer<Tensor, memorySpace, mathDomain>::Set;
+		using Buffer<Tensor, memorySpace, mathDomain>::Set;
 		void Set(const ColumnWiseMatrix<memorySpace, mathDomain>& matrixBuffer, const unsigned matrix);
 		void Set(const Vector<memorySpace, mathDomain>& columnVector, const unsigned column, const unsigned matrix);
 
-		void Print(const std::string& label = "") const override final;
-		std::ostream& ToOutputStream(std::ostream&) const override final { throw std::logic_error("Not Implemented"); }
-		void ToBinaryFile(const std::string&, const bool, const std::string) const override final { throw std::logic_error("Not Implemented"); }
+		void Print(const std::string& label = "") const final;
+		std::ostream& ToOutputStream(std::ostream&) const final { throw std::logic_error("Not Implemented"); }
+		void ToBinaryFile(const std::string&, const bool, const std::string) const final { throw std::logic_error("Not Implemented"); }
 
         inline ~Tensor() override
         {
@@ -63,6 +63,11 @@ namespace cl
 		std::vector<std::shared_ptr<ColumnWiseMatrix<memorySpace, mathDomain>>> matrices {};
 	
 		#pragma region Linear Algebra
+
+		using Buffer<Tensor<memorySpace, mathDomain>, memorySpace, mathDomain>::LinSpace;
+		using Buffer<Tensor<memorySpace, mathDomain>, memorySpace, mathDomain>::RandomUniform;
+		using Buffer<Tensor<memorySpace, mathDomain>, memorySpace, mathDomain>::RandomGaussian;
+		using Buffer<Tensor<memorySpace, mathDomain>, memorySpace, mathDomain>::Scale;
 
 		Tensor operator +(const Tensor& rhs) const;
 		Tensor operator -(const Tensor& rhs) const;
@@ -87,7 +92,7 @@ namespace cl
 
 		static Tensor Copy(const Tensor& source);
 
-		static Tensor LinSpace(const typename Traits<mathDomain>::stdType x0, const typename Traits<mathDomain>::stdType x1, const unsigned nRows, const unsigned nCols, const unsigned nMatrices);
+		static Tensor LinSpace(const stdType x0, const stdType x1, const unsigned nRows, const unsigned nCols, const unsigned nMatrices);
 
 		static Tensor RandomUniform(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const unsigned seed);
 
@@ -99,8 +104,8 @@ namespace cl
 
 		static void Scale(Tensor& lhs, const double alpha);
 
-		MemoryBuffer& GetBuffer() noexcept override final { return _buffer; }
-		const MemoryBuffer& GetBuffer() const noexcept override final { return _buffer; }
+		MemoryBuffer& GetBuffer() noexcept final { return _buffer; }
+		const MemoryBuffer& GetBuffer() const noexcept final { return _buffer; }
 		const MemoryCube& GetCube() const noexcept { return _buffer; }
 		MemoryCube& GetCube() noexcept { return _buffer; }
 	private:

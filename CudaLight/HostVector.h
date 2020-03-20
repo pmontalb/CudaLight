@@ -3,20 +3,21 @@
 #include <string>
 #include <memory>
 
-#include <Buffer.h>
+#include <HostBuffer.h>
 #include <Types.h>
 
-namespace cl
+namespace cl { namespace host
 {
 	template<MemorySpace memorySpace, MathDomain mathDomain>
 	class SparseVector;
 	template<MemorySpace memorySpace, MathDomain mathDomain>
 	class CompressedSparseRowMatrix;
 
-	template<MemorySpace memorySpace = MemorySpace::Device, MathDomain mathDomain = MathDomain::Float>
+	template<MemorySpace memorySpace = MemorySpace::Test, MathDomain mathDomain = MathDomain::Float>
 	class Vector : public Buffer<Vector<memorySpace, mathDomain>, memorySpace, mathDomain>
 	{
 	public:
+		static_assert(memorySpace != MemorySpace::Host && memorySpace != MemorySpace::Device, "Unsupported memory space");
 		using stdType = typename Traits<mathDomain>::stdType;
 
 		friend class Buffer<Vector<memorySpace, mathDomain>, memorySpace, mathDomain>;
@@ -134,22 +135,13 @@ namespace cl
 
 	#pragma region Type aliases
 
-	typedef Vector<MemorySpace::Device, MathDomain::Int> GpuIntegerVector;
-	typedef Vector<MemorySpace::Device, MathDomain::Float> GpuSingleVector;
-	typedef GpuSingleVector GpuFloatVector;
-	typedef Vector<MemorySpace::Device, MathDomain::Double> GpuDoubleVector;
-
-	typedef Vector<MemorySpace::Host, MathDomain::Int> CpuIntegerVector;
-	typedef Vector<MemorySpace::Host, MathDomain::Float> CpuSingleVector;
-	typedef CpuSingleVector CpuFloatVector;
-	typedef Vector<MemorySpace::Host, MathDomain::Double> CpuDoubleVector;
-	
-	typedef GpuSingleVector vec;
-	typedef GpuDoubleVector dvec;
-	typedef GpuIntegerVector ivec;
+	typedef Vector<MemorySpace::Test, MathDomain::Int> DebugIntegerVector;
+	typedef Vector<MemorySpace::Test, MathDomain::Float> DebugSingleVector;
+	typedef DebugSingleVector DebugFloatVector;
+	typedef Vector<MemorySpace::Test, MathDomain::Double> DebugDoubleVector;
 
 	#pragma endregion
-}
+}}
 
-#include <Vector.tpp>
+#include <HostVector.tpp>
 

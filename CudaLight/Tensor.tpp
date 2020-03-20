@@ -6,7 +6,7 @@ namespace cl
 {
 	template<MemorySpace ms, MathDomain md>
 	Tensor<ms, md>::Tensor(const unsigned nRows, const unsigned nCols, const unsigned nMatrices)
-		: IBuffer<Tensor<ms, md>, ms, md>(true), _buffer(MemoryCube(0, nRows, nCols, nMatrices, ms, md))
+		: Buffer<Tensor<ms, md>, ms, md>(true), _buffer(MemoryCube(0, nRows, nCols, nMatrices, ms, md))
 	{
 		this->ctor(_buffer);
 		SetUp(nMatrices);
@@ -14,7 +14,7 @@ namespace cl
 	
 	template<MemorySpace ms, MathDomain md>
 	Tensor<ms, md>::Tensor(Tensor&& rhs) noexcept
-			: IBuffer<Tensor<ms, md>, ms, md>(std::move(rhs)), matrices(std::move(rhs.matrices)), _buffer(rhs._buffer)
+			: Buffer<Tensor<ms, md>, ms, md>(std::move(rhs)), matrices(std::move(rhs.matrices)), _buffer(rhs._buffer)
 	{
 	}
 
@@ -60,25 +60,25 @@ namespace cl
 	{
 		dm::detail::AutoCopy(matrices[0]->columns[0]->GetBuffer(), rhs.GetBuffer());
 	}
-	
+
 	template<MemorySpace ms, MathDomain md>
 	Tensor<ms, md>::Tensor(const Vector<ms, md>& rhs, const size_t startOffset, const size_t nRows, const size_t nCols, const size_t nMatrices) noexcept
-		: IBuffer<Tensor<ms, md>, ms, md>(false),
+		: Buffer<Tensor<ms, md>, ms, md>(false),
 		  _buffer(0, static_cast<unsigned>(nRows), static_cast<unsigned>(nCols), static_cast<unsigned>(nMatrices), ms, md)
 	{
 		assert(startOffset + nRows * nCols * nMatrices <= rhs.size());
 		_buffer.pointer = rhs.GetBuffer().pointer + startOffset * rhs.GetBuffer().ElementarySize();
 		SetUp(nMatrices);
 	}
-	
-	
+
+
 	template<MemorySpace ms, MathDomain md>
 	Tensor<ms, md>::Tensor(const MemoryCube& buffer)
-		: IBuffer<Tensor<ms, md>, ms, md>(false), _buffer(buffer)
+		: Buffer<Tensor<ms, md>, ms, md>(false), _buffer(buffer)
 	{
 
 	}
-	
+
 	template<MemorySpace ms, MathDomain md>
 	void Tensor<ms, md>::SetUp(const size_t nMatrices)
 	{
@@ -88,7 +88,7 @@ namespace cl
 			const size_t matrixShift = i * nRows() * nCols() * _buffer.ElementarySize();
 			MemoryTile matrixBuffer(_buffer.pointer + matrixShift, _buffer.nRows, _buffer.nCols, ms, md);
 			matrices[i] = ColumnWiseMatrix<ms, md>::make_shared(matrixBuffer);
-			
+
 			matrices[i]->columns.resize(nCols());
 			for (size_t j = 0; j < nCols(); ++j)
 			{
@@ -98,7 +98,7 @@ namespace cl
 			}
 		}
 	}
-	
+
 	template<MemorySpace ms, MathDomain md>
 	void Tensor<ms, md>::ReadFrom(const ColumnWiseMatrix<ms, md>& rhs)
 	{
@@ -214,7 +214,7 @@ namespace cl
 	{
 		ColumnWiseMatrix<ms, md> out(nRows(), nCols(), 0.0);
 		CubeWiseSum(out);
-		
+
 		return out;
 	}
 
@@ -229,7 +229,7 @@ namespace cl
 			Vector<ms, MathDomain::Int> nNonZeroRows(out.size() * nMatrices());
 			nNonZeroRows.LinSpace(0, static_cast<int>(out.size() * nMatrices() - 1));
 			nNonZeroRows.Scale(nMatrices());
-			
+
 			std::vector<int> nonZeroColumnIndicesCpu(nNonZeroRows.size());
 			for (size_t i = 0; i < out.size(); ++i)
 			{
@@ -241,7 +241,7 @@ namespace cl
 			CubeWiseSum(out, eye);
 		#endif
 	}
-	
+
 	template<MemorySpace ms, MathDomain md>
 	void Tensor<ms, md>::CubeWiseSum(ColumnWiseMatrix<ms, md>& out, const CompressedSparseRowMatrix<ms, md>&) const
 	{
@@ -261,7 +261,7 @@ namespace cl
 	{
 		ColumnWiseMatrix<ms, md> out(nRows(), nCols(), -123456789.0);
 		MatrixSum(out);
-		
+
 		return out;
 	}
 	template<MemorySpace ms, MathDomain md>
@@ -286,16 +286,16 @@ namespace cl
 	{
 		Tensor<ms, md> ret(lhs.nRows(), rhs.nRows(), rhs.nCols(), 0.0);
 		KroneckerProduct(ret, lhs, rhs, alpha);
-		
+
 		return ret;
 	}
-	
+
 	template<MemorySpace ms, MathDomain md>
 	void Tensor<ms, md>::KroneckerProduct(Tensor<ms, md>& out, const ColumnWiseMatrix<ms, md>& lhs, const ColumnWiseMatrix<ms, md>& rhs, const double alpha)
 	{
 		assert(out.nMatrices() == lhs.nCols());
 		assert(out.nMatrices() == rhs.nCols());
-		
+
 		//#define DO_NOT_USE_STREAMS
 		#ifdef DO_NOT_USE_STREAMS
 			for (size_t k = 0; k < out.nMatrices(); ++k)
@@ -303,9 +303,9 @@ namespace cl
 		#else
 			dm::detail::BatchedTransposedKroneckerProduct(out.GetCube(), lhs.GetTile(), rhs.GetTile(), alpha);
 		#endif
-		
+
 	}
-	
+
 	template<MemorySpace ms, MathDomain md>
 	void Tensor<ms, md>::AccumulateKroneckerProduct(ColumnWiseMatrix<ms, md>& out, const ColumnWiseMatrix<ms, md>& lhs, const ColumnWiseMatrix<ms, md>& rhs, const double alpha)
 	{
@@ -314,7 +314,7 @@ namespace cl
 		for (size_t k = 0; k < lhs.nCols(); ++k)
 			dm::detail::KroneckerProduct(out.GetTile(), lhs.columns[k]->GetBuffer(), rhs.columns[k]->GetBuffer(), alpha);
 	}
-	
+
 #pragma endregion
 
 	template<MemorySpace ms, MathDomain md>
@@ -325,10 +325,10 @@ namespace cl
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	Tensor<ms, md> Tensor<ms, md>::LinSpace(const typename Traits<md>::stdType x0, const typename Traits<md>::stdType x1, const unsigned nRows, const unsigned nCols, const unsigned nMatrices)
+	Tensor<ms, md> Tensor<ms, md>::LinSpace(const stdType x0, const stdType x1, const unsigned nRows, const unsigned nCols, const unsigned nMatrices)
 	{
 		Tensor<ms, md> ret(nRows, nCols, nMatrices);
-		static_cast<IBuffer<Tensor<ms, md>, ms, md>>(ret).LinSpace(x0, x1);
+		ret.LinSpace(x0, x1);
 
 		return ret;
 	}
@@ -337,7 +337,7 @@ namespace cl
 	Tensor<ms, md> Tensor<ms, md>::RandomUniform(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const unsigned seed)
 	{
 		Tensor<ms, md> ret(nRows, nCols, nMatrices);
-		static_cast<IBuffer<Tensor<ms, md>, ms, md>>(ret).RandomUniform(seed);
+		ret.RandomUniform(seed);
 
 		return ret;
 	}
@@ -346,7 +346,7 @@ namespace cl
 	Tensor<ms, md> Tensor<ms, md>::RandomGaussian(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const unsigned seed)
 	{
 		Tensor<ms, md> ret(nRows, nCols, nMatrices);
-		static_cast<IBuffer<Tensor<ms, md>, ms, md>>(ret).RandomGaussian(seed);
+		ret.RandomGaussian(seed);
 
 		return ret;
 	}
@@ -366,6 +366,6 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void Tensor<ms, md>::Scale(Tensor<ms, md>& lhs, const double alpha)
 	{
-		static_cast<IBuffer<Tensor<ms, md>, ms, md>>(lhs).Scale(alpha);
+		static_cast<Buffer<Tensor<ms, md>, ms, md>>(lhs).Scale(alpha);
 	}
 }

@@ -4,7 +4,7 @@ namespace cl
 {
 	template< MemorySpace ms, MathDomain md>
 	CompressedSparseRowMatrix<ms, md>::CompressedSparseRowMatrix(const unsigned nRows, const unsigned nCols, Vector<ms, MathDomain::Int>&& nonZeroColumnIndices_, Vector<ms, MathDomain::Int>&& nNonZeroRows_)
-		: IBuffer<CompressedSparseRowMatrix<ms, md>, ms, md>(false),  // CompressedSparseRowMatrix doesn't allocate its memory in its _buffer!
+		: Buffer<CompressedSparseRowMatrix < ms, md>, ms, md>(false),  // CompressedSparseRowMatrix doesn't allocate its memory in its _buffer!
 		_buffer(0, nonZeroColumnIndices_.size(), 0, 0, nRows, nCols, ms, md),
 		values(nonZeroColumnIndices_.size()),
 		nonZeroColumnIndices(std::move(nonZeroColumnIndices_)),
@@ -15,7 +15,7 @@ namespace cl
 	
 	template< MemorySpace ms, MathDomain md>
 	CompressedSparseRowMatrix<ms, md>::CompressedSparseRowMatrix(const unsigned nRows, const unsigned nCols, const Vector<ms, MathDomain::Int>& nonZeroColumnIndices_, const Vector<ms, MathDomain::Int>& nNonZeroRows_)
-		: IBuffer<CompressedSparseRowMatrix<ms, md>, ms, md>(false),  // CompressedSparseRowMatrix doesn't allocate its memory in its _buffer!
+		: Buffer<CompressedSparseRowMatrix < ms, md>, ms, md>(false),  // CompressedSparseRowMatrix doesn't allocate its memory in its _buffer!
 		_buffer(0, nonZeroColumnIndices_.size(), 0, 0, nRows, nCols, ms, md),
 		values(nonZeroColumnIndices_.size()),
 		nonZeroColumnIndices(nonZeroColumnIndices_),
@@ -40,14 +40,14 @@ namespace cl
 
 	template< MemorySpace ms, MathDomain md>
 	CompressedSparseRowMatrix<ms, md>::CompressedSparseRowMatrix(const ColumnWiseMatrix<ms, md>& denseMatrix)
-		: IBuffer<CompressedSparseRowMatrix<ms, md>, ms, md>(false), _buffer(0, 0, 0, 0, denseMatrix.nRows(), denseMatrix.nCols(), ms, md)
+		: Buffer<CompressedSparseRowMatrix < ms, md>, ms, md>(false), _buffer(0, 0, 0, 0, denseMatrix.nRows(), denseMatrix.nCols(), ms, md)
 	{
 		ReadFrom(denseMatrix.Get(), denseMatrix.nRows(), denseMatrix.nCols());
 	}
 	
 	template< MemorySpace ms, MathDomain md>
 	CompressedSparseRowMatrix<ms, md>::CompressedSparseRowMatrix(const std::vector<stdType>& denseMatrix, const size_t nRows, const size_t nCols)
-		: IBuffer<CompressedSparseRowMatrix<ms, md>, ms, md>(false), _buffer(0, 0, 0, 0, static_cast<unsigned>(nRows), static_cast<unsigned>(nCols), ms, md)
+		: Buffer<CompressedSparseRowMatrix < ms, md>, ms, md>(false), _buffer(0, 0, 0, 0, static_cast<unsigned>(nRows), static_cast<unsigned>(nCols), ms, md)
 	{
 		ReadFrom(denseMatrix, nRows, nCols);
 	}
@@ -93,7 +93,7 @@ namespace cl
 
 	template< MemorySpace ms, MathDomain md>
 	CompressedSparseRowMatrix<ms, md>::CompressedSparseRowMatrix(const CompressedSparseRowMatrix& rhs)
-		: IBuffer<CompressedSparseRowMatrix<ms, md>, ms, md>(false), // CompressedSparseRowMatrix doesn't allocate its memory in its _buffer!
+		: Buffer<CompressedSparseRowMatrix < ms, md>, ms, md>(false), // CompressedSparseRowMatrix doesn't allocate its memory in its _buffer!
 		_buffer(0, 0, 0, 0, rhs.nRows(), rhs.nCols(), ms, md),
 		values(rhs.values), nonZeroColumnIndices(rhs.nonZeroColumnIndices), nNonZeroRows(rhs.nNonZeroRows)
 	{
@@ -102,7 +102,7 @@ namespace cl
 
 template< MemorySpace ms, MathDomain md>
 	CompressedSparseRowMatrix<ms, md>::CompressedSparseRowMatrix(CompressedSparseRowMatrix&& rhs) noexcept
-		: IBuffer<CompressedSparseRowMatrix<ms, md>, ms, md>(false),
+		: Buffer<CompressedSparseRowMatrix < ms, md>, ms, md>(false),
 		  _buffer(rhs._buffer),
 		  values(std::move(rhs.values)), nonZeroColumnIndices(std::move(rhs.nonZeroColumnIndices)), nNonZeroRows(std::move(rhs.nNonZeroRows))
 	{

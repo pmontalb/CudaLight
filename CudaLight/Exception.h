@@ -15,7 +15,7 @@ public:
 	Exception& operator=(const Exception& rhs) = delete;
 	Exception& operator=(Exception&& rhs) = delete;
 
-	char const* what() const noexcept override final
+	char const* what() const noexcept final
 	{
 		return _message.c_str();
 	}
