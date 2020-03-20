@@ -4,6 +4,7 @@
 #include <Types.h>
 #include <Exceptions.h>
 #include <MemoryManager.h>
+#include "MklWrappers.h"
 
 namespace cl { namespace routines {
 
@@ -24,6 +25,9 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 						std::copy(sourcePtr, sourcePtr + source.size, destPtr);
 						break;
+					case MemorySpace::Mkl:
+						mkr::Copy(destPtr, sourcePtr, static_cast<int>(dest.size));
+						break;
 					default:
 						throw NotImplementedException();
 				}
@@ -38,6 +42,9 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 						std::copy(sourcePtr, sourcePtr + source.size, destPtr);
 						break;
+					case MemorySpace::Mkl:
+						mkr::Copy(destPtr, sourcePtr, static_cast<int>(dest.size));
+						break;
 					default:
 						throw NotImplementedException();
 				}
@@ -50,6 +57,7 @@ namespace cl { namespace routines {
 				switch (dest.memorySpace)
 				{
 					case MemorySpace::Test:
+					case MemorySpace::Mkl:  // TODO
 						std::copy(sourcePtr, sourcePtr + source.size, destPtr);
 						break;
 					default:
@@ -74,6 +82,9 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 						*ptr = new float[buf.size];
 						break;
+					case MemorySpace::Mkl:
+						mkr::Alloc(ptr, buf.size);
+						break;
 					default:
 						throw NotImplementedException();
 				}
@@ -87,6 +98,9 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 						*ptr = new double[buf.size];
 						break;
+					case MemorySpace::Mkl:
+						mkr::Alloc(ptr, buf.size);
+						break;
 					default:
 						throw NotImplementedException();
 				}
@@ -99,6 +113,9 @@ namespace cl { namespace routines {
 				{
 					case MemorySpace::Test:
 						*ptr = new int[buf.size];
+						break;
+					case MemorySpace::Mkl:
+						mkr::Alloc(ptr, buf.size);
 						break;
 					default:
 						throw NotImplementedException();
@@ -116,12 +133,14 @@ namespace cl { namespace routines {
 		{
 			case MathDomain::Float:
 			{
-				auto *ptr = GetPointer<MathDomain::Float>(buf);
+				auto **ptr = GetRefPointer<MathDomain::Float>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
-						delete[] ptr;
-						buf.pointer = 0;
+						delete[] *ptr;
+						break;
+					case MemorySpace::Mkl:
+						mkr::Free(ptr);
 						break;
 					default:
 						throw NotImplementedException();
@@ -130,12 +149,14 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Double:
 			{
-				auto *ptr = GetPointer<MathDomain::Double>(buf);
+				auto **ptr = GetRefPointer<MathDomain::Double>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
-						delete[] ptr;
-						buf.pointer = 0;
+						delete[] *ptr;
+						break;
+					case MemorySpace::Mkl:
+						mkr::Free(ptr);
 						break;
 					default:
 						throw NotImplementedException();
@@ -144,12 +165,14 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Int:
 			{
-				auto *ptr = GetPointer<MathDomain::Int>(buf);
+				auto *ptr = GetRefPointer<MathDomain::Int>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
-						delete[] ptr;
-						buf.pointer = 0;
+						delete[] *ptr;
+						break;
+					case MemorySpace::Mkl:
+						mkr::Free(ptr);
 						break;
 					default:
 						throw NotImplementedException();
@@ -159,5 +182,7 @@ namespace cl { namespace routines {
 			default:
 				throw NotImplementedException();
 		}
+
+		buf.pointer = 0;
 	}
 }}

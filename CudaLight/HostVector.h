@@ -140,7 +140,18 @@ namespace cl { namespace host
 	typedef DebugSingleVector DebugFloatVector;
 	typedef Vector<MemorySpace::Test, MathDomain::Double> DebugDoubleVector;
 
+	typedef Vector<MemorySpace::Mkl, MathDomain::Int> MklIntegerVector;
+	typedef Vector<MemorySpace::Mkl, MathDomain::Float> MklSingleVector;
+	typedef MklSingleVector MklFloatVector;
+	typedef Vector<MemorySpace::Mkl, MathDomain::Double> MklDoubleVector;
+
 	#pragma endregion
+}}
+
+namespace cl { namespace mkl {
+	typedef cl::host::MklSingleVector vec;
+	typedef cl::host::MklDoubleVector dvec;
+	typedef cl::host::MklIntegerVector ivec;
 }}
 
 #include <HostVector.tpp>

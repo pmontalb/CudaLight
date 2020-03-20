@@ -45,14 +45,7 @@ namespace cl { namespace host
 	template<typename bi, MemorySpace ms, MathDomain md>
 	void Buffer<bi, ms, md>::Alloc(MemoryBuffer& buffer)
 	{
-		switch (ms)
-		{
-			case MemorySpace::Test:
-				routines::Alloc(buffer);
-				break;
-			default:
-				throw NotImplementedException();
-		}
+		routines::Alloc(buffer);
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
@@ -130,7 +123,6 @@ namespace cl { namespace host
 		assert(buffer.pointer != 0);
 
 		MemoryBuffer newBuf(buffer);
-		newBuf.memorySpace = MemorySpace::Test;
 
 		routines::Alloc(newBuf);
 		routines::Copy(newBuf, buffer);
@@ -150,15 +142,7 @@ namespace cl { namespace host
 		if (!_isOwner)
 			return;
 		assert(buffer.pointer != 0);
-
-		switch (buffer.memorySpace)
-		{
-			case MemorySpace::Test:
-				routines::Free(buffer);
-				break;
-			default:
-				throw NotImplementedException();
-		}
+		routines::Free(buffer);
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>

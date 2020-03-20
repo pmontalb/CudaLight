@@ -4,6 +4,7 @@
 #include <Exceptions.h>
 
 #include <BlasWrappers.h>
+#include <MklWrappers.h>
 #include <cmath>
 
 namespace cl { namespace routines {
@@ -33,6 +34,9 @@ namespace cl { namespace routines {
 						for (size_t i = 0; i < z.size; ++i)
 							zPtr[i] = static_cast<float>(alpha) * xPtr[i] + yPtr[i];
 						break;
+					case MemorySpace::Mkl:
+						mkr::Add(zPtr, xPtr, yPtr, static_cast<int>(z.size), static_cast<float>(alpha));
+						break;
 					default:
 						throw NotImplementedException();
 				}
@@ -49,6 +53,9 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 						for (size_t i = 0; i < z.size; ++i)
 							zPtr[i] = alpha * xPtr[i] + yPtr[i];
+						break;
+					case MemorySpace::Mkl:
+						mkr::Add(zPtr, xPtr, yPtr, static_cast<int>(z.size), alpha);
 						break;
 					default:
 						throw NotImplementedException();
@@ -1156,6 +1163,13 @@ namespace cl { namespace routines {
 							norm += static_cast<double>(xPtr[i] * xPtr[i]);
 						norm = std::sqrt(norm);
 						break;
+					case MemorySpace::Mkl:
+					{
+						float _norm = 0.0f;
+						mkr::EuclideanNorm(_norm, xPtr, static_cast<int>(x.size));
+						norm = static_cast<double>(_norm);
+						break;
+					}
 					default:
 						throw NotImplementedException();
 				}
@@ -1173,6 +1187,11 @@ namespace cl { namespace routines {
 							norm += xPtr[i] * xPtr[i];
 						norm = std::sqrt(norm);
 						break;
+					case MemorySpace::Mkl:
+					{
+						mkr::EuclideanNorm(norm, xPtr, static_cast<int>(x.size));
+						break;
+					}
 					default:
 						throw NotImplementedException();
 				}
@@ -1185,6 +1204,7 @@ namespace cl { namespace routines {
 				switch (x.memorySpace)
 				{
 					case MemorySpace::Test:
+					case MemorySpace::Mkl:
 						norm = 0.0;
 						for (size_t i = 0; i < x.size; ++i)
 							norm += static_cast<double>(xPtr[i] * xPtr[i]);
