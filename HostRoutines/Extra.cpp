@@ -7,6 +7,7 @@
 
 #include <numeric>
 #include <cmath>
+#include <algorithm>
 
 
 namespace cl { namespace routines {
@@ -17,12 +18,13 @@ namespace cl { namespace routines {
 		{
 			case MathDomain::Float:
 			{
-				auto *vPtr = GetPointer<MathDomain::Float>(v);
-
 				switch (v.memorySpace)
 				{
 					case MemorySpace::Test:
+					case MemorySpace::Mkl:  // TODO
 					{
+						auto *vPtr = GetPointer<MathDomain::Float>(v);
+
 						sum = std::accumulate(vPtr, vPtr + v.size, 0.0);
 						break;
 					}
@@ -33,12 +35,13 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Double:
 			{
-				auto *vPtr = GetPointer<MathDomain::Double>(v);
-
 				switch (v.memorySpace)
 				{
 					case MemorySpace::Test:
+					case MemorySpace::Mkl:  // TODO
 					{
+						auto *vPtr = GetPointer<MathDomain::Double>(v);
+
 						sum = std::accumulate(vPtr, vPtr + v.size, 0.0);
 						break;
 					}
@@ -49,12 +52,13 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Int:
 			{
-				auto *vPtr = GetPointer<MathDomain::Int>(v);
-
 				switch (v.memorySpace)
 				{
 					case MemorySpace::Test:
+					case MemorySpace::Mkl:  // TODO
 					{
+						auto *vPtr = GetPointer<MathDomain::Int>(v);
+
 						sum = std::accumulate(vPtr, vPtr + v.size, 0);
 						break;
 					}
@@ -69,98 +73,18 @@ namespace cl { namespace routines {
 	}
 
 	void Min(double& min, const MemoryBuffer& x)
-		{
-			switch (x.mathDomain)
-			{
-				case MathDomain::Float:
-				{
-					auto *xPtr = GetPointer<MathDomain::Float>(x);
-
-					switch (x.memorySpace)
-					{
-						case MemorySpace::Test:
-						{
-							auto _min = xPtr[0];
-							for (size_t i = 1; i < x.size; ++i)
-							{
-								if (xPtr[i] < _min)
-									_min = xPtr[i];
-							}
-							min = static_cast<double>(_min);
-							break;
-						}
-						default:
-							throw NotImplementedException();
-					}
-					break;
-				}
-				case MathDomain::Double:
-				{
-					auto *xPtr = GetPointer<MathDomain::Double>(x);
-
-					switch (x.memorySpace)
-					{
-						case MemorySpace::Test:
-						{
-							min = xPtr[0];
-							for (size_t i = 1; i < x.size; ++i)
-							{
-								if (xPtr[i] < min)
-									min = xPtr[i];
-							}
-							break;
-						}
-						default:
-							throw NotImplementedException();
-					}
-					break;
-				}
-				case MathDomain::Int:
-				{
-					auto *xPtr = GetPointer<MathDomain::Int>(x);
-
-					switch (x.memorySpace)
-					{
-						case MemorySpace::Test:
-						{
-							auto _min = xPtr[0];
-							for (size_t i = 1; i < x.size; ++i)
-							{
-								if (xPtr[i] < _min)
-									_min = xPtr[i];
-							}
-							min = static_cast<double>(_min);
-							break;
-						}
-						default:
-							throw NotImplementedException();
-					}
-					break;
-				}
-				default:
-					throw NotImplementedException();
-			}
-		}
-
-	void Max(double& max, const MemoryBuffer& x)
 	{
 		switch (x.mathDomain)
 		{
 			case MathDomain::Float:
 			{
-				auto *xPtr = GetPointer<MathDomain::Float>(x);
-
 				switch (x.memorySpace)
 				{
 					case MemorySpace::Test:
+					case MemorySpace::Mkl:  // TODO
 					{
-						auto _max = xPtr[0];
-						for (size_t i = 1; i < x.size; ++i)
-						{
-							if (xPtr[i] > _max)
-								_max = xPtr[i];
-						}
-						max = static_cast<double>(_max);
+						auto *xPtr = GetPointer<MathDomain::Float>(x);
+						min = static_cast<double>(*std::min_element(xPtr, xPtr + x.size));
 						break;
 					}
 					default:
@@ -170,18 +94,13 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Double:
 			{
-				auto *xPtr = GetPointer<MathDomain::Double>(x);
-
 				switch (x.memorySpace)
 				{
 					case MemorySpace::Test:
+					case MemorySpace::Mkl:  // TODO
 					{
-						max = xPtr[0];
-						for (size_t i = 1; i < x.size; ++i)
-						{
-							if (xPtr[i] > max)
-								max = xPtr[i];
-						}
+						auto *xPtr = GetPointer<MathDomain::Double>(x);
+						min = *std::min_element(xPtr, xPtr + x.size);
 						break;
 					}
 					default:
@@ -191,19 +110,13 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Int:
 			{
-				auto *xPtr = GetPointer<MathDomain::Int>(x);
-
 				switch (x.memorySpace)
 				{
 					case MemorySpace::Test:
+					case MemorySpace::Mkl:  // TODO
 					{
-						auto _max = xPtr[0];
-						for (size_t i = 1; i < x.size; ++i)
-						{
-							if (xPtr[i] > _max)
-								_max = xPtr[i];
-						}
-						max = static_cast<double>(_max);
+						auto *xPtr = GetPointer<MathDomain::Int>(x);
+						min = static_cast<double>(*std::min_element(xPtr, xPtr + x.size));
 						break;
 					}
 					default:
@@ -216,18 +129,78 @@ namespace cl { namespace routines {
 		}
 	}
 
+	void Max(double& max, const MemoryBuffer& x)
+	{
+		{
+			switch (x.mathDomain)
+			{
+				case MathDomain::Float:
+				{
+					switch (x.memorySpace)
+					{
+						case MemorySpace::Test:
+						case MemorySpace::Mkl:  // TODO
+						{
+							auto *xPtr = GetPointer<MathDomain::Float>(x);
+							max = static_cast<double>(*std::max_element(xPtr, xPtr + x.size));
+							break;
+						}
+						default:
+							throw NotImplementedException();
+					}
+					break;
+				}
+				case MathDomain::Double:
+				{
+					switch (x.memorySpace)
+					{
+						case MemorySpace::Test:
+						case MemorySpace::Mkl:  // TODO
+						{
+							auto *xPtr = GetPointer<MathDomain::Double>(x);
+							max = *std::max_element(xPtr, xPtr + x.size);
+							break;
+						}
+						default:
+							throw NotImplementedException();
+					}
+					break;
+				}
+				case MathDomain::Int:
+				{
+					switch (x.memorySpace)
+					{
+						case MemorySpace::Test:
+						case MemorySpace::Mkl:  // TODO
+						{
+							auto *xPtr = GetPointer<MathDomain::Int>(x);
+							max = static_cast<double>(*std::max_element(xPtr, xPtr + x.size));
+							break;
+						}
+						default:
+							throw NotImplementedException();
+					}
+					break;
+				}
+				default:
+					throw NotImplementedException();
+			}
+		}
+	}
+
 	void AbsMin(double& min, const MemoryBuffer& x)
 	{
 		switch (x.mathDomain)
 		{
 			case MathDomain::Float:
 			{
-				auto *xPtr = GetPointer<MathDomain::Float>(x);
-
 				switch (x.memorySpace)
 				{
 					case MemorySpace::Test:
+					case MemorySpace::Mkl:  // TODO
 					{
+						auto *xPtr = GetPointer<MathDomain::Float>(x);
+
 						int argMin = -1;
 						ArgAbsMin(argMin, x);
 						min = static_cast<double>(std::fabs(xPtr[static_cast<size_t>(argMin)]));
@@ -240,12 +213,13 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Double:
 			{
-				auto *xPtr = GetPointer<MathDomain::Double>(x);
-
 				switch (x.memorySpace)
 				{
 					case MemorySpace::Test:
+					case MemorySpace::Mkl:  // TODO
 					{
+						auto *xPtr = GetPointer<MathDomain::Double>(x);
+
 						int argMin = -1;
 						ArgAbsMin(argMin, x);
 						min = std::fabs(xPtr[static_cast<size_t>(argMin)]);
@@ -258,12 +232,13 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Int:
 			{
-				auto *xPtr = GetPointer<MathDomain::Int>(x);
-
 				switch (x.memorySpace)
 				{
 					case MemorySpace::Test:
+					case MemorySpace::Mkl:  // TODO
 					{
+						auto *xPtr = GetPointer<MathDomain::Int>(x);
+
 						int argMin = -1;
 						ArgAbsMin(argMin, x);
 						min = std::fabs(xPtr[static_cast<size_t>(argMin)]);
@@ -285,15 +260,16 @@ namespace cl { namespace routines {
 		{
 			case MathDomain::Float:
 			{
-				auto *xPtr = GetPointer<MathDomain::Float>(x);
-
 				switch (x.memorySpace)
 				{
 					case MemorySpace::Test:
+					case MemorySpace::Mkl:  // TODO
 					{
-						int argMax = -1;
-						ArgAbsMax(argMax, x);
-						max = static_cast<double>(std::fabs(xPtr[static_cast<size_t>(argMax)]));
+						auto *xPtr = GetPointer<MathDomain::Float>(x);
+
+						int argMin = -1;
+						ArgAbsMax(argMin, x);
+						max = static_cast<double>(std::fabs(xPtr[static_cast<size_t>(argMin)]));
 						break;
 					}
 					default:
@@ -303,15 +279,16 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Double:
 			{
-				auto *xPtr = GetPointer<MathDomain::Double>(x);
-
 				switch (x.memorySpace)
 				{
 					case MemorySpace::Test:
+					case MemorySpace::Mkl:  // TODO
 					{
-						int argMax = -1;
-						ArgAbsMax(argMax, x);
-						max = std::fabs(xPtr[static_cast<size_t>(argMax)]);
+						auto *xPtr = GetPointer<MathDomain::Double>(x);
+
+						int argMin = -1;
+						ArgAbsMax(argMin, x);
+						max = std::fabs(xPtr[static_cast<size_t>(argMin)]);
 						break;
 					}
 					default:
@@ -321,15 +298,16 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Int:
 			{
-				auto *xPtr = GetPointer<MathDomain::Int>(x);
-
 				switch (x.memorySpace)
 				{
 					case MemorySpace::Test:
+					case MemorySpace::Mkl:  // TODO
 					{
-						int argMax = -1;
-						ArgAbsMax(argMax, x);
-						max = std::fabs(xPtr[static_cast<size_t>(argMax)]);
+						auto *xPtr = GetPointer<MathDomain::Int>(x);
+
+						int argMin = -1;
+						ArgAbsMax(argMin, x);
+						max = std::fabs(xPtr[static_cast<size_t>(argMin)]);
 						break;
 					}
 					default:

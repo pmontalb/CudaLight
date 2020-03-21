@@ -49,7 +49,8 @@ if (MKL_FOUND)
     set(MKL_WRAPPERS_DEFINE USE_MKL)
     set(MKL_WRAPPERS_INCLUDE ${MKL_INCLUDE_DIR})
     set(MKL_WRAPPERS_DEPENDENCIES ${MKL_LIBRARIES})
-    set(MKL_TEST_SOURCE     UnitTests/MklVectorTests.cpp)
+    set(MKL_TEST_SOURCE     UnitTests/MklVectorTests.cpp
+                            UnitTests/MklBlasTests.cpp)
 endif()
 
 create_library(

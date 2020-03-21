@@ -17,13 +17,16 @@ namespace cl { namespace routines {
 		{
 			case MathDomain::Float:
 			{
-				auto *ptr = GetPointer<MathDomain::Float>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:
+					{
+						auto *ptr = GetPointer<MathDomain::Float>(buf);
+
 						std::memset(ptr, 0, buf.TotalSize());
 						break;
+					}
 					default:
 						throw NotImplementedException();
 				}
@@ -31,13 +34,16 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Double:
 			{
-				auto *ptr = GetPointer<MathDomain::Double>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:
+					{
+						auto *ptr = GetPointer<MathDomain::Double>(buf);
+
 						std::memset(ptr, 0, buf.TotalSize());
 						break;
+					}
 					default:
 						throw NotImplementedException();
 				}
@@ -45,13 +51,16 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Int:
 			{
-				auto *ptr = GetPointer<MathDomain::Int>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:
+					{
+						auto *ptr = GetPointer<MathDomain::Int>(buf);
+
 						std::memset(ptr, 0, buf.TotalSize());
 						break;
+					}
 					default:
 						throw NotImplementedException();
 				}
@@ -68,13 +77,16 @@ namespace cl { namespace routines {
 		{
 			case MathDomain::Float:
 			{
-				auto *ptr = GetPointer<MathDomain::Float>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:
+					{
+						auto *ptr = GetPointer<MathDomain::Float>(buf);
+
 						std::fill(ptr, ptr + buf.size, value);
 						break;
+					}
 					default:
 						throw NotImplementedException();
 				}
@@ -82,13 +94,16 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Double:
 			{
-				auto *ptr = GetPointer<MathDomain::Double>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:
+					{
+						auto *ptr = GetPointer<MathDomain::Double>(buf);
+
 						std::fill(ptr, ptr + buf.size, value);
 						break;
+					}
 					default:
 						throw NotImplementedException();
 				}
@@ -96,13 +111,16 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Int:
 			{
-				auto *ptr = GetPointer<MathDomain::Int>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:
+					{
+						auto *ptr = GetPointer<MathDomain::Int>(buf);
+
 						std::fill(ptr, ptr + buf.size, value);
 						break;
+					}
 					default:
 						throw NotImplementedException();
 				}
@@ -119,13 +137,16 @@ namespace cl { namespace routines {
 		{
 			case MathDomain::Float:
 			{
-				auto *ptr = GetPointer<MathDomain::Float>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
+					{
+						auto *ptr = GetPointer<MathDomain::Float>(buf);
+
 						std::transform(ptr, ptr + buf.size, ptr, std::bind1st(std::divides<float>(), 1.0f));
 						break;
+					}
 					default:
 						throw NotImplementedException();
 				}
@@ -133,13 +154,16 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Double:
 			{
-				auto *ptr = GetPointer<MathDomain::Double>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
+					{
+						auto *ptr = GetPointer<MathDomain::Double>(buf);
+
 						std::transform(ptr, ptr + buf.size, ptr, std::bind1st(std::divides<double>(), 1.0));
 						break;
+					}
 					default:
 						throw NotImplementedException();
 				}
@@ -147,13 +171,16 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Int:
 			{
-				auto *ptr = GetPointer<MathDomain::Int>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
+					{
+						auto *ptr = GetPointer<MathDomain::Int>(buf);
+
 						std::transform(ptr, ptr + buf.size, ptr, std::bind1st(std::divides<int>(), 1));
 						break;
+					}
 					default:
 						throw NotImplementedException();
 				}
@@ -177,13 +204,16 @@ namespace cl { namespace routines {
 		{
 			case MathDomain::Float:
 			{
-				auto *ptr = GetPointer<MathDomain::Float>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
+					{
+						auto *ptr = GetPointer<MathDomain::Float>(buf);
+
 						linspaceWorker(ptr, ptr + buf.size, 0.0f);
 						break;
+					}
 					default:
 						throw NotImplementedException();
 				}
@@ -191,13 +221,16 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Double:
 			{
-				auto *ptr = GetPointer<MathDomain::Double>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
+					{
+						auto *ptr = GetPointer<MathDomain::Double>(buf);
+
 						linspaceWorker(ptr, ptr + buf.size, 0.0);
 						break;
+					}
 					default:
 						throw NotImplementedException();
 				}
@@ -205,13 +238,16 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Int:
 			{
-				auto *ptr = GetPointer<MathDomain::Int>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
+					{
+						auto *ptr = GetPointer<MathDomain::Int>(buf);
+
 						linspaceWorker(ptr, ptr + buf.size, 0);
 						break;
+					}
 					default:
 						throw NotImplementedException();
 				}
@@ -228,11 +264,15 @@ namespace cl { namespace routines {
 		{
 			case MathDomain::Float:
 			{
-				auto *ptr = GetPointer<MathDomain::Float>(buf);
 				switch (buf.memorySpace)
 				{
+					case MemorySpace::Mkl:
+						mkr::RandUniform<MathDomain::Float>(buf, seed);
+						break;
+
 					case MemorySpace::Test:
 					{
+						auto *ptr = GetPointer<MathDomain::Float>(buf);
 						std::random_device randomDevice;
 						std::mt19937 mersenneEngine { randomDevice() };
 						mersenneEngine.seed(seed);
@@ -243,9 +283,6 @@ namespace cl { namespace routines {
 						std::generate(ptr, ptr + buf.size, generator);
 						break;
 					}
-					case MemorySpace::Mkl:
-						mkr::RandUniform(ptr, buf.size, seed);
-						break;
 					default:
 						throw NotImplementedException();
 				}
@@ -253,11 +290,16 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Double:
 			{
-				auto *ptr = GetPointer<MathDomain::Double>(buf);
 				switch (buf.memorySpace)
 				{
+					case MemorySpace::Mkl:
+						mkr::RandUniform<MathDomain::Double>(buf, seed);
+						break;
+
 					case MemorySpace::Test:
 					{
+						auto *ptr = GetPointer<MathDomain::Double>(buf);
+
 						std::random_device randomDevice;
 						std::mt19937 mersenneEngine { randomDevice() };
 						mersenneEngine.seed(seed);
@@ -268,9 +310,6 @@ namespace cl { namespace routines {
 						std::generate(ptr, ptr + buf.size, generator);
 						break;
 					}
-					case MemorySpace::Mkl:
-						mkr::RandUniform(ptr, buf.size, seed);
-						break;
 					default:
 						throw NotImplementedException();
 				}
@@ -288,11 +327,16 @@ namespace cl { namespace routines {
 		{
 			case MathDomain::Float:
 			{
-				auto *ptr = GetPointer<MathDomain::Float>(buf);
 				switch (buf.memorySpace)
 				{
+					case MemorySpace::Mkl:
+						mkr::RandNormal<MathDomain::Float>(buf, seed);
+						break;
+
 					case MemorySpace::Test:
 					{
+						auto *ptr = GetPointer<MathDomain::Float>(buf);
+
 						std::random_device randomDevice;
 						std::mt19937 mersenneEngine { randomDevice() };
 						mersenneEngine.seed(seed);
@@ -303,9 +347,6 @@ namespace cl { namespace routines {
 						std::generate(ptr, ptr + buf.size, generator);
 						break;
 					}
-					case MemorySpace::Mkl:
-						mkr::RandNormal(ptr, buf.size, seed);
-						break;
 					default:
 						throw NotImplementedException();
 				}
@@ -313,11 +354,16 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Double:
 			{
-				auto *ptr = GetPointer<MathDomain::Double>(buf);
 				switch (buf.memorySpace)
 				{
+					case MemorySpace::Mkl:
+						mkr::RandNormal<MathDomain::Double>(buf, seed);
+						break;
+
 					case MemorySpace::Test:
 					{
+						auto *ptr = GetPointer<MathDomain::Double>(buf);
+
 						std::random_device randomDevice;
 						std::mt19937 mersenneEngine { randomDevice() };
 						mersenneEngine.seed(seed);
@@ -328,9 +374,6 @@ namespace cl { namespace routines {
 						std::generate(ptr, ptr + buf.size, generator);
 						break;
 					}
-					case MemorySpace::Mkl:
-						mkr::RandNormal(ptr, buf.size, seed);
-						break;
 					default:
 						throw NotImplementedException();
 				}
@@ -350,15 +393,18 @@ namespace cl { namespace routines {
 		{
 			case MathDomain::Float:
 			{
-				auto *ptr = GetPointer<MathDomain::Float>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl: // TODO
+					{
+						auto *ptr = GetPointer<MathDomain::Float>(buf);
+
 						Zero(buf);
 						for (size_t i = 0; i < buf.nRows; ++i)
 							ptr[i + i * buf.nRows] = 1.0f;
 						break;
+					}
 					default:
 						throw NotImplementedException();
 				}
@@ -366,15 +412,18 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Double:
 			{
-				auto *ptr = GetPointer<MathDomain::Double>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl: // TODO
+					{
+						auto *ptr = GetPointer<MathDomain::Double>(buf);
+
 						Zero(buf);
 						for (size_t i = 0; i < buf.nRows; ++i)
 							ptr[i + i * buf.nRows] = 1.0;
 						break;
+					}
 					default:
 						throw NotImplementedException();
 				}
@@ -382,15 +431,18 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Int:
 			{
-				auto *ptr = GetPointer<MathDomain::Int>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl: // TODO
+					{
+						auto *ptr = GetPointer<MathDomain::Int>(buf);
+
 						Zero(buf);
 						for (size_t i = 0; i < buf.nRows; ++i)
 							ptr[i + i * buf.nRows] = 1;
 						break;
+					}
 					default:
 						throw NotImplementedException();
 				}
@@ -409,10 +461,13 @@ namespace cl { namespace routines {
 		{
 			case MathDomain::Float:
 			{
-				auto *ptr = GetPointer<MathDomain::Float>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
+					case MemorySpace::Mkl:  // TODO
+					{
+						auto *ptr = GetPointer<MathDomain::Float>(buf);
+
 						Zero(buf);
 						for (size_t i = 0; i < buf.nRows; ++i)
 						{
@@ -420,6 +475,7 @@ namespace cl { namespace routines {
 								ptr[i + j * buf.nRows] = 1.0f;
 						}
 						break;
+					}
 					default:
 						throw NotImplementedException();
 				}
@@ -427,10 +483,13 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Double:
 			{
-				auto *ptr = GetPointer<MathDomain::Double>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
+					case MemorySpace::Mkl:  // TODO
+					{
+						auto *ptr = GetPointer<MathDomain::Double>(buf);
+
 						Zero(buf);
 						for (size_t i = 0; i < buf.nRows; ++i)
 						{
@@ -438,6 +497,7 @@ namespace cl { namespace routines {
 								ptr[j + i * buf.nRows] = 1.0;
 						}
 						break;
+					}
 					default:
 						throw NotImplementedException();
 				}
@@ -445,10 +505,13 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Int:
 			{
-				auto *ptr = GetPointer<MathDomain::Int>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
+					case MemorySpace::Mkl:  // TODO
+					{
+						auto *ptr = GetPointer<MathDomain::Int>(buf);
+
 						Zero(buf);
 						for (size_t i = 0; i < buf.nRows; ++i)
 						{
@@ -456,6 +519,7 @@ namespace cl { namespace routines {
 								ptr[j + i * buf.nRows] = 1;
 						}
 						break;
+					}
 					default:
 						throw NotImplementedException();
 				}
@@ -468,21 +532,24 @@ namespace cl { namespace routines {
 
 	void RandShuffle(MemoryBuffer &buf, const unsigned seed)
 	{
-		std::random_device randomDevice;
-		std::mt19937 mersenneEngine { randomDevice() };
-		mersenneEngine.seed(seed);
-
 		switch (buf.mathDomain)
 		{
 			case MathDomain::Float:
 			{
-				auto *ptr = GetPointer<MathDomain::Float>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
+					{
+						auto *ptr = GetPointer<MathDomain::Float>(buf);
+
+						std::random_device randomDevice;
+						std::mt19937 mersenneEngine { randomDevice() };
+						mersenneEngine.seed(seed);
+
 						std::shuffle(ptr, ptr + buf.size, mersenneEngine);
 						break;
+					}
 					default:
 						throw NotImplementedException();
 				}
@@ -490,13 +557,20 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Double:
 			{
-				auto *ptr = GetPointer<MathDomain::Double>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
+					{
+						auto *ptr = GetPointer<MathDomain::Double>(buf);
+
+						std::random_device randomDevice;
+						std::mt19937 mersenneEngine { randomDevice() };
+						mersenneEngine.seed(seed);
+
 						std::shuffle(ptr, ptr + buf.size, mersenneEngine);
 						break;
+					}
 					default:
 						throw NotImplementedException();
 				}
@@ -504,13 +578,20 @@ namespace cl { namespace routines {
 			}
 			case MathDomain::Int:
 			{
-				auto *ptr = GetPointer<MathDomain::Int>(buf);
 				switch (buf.memorySpace)
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
+					{
+						auto *ptr = GetPointer<MathDomain::Int>(buf);
+
+						std::random_device randomDevice;
+						std::mt19937 mersenneEngine { randomDevice() };
+						mersenneEngine.seed(seed);
+
 						std::shuffle(ptr, ptr + buf.size, mersenneEngine);
 						break;
+					}
 					default:
 						throw NotImplementedException();
 				}
@@ -537,13 +618,127 @@ namespace cl { namespace routines {
 		}
 	}
 
-	void RandShuffleColumns(MemoryTile &, const unsigned)
+	void RandShuffleColumns(MemoryTile &buf, const unsigned seed)
 	{
-		throw NotImplementedException();
+		switch (buf.mathDomain)
+		{
+			case MathDomain::Float:
+			{
+				switch (buf.memorySpace)
+				{
+					case MemorySpace::Test:
+					case MemorySpace::Mkl:  // TODO
+					{
+						auto *ptr = GetPointer<MathDomain::Float>(buf);
+
+						std::random_device randomDevice;
+						std::mt19937 mersenneEngine { randomDevice() };
+						mersenneEngine.seed(seed);
+
+						// Fisher-Yates
+						for (int j = static_cast<int>(buf.nCols) - 1; j > 0; j--)
+						{
+							// Pick a random index from 0 to i
+							std::uniform_int_distribution<int> uniformDistribution {0, j + 1};
+
+							const auto k = uniformDistribution(mersenneEngine);
+
+							// Swap j-th column with k-th one
+							for (size_t i = 0; i < buf.nRows; ++i)
+								std::swap(ptr[i + static_cast<size_t>(j) * buf.nRows], ptr[i + static_cast<size_t>(k) * buf.nRows]);
+						}
+
+						break;
+					}
+					default:
+						throw NotImplementedException();
+				}
+				break;
+			}
+			case MathDomain::Double:
+			{
+				switch (buf.memorySpace)
+				{
+					case MemorySpace::Test:
+					case MemorySpace::Mkl:  // TODO
+					{
+						auto *ptr = GetPointer<MathDomain::Double>(buf);
+
+						std::random_device randomDevice;
+						std::mt19937 mersenneEngine { randomDevice() };
+						mersenneEngine.seed(seed);
+
+						// Fisher-Yates
+						for (int j = static_cast<int>(buf.nCols) - 1; j > 0; j--)
+						{
+							// Pick a random index from 0 to i
+							std::uniform_int_distribution<int> uniformDistribution {0, j + 1};
+
+							const auto k = uniformDistribution(mersenneEngine);
+
+							// Swap j-th column with k-th one
+							for (size_t i = 0; i < buf.nRows; ++i)
+								std::swap(ptr[i + static_cast<size_t>(j) * buf.nRows], ptr[i + static_cast<size_t>(k) * buf.nRows]);
+						}
+
+						break;
+					}
+					default:
+						throw NotImplementedException();
+				}
+				break;
+			}
+			case MathDomain::Int:
+			{
+				switch (buf.memorySpace)
+				{
+					case MemorySpace::Test:
+					case MemorySpace::Mkl:  // TODO
+					{
+						auto *ptr = GetPointer<MathDomain::Int>(buf);
+
+						std::random_device randomDevice;
+						std::mt19937 mersenneEngine { randomDevice() };
+						mersenneEngine.seed(seed);
+
+						// Fisher-Yates
+						for (int j = static_cast<int>(buf.nCols) - 1; j > 0; j--)
+						{
+							// Pick a random index from 0 to i
+							std::uniform_int_distribution<int> uniformDistribution {0, j + 1};
+
+							const auto k = uniformDistribution(mersenneEngine);
+
+							// Swap j-th column with k-th one
+							for (size_t i = 0; i < buf.nRows; ++i)
+								std::swap(ptr[i + static_cast<size_t>(j) * buf.nRows], ptr[i + static_cast<size_t>(k) * buf.nRows]);
+						}
+
+						break;
+					}
+					default:
+						throw NotImplementedException();
+				}
+				break;
+			}
+			default:
+				throw NotImplementedException();
+		}
 	}
 
-	void RandShuffleColumnsPair(MemoryTile &, MemoryTile &, const unsigned )
+	void RandShuffleColumnsPair(MemoryTile &buf1, MemoryTile &buf2, const unsigned seed)
 	{
-		throw NotImplementedException();
+		assert(buf1.memorySpace == buf2.memorySpace);
+
+		switch (buf1.memorySpace)
+		{
+			case MemorySpace::Test:
+			case MemorySpace::Mkl:  // TODO
+				RandShuffleColumns(buf1, seed);
+				RandShuffleColumns(buf2, seed);
+				break;
+			default:
+				throw NotImplementedException();
+		}
 	}
 }}

@@ -71,7 +71,7 @@ namespace cl { namespace host
 
 		MemoryBuffer rhsBuf;
 		auto pointer = reinterpret_cast<ptr_t>(rhs.data());
-		rhsBuf = MemoryBuffer(pointer, static_cast<unsigned>(rhs.size()), MemorySpace::Test, _Traits<T>::clType);
+		rhsBuf = MemoryBuffer(pointer, static_cast<unsigned>(rhs.size()), buffer.memorySpace, _Traits<T>::clType);
 
 		routines::Copy(buffer, rhsBuf);
 	}
@@ -122,15 +122,8 @@ namespace cl { namespace host
 		const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
-		MemoryBuffer newBuf(buffer);
-
-		routines::Alloc(newBuf);
-		routines::Copy(newBuf, buffer);
-
 		std::vector<typename Traits<md>::stdType> ret(buffer.size);
-		detail::Fill<md>(ret, newBuf);
-
-		routines::Free(newBuf);
+		detail::Fill<md>(ret, buffer);
 
 		return ret;
 	}
@@ -214,6 +207,7 @@ namespace cl { namespace host
 		assert(buffer.pointer != 0);
 
 		routines::ElementwiseProduct(buffer, buffer, static_cast<const bi*>(&rhs)->_buffer, alpha);
+
 		return *this;
 	}
 
