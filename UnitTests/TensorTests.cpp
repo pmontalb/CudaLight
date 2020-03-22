@@ -16,10 +16,10 @@ namespace clt
 		cl::GpuDoubleTensor t2(10, 5, 5, 1.2345);
 		dm::DeviceManager::CheckDeviceSanity();
 
-		cl::CpuSingleTensor t3(10, 5, 5, 1.2345f);
+		cl::CudaCpuSingleTensor t3(10, 5, 5, 1.2345f);
 		dm::DeviceManager::CheckDeviceSanity();
 
-		cl::CpuDoubleTensor t4(10, 5, 5, 1.2345);
+		cl::CudaCpuDoubleTensor t4(10, 5, 5, 1.2345);
 		dm::DeviceManager::CheckDeviceSanity();
 	}
 

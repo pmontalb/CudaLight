@@ -19,7 +19,7 @@ namespace clt
 		cl::GpuDoubleSparseVector v2(10, gpuIndices, 1.2345);
 		dm::DeviceManager::CheckDeviceSanity();
 
-		cl::CpuIntegerVector cpuIndices(static_cast<unsigned>(indices.size()));
+		cl::cudaCpu::ivec cpuIndices(static_cast<unsigned>(indices.size()));
 		cpuIndices.ReadFrom(indices);
 		cl::CpuSingleSparseVector v3(10, cpuIndices, 1.2345f);
 		dm::DeviceManager::CheckDeviceSanity();

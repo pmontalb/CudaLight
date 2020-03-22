@@ -6,6 +6,7 @@
 #include <Exception.h>
 
 #include <Vector.h>
+#include <HostRoutines/ForgeHelpers.h>
 
 namespace cl
 {
@@ -20,7 +21,10 @@ namespace cl
 	Vector<ms, md>::Vector(const unsigned size, const typename Traits<md>::stdType value)
 		: Vector(size)
 	{
-		dm::detail::Initialize(_buffer, static_cast<double>(value));
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Initialize(_buffer, static_cast<double>(value));
+		else
+			routines::Initialize(_buffer, static_cast<double>(value));
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -73,7 +77,10 @@ namespace cl
 	void Vector<ms, md>::RandomShuffle(const unsigned seed)
 	{
 		assert(_buffer.pointer != 0);
-		dm::detail::RandShuffle(_buffer, seed);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::RandShuffle(_buffer, seed);
+		else
+			routines::RandShuffle(_buffer, seed);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -192,7 +199,10 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void Vector<ms, md>::RandomShufflePair(Vector<ms, md>& v1, Vector<ms, md>& v2, const unsigned seed)
 	{
-		dm::detail::RandShufflePair(v1.GetBuffer(), v2.GetBuffer(), seed);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::RandShufflePair(v1.GetBuffer(), v2.GetBuffer(), seed);
+		else
+			routines::RandShufflePair(v1.GetBuffer(), v2.GetBuffer(), seed);
 	}
 	
 	template<MemorySpace ms, MathDomain md>
@@ -264,6 +274,9 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void Vector<ms, md>::MakePair(Vector<ms, MathDomain::Float>& pair, const Vector<ms, md>& x, const Vector<ms, md>& y)
 	{
-		dm::detail::MakePair(pair.GetBuffer(), x.GetBuffer(), y.GetBuffer());
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::MakePair(pair.GetBuffer(), x.GetBuffer(), y.GetBuffer());
+		else
+			routines::MakePair(pair.GetBuffer(), x.GetBuffer(), y.GetBuffer());
 	}
 }

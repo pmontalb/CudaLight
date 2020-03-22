@@ -19,7 +19,6 @@ namespace cl
 	class Buffer: public IBuffer<memorySpace, mathDomain>
 	{
 	public:
-		static_assert(memorySpace == MemorySpace::Host || memorySpace == MemorySpace::Device, "Unsupported memory space");
 		using stdType = typename Traits<mathDomain>::stdType;
 
 		virtual ~Buffer() override = default;

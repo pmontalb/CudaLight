@@ -1,9 +1,11 @@
 
 #include <gtest/gtest.h>
 
-#include <HostVector.h>
-#include <HostColumnWiseMatrix.h>
+#include <Vector.h>
+#include <ColumnWiseMatrix.h>
 //#include <HostTensor.h>
+
+#include <Exceptions.h>
 
 namespace clt
 {
@@ -11,9 +13,9 @@ namespace clt
 	{
 	};
 
-	static cl::host::DebugSingleMatrix GetInvertibleMatrix(unsigned nRows, const unsigned seed = 1234)
+	static cl::test::mat GetInvertibleMatrix(unsigned nRows, const unsigned seed = 1234)
 	{
-		cl::host::DebugSingleMatrix A = cl::host::DebugSingleMatrix::RandomUniform(nRows, nRows, seed);
+		cl::test::mat A = cl::test::mat::RandomUniform(nRows, nRows, seed);
 		auto _A = A.Get();
 
 		for (size_t i = 0; i < nRows; ++i)
@@ -25,11 +27,11 @@ namespace clt
 
 	TEST_F(HostBlasTests, Add)
 	{
-		cl::host::DebugSingleVector v1 = cl::host::DebugSingleVector::LinSpace(-1.0, 1.0, 100);
+		cl::test::vec v1 = cl::test::vec::LinSpace(-1.0, 1.0, 100);
 		
 		auto _v1 = v1.Get();
 
-		cl::host::DebugSingleVector v2 = cl::host::DebugSingleVector::RandomUniform(v1.size(), 1234);
+		cl::test::vec v2 = cl::test::vec::RandomUniform(v1.size(), 1234);
 		
 		auto _v2 = v2.Get();
 
@@ -47,11 +49,11 @@ namespace clt
 		for (size_t i = 0; i < v1.size(); ++i)
 			ASSERT_TRUE(std::fabs(_v4[i] - _v1[i] - 2.0f * _v2[i]) <= 1.2e-7f);
 
-		cl::host::DebugIntegerVector v5(32, 5);
+		cl::test::ivec v5(32, 5);
 		
 		auto _v5 = v5.Get();
 
-		cl::host::DebugIntegerVector v6(32, 7);
+		cl::test::ivec v6(32, 7);
 		
 		auto _v6 = v6.Get();
 
@@ -79,11 +81,11 @@ namespace clt
 
 	TEST_F(HostBlasTests, AddMatrix)
 	{
-		cl::host::DebugSingleMatrix m1 = cl::host::DebugSingleMatrix::LinSpace(-1.0f, 1.0f, 100, 100);
+		cl::test::mat m1 = cl::test::mat::LinSpace(-1.0f, 1.0f, 100, 100);
 
 		auto _m1 = m1.Get();
 
-		cl::host::DebugSingleMatrix m2 = cl::host::DebugSingleMatrix::RandomUniform(m1.nRows(), m1.nCols(), 1234);
+		cl::test::mat m2 = cl::test::mat::RandomUniform(m1.nRows(), m1.nCols(), 1234);
 
 		auto _m2 = m2.Get();
 
@@ -106,16 +108,16 @@ namespace clt
 
 //	TEST_F(HostBlasTests, BroadcastAdd)
 //	{
-//		cl::host::DebugSingleMatrix m1 = cl::host::DebugSingleMatrix::LinSpace(-1.0f, 1.0f, 64, 128);
+//		cl::test::mat m1 = cl::test::mat::LinSpace(-1.0f, 1.0f, 64, 128);
 //
 //		auto _m1 = m1.Get();
 //		auto m1Copy = m1;
 //
-//		cl::host::DebugSingleVector v1 = cl::host::DebugSingleVector::RandomUniform(m1.nRows(), 1234);
+//		cl::test::vec v1 = cl::test::vec::RandomUniform(m1.nRows(), 1234);
 //
 //		auto _v1 = v1.Get();
 //
-//		cl::host::DebugSingleVector v2 = cl::host::DebugSingleVector::RandomUniform(m1.nCols(), 1234);
+//		cl::test::vec v2 = cl::test::vec::RandomUniform(m1.nCols(), 1234);
 //
 //		auto _v2 = v2.Get();
 //
@@ -139,7 +141,7 @@ namespace clt
 
 	TEST_F(HostBlasTests, Reciprocal)
 	{
-		cl::host::DebugSingleVector v1 = cl::host::DebugSingleVector::LinSpace(1.0, 2.0, 100);
+		cl::test::vec v1 = cl::test::vec::LinSpace(1.0, 2.0, 100);
 		
 		auto _v1 = v1.Get();
 		
@@ -152,7 +154,7 @@ namespace clt
 	
 	TEST_F(HostBlasTests, Scale)
 	{
-		cl::host::DebugSingleVector v1 = cl::host::DebugSingleVector::LinSpace(-1.0, 1.0, 100);
+		cl::test::vec v1 = cl::test::vec::LinSpace(-1.0, 1.0, 100);
 		
 		auto _v1 = v1.Get();
 
@@ -165,8 +167,8 @@ namespace clt
 
 	TEST_F(HostBlasTests, ScaleColumns)
 	{
-		cl::host::DebugSingleMatrix m = cl::host::DebugSingleMatrix::RandomUniform(10, 100, 1234);
-		cl::host::DebugSingleVector v(m.nCols(), 2.0);
+		cl::test::mat m = cl::test::mat::RandomUniform(10, 100, 1234);
+		cl::test::vec v(m.nCols(), 2.0);
 
 		auto _v = v.Get();
 		auto _m1 = m.Get();
@@ -183,11 +185,11 @@ namespace clt
 
 	TEST_F(HostBlasTests, ElementWiseProduct)
 	{
-		cl::host::DebugSingleVector v1 = cl::host::DebugSingleVector::LinSpace(-1.0, 1.0, 100);
+		cl::test::vec v1 = cl::test::vec::LinSpace(-1.0, 1.0, 100);
 		
 		auto _v1 = v1.Get();
 
-		cl::host::DebugSingleVector v2 = cl::host::DebugSingleVector::RandomUniform(v1.size(), 1234);
+		cl::test::vec v2 = cl::test::vec::RandomUniform(v1.size(), 1234);
 		
 		auto _v2 = v2.Get();
 
@@ -200,11 +202,11 @@ namespace clt
 
 //	TEST_F(HostBlasTests, Multiply)
 //	{
-//		cl::host::DebugSingleMatrix m1(10, 10, 1.2345f);
+//		cl::test::mat m1(10, 10, 1.2345f);
 //
 //		auto _m1 = m1.Get();
 //
-//		cl::host::DebugSingleMatrix m2(10, 10, 9.8765f);
+//		cl::test::mat m2(10, 10, 9.8765f);
 //
 //		auto _m2 = m2.Get();
 //
@@ -226,18 +228,18 @@ namespace clt
 //
 //	TEST_F(HostBlasTests, SubMultiply)
 //	{
-//		cl::host::DebugSingleMatrix m1(10, 10, 1.2345f);
+//		cl::test::mat m1(10, 10, 1.2345f);
 //
 //		auto _m1 = m1.Get();
 //
-//		cl::host::DebugSingleMatrix m2(10, 10, 9.8765f);
+//		cl::test::mat m2(10, 10, 9.8765f);
 //
 //		auto _m2 = m2.Get();
 //
-//		cl::host::DebugSingleMatrix m3(m1.nRows(), m2.nCols(), -123456789.0f);
+//		cl::test::mat m3(m1.nRows(), m2.nCols(), -123456789.0f);
 //		auto _initialM3 = m3.Get();
 //
-//		cl::host::DebugSingleMatrix m4 = m1 * m2;
+//		cl::test::mat m4 = m1 * m2;
 //		auto _m4 = m4.Get();
 //
 //		const size_t rowStartM1 = 2;
@@ -275,11 +277,11 @@ namespace clt
 
 //	TEST_F(HostBlasTests, Dot)
 //	{
-//		cl::host::DebugSingleMatrix m1(10, 10, 1.2345f);
+//		cl::test::mat m1(10, 10, 1.2345f);
 //
 //		auto _m1 = m1.Get();
 //
-//		cl::host::DebugSingleVector v1(10, 9.8765f);
+//		cl::test::vec v1(10, 9.8765f);
 //
 //		auto _v1 = v1.Get();
 //
@@ -298,10 +300,10 @@ namespace clt
 
 //	TEST_F(HostBlasTests, Invert)
 //	{
-//		cl::host::DebugSingleMatrix v = GetInvertibleMatrix(128);
+//		cl::test::mat v = GetInvertibleMatrix(128);
 //
 //
-//		cl::host::DebugSingleMatrix vMinus1(v);
+//		cl::test::mat vMinus1(v);
 //		vMinus1.Invert();
 //
 //
@@ -322,11 +324,11 @@ namespace clt
 //
 //	TEST_F(HostBlasTests, Solve)
 //	{
-//		cl::host::DebugSingleMatrix v = GetInvertibleMatrix(128);
+//		cl::test::mat v = GetInvertibleMatrix(128);
 //
 //		auto _v = v.Get();
 //
-//		cl::host::DebugSingleMatrix u = GetInvertibleMatrix(v.nRows(), 2345);
+//		cl::test::mat u = GetInvertibleMatrix(v.nRows(), 2345);
 //		auto _u = u.Get();
 //		v.Solve(u);
 //
@@ -347,15 +349,15 @@ namespace clt
 
 //	TEST_F(HostBlasTests, KroneckerProduct)
 //	{
-//		cl::host::DebugSingleVector u(64, 0.1f);
+//		cl::test::vec u(64, 0.1f);
 //
 //		auto _u = u.Get();
 //
-//		cl::host::DebugSingleVector v(128, 0.2f);
+//		cl::test::vec v(128, 0.2f);
 //
 //		auto _v = v.Get();
 //
-//		cl::host::DebugSingleMatrix A = cl::host::DebugSingleMatrix::KroneckerProduct(u, v, 2.0);
+//		cl::test::mat A = cl::test::mat::KroneckerProduct(u, v, 2.0);
 //
 //		auto _A = A.Get();
 //		ASSERT_EQ(A.nRows(), u.size());
@@ -373,7 +375,7 @@ namespace clt
 
 //	TEST_F(HostBlasTests, RowWiseSum)
 //	{
-//		cl::host::DebugSingleMatrix A(128, 64);
+//		cl::test::mat A(128, 64);
 //		A.RandomGaussian(1234);
 //
 //		const auto rowSum = A.RowWiseSum();
@@ -392,7 +394,7 @@ namespace clt
 //
 //	TEST_F(HostBlasTests, ColumnWiseSum)
 //	{
-//		cl::host::DebugSingleMatrix A(128, 64);
+//		cl::test::mat A(128, 64);
 //		A.RandomGaussian(1234);
 //
 //		const auto columnSum = A.ColumnWiseSum();
@@ -457,7 +459,7 @@ namespace clt
 //
 //		for (size_t n = 0; n < 10; ++n)
 //		{
-//			cl::host::DebugSingleMatrix out(T.nRows(), T.nCols(), 0.0);
+//			cl::test::mat out(T.nRows(), T.nCols(), 0.0);
 //			T.CubeWiseSum(out, eye);
 //			const auto _cubeSum1 = out.Get();
 //
@@ -484,12 +486,12 @@ namespace clt
 //	{
 //		unsigned nCubes = 64;
 //
-//		cl::host::DebugSingleMatrix u(128, nCubes, 1.0);
+//		cl::test::mat u(128, nCubes, 1.0);
 //		u.RandomUniform();
 //
 //		auto _u = u.Get();
 //
-//		cl::host::DebugSingleMatrix v(32, nCubes, 2.0);
+//		cl::test::mat v(32, nCubes, 2.0);
 //		v.RandomGaussian();
 //
 //		auto _v = v.Get();
@@ -516,7 +518,7 @@ namespace clt
 
 	TEST_F(HostBlasTests, ColumnWiseAbsoluteMinMax)
 	{
-		cl::host::DebugSingleMatrix A = cl::host::DebugSingleMatrix::LinSpace(-1.0f, 1.0f, 32, 128);
+		cl::test::mat A = cl::test::mat::LinSpace(-1.0f, 1.0f, 32, 128);
 		auto _A = A.Get();
 
 		auto AMin = A.ColumnWiseArgAbsMinimum();
@@ -545,8 +547,8 @@ namespace clt
 
 	TEST_F(HostBlasTests, CountEquals)
 	{
-		cl::host::DebugSingleVector u(64, 0.1f);
-		cl::host::DebugSingleVector v(u);
+		cl::test::vec u(64, 0.1f);
+		cl::test::vec v(u);
 		
 		auto _v = v.Get();
 
@@ -559,7 +561,7 @@ namespace clt
 		ASSERT_EQ(u.CountEquals(v), u.size() - 1);
 		ASSERT_EQ(v.CountEquals(u), u.size() - 1);
 
-		cl::host::DebugSingleVector w = cl::host::DebugSingleVector::LinSpace(-3.14f, 3.14f, u.size());
+		cl::test::vec w = cl::test::vec::LinSpace(-3.14f, 3.14f, u.size());
 		ASSERT_EQ(w.CountEquals(w), w.size());
 		ASSERT_EQ(w.CountEquals(u), 0);
 		ASSERT_EQ(w.CountEquals(v), 0);
@@ -567,16 +569,16 @@ namespace clt
 	
 //	TEST_F(HostBlasTests, TransposeMultiply)
 //	{
-//		cl::host::DebugSingleMatrix A(64, 128);
+//		cl::test::mat A(64, 128);
 //		A.RandomUniform();
 //
-//		cl::host::DebugSingleMatrix B(64, 32);  // for A^T * B
+//		cl::test::mat B(64, 32);  // for A^T * B
 //		B.RandomUniform();
 //
-//		cl::host::DebugSingleMatrix C(16, 128);  // for A * C^T
+//		cl::test::mat C(16, 128);  // for A * C^T
 //		C.RandomUniform();
 //
-//		cl::host::DebugSingleMatrix D(32, 64);  // for A^T * D^T
+//		cl::test::mat D(32, 64);  // for A^T * D^T
 //		D.RandomUniform();
 //
 //		auto ATB  = A.Multiply(B, MatrixOperation::Transpose, MatrixOperation::None);

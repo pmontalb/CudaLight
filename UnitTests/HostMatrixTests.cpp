@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <HostColumnWiseMatrix.h>
+#include <ColumnWiseMatrix.h>
 
 namespace clt
 {
@@ -10,31 +10,31 @@ namespace clt
 
 	TEST_F(HostMatrixTests, Allocation)
 	{
-		cl::host::DebugSingleMatrix m1(10, 5, 1.2345f);
-		cl::host::DebugDoubleMatrix m2(10, 5, 1.2345);
+		cl::test::mat m1(10, 5, 1.2345f);
+		cl::test::dmat m2(10, 5, 1.2345);
 	}
 
 	TEST_F(HostMatrixTests, Copy)
 	{
-		cl::host::DebugSingleMatrix m1(10, 5, 1.2345f);
-		cl::host::DebugSingleMatrix m2(m1);
+		cl::test::mat m1(10, 5, 1.2345f);
+		cl::test::mat m2(m1);
 
 		ASSERT_TRUE(m1 == m2);
 
-		cl::host::DebugDoubleMatrix m3(10, 5, 1.2345);
-		cl::host::DebugDoubleMatrix m4(m3);
+		cl::test::dmat m3(10, 5, 1.2345);
+		cl::test::dmat m4(m3);
 
 		ASSERT_TRUE(m3 == m4);
 
-		cl::host::DebugIntegerMatrix m5(10, 5, 10);
-		cl::host::DebugIntegerMatrix m6(m5);
+		cl::test::imat m5(10, 5, 10);
+		cl::test::imat m6(m5);
 
 		ASSERT_TRUE(m5 == m6);
 	}
 
 	TEST_F(HostMatrixTests, Eye)
 	{
-		cl::host::DebugSingleMatrix v = cl::host::DebugSingleMatrix::Eye(128);
+		cl::test::mat v = cl::test::mat::Eye(128);
 
 		auto _v = v.Get();
 		for (size_t i = 0; i < v.nRows(); ++i)
@@ -43,7 +43,7 @@ namespace clt
 
 	TEST_F(HostMatrixTests, Linspace)
 	{
-		cl::host::DebugSingleMatrix v = cl::host::DebugSingleMatrix::LinSpace(0.0f, 1.0f, 10, 10);
+		cl::test::mat v = cl::test::mat::LinSpace(0.0f, 1.0f, 10, 10);
 
 		auto _v = v.Get();
 		ASSERT_TRUE(std::fabs(_v[0] - 0.0f) <= 1e-7f);
@@ -52,7 +52,7 @@ namespace clt
 
 	TEST_F(HostMatrixTests, RandomUniform)
 	{
-		cl::host::DebugSingleMatrix v = cl::host::DebugSingleMatrix::RandomUniform(10, 10, 1234);
+		cl::test::mat v = cl::test::mat::RandomUniform(10, 10, 1234);
 
 		auto _v = v.Get();
 		for (const auto &iter : _v)
@@ -61,13 +61,13 @@ namespace clt
 
 	TEST_F(HostMatrixTests, RandomGaussian)
 	{
-		cl::host::DebugSingleMatrix v = cl::host::DebugSingleMatrix::RandomGaussian(10, 10, 1234);
+		cl::test::mat v = cl::test::mat::RandomGaussian(10, 10, 1234);
 		auto _v = v.Get();
 	}
 
 	TEST_F(HostMatrixTests, GetColumn)
 	{
-		cl::host::DebugSingleMatrix m1(10, 5, 1.2345f);
+		cl::test::mat m1(10, 5, 1.2345f);
 
 		for (unsigned j = 0; j < m1.nCols(); ++j)
 		{
@@ -82,11 +82,11 @@ namespace clt
 
 	TEST_F(HostMatrixTests, SetColumn)
 	{
-		cl::host::DebugSingleMatrix m1(10, 5, 1.2345f);
+		cl::test::mat m1(10, 5, 1.2345f);
 
 		auto _m1 = m1.Get();
 
-		const cl::host::DebugSingleVector v1(10, 2.3456f);
+		const cl::test::vec v1(10, 2.3456f);
 
 		auto _v1 = v1.Get();
 		m1.Set(v1, 3);
@@ -113,7 +113,7 @@ namespace clt
 
 	TEST_F(HostMatrixTests, RandomShuffle)
 	{
-		cl::host::DebugSingleMatrix m = cl::host::DebugSingleMatrix::RandomGaussian(10, 20, 1234);
+		cl::test::mat m = cl::test::mat::RandomGaussian(10, 20, 1234);
 
 		auto _m1 = m.Get();
 
@@ -142,13 +142,13 @@ namespace clt
 
 	TEST_F(HostMatrixTests, RandomShufflePair)
 	{
-		cl::host::DebugSingleMatrix m = cl::host::DebugSingleMatrix::RandomGaussian(10, 20, 1234);
-		cl::host::DebugSingleMatrix n = cl::host::DebugSingleMatrix::RandomGaussian(15, 20, 1234);
+		cl::test::mat m = cl::test::mat::RandomGaussian(10, 20, 1234);
+		cl::test::mat n = cl::test::mat::RandomGaussian(15, 20, 1234);
 
 		auto _m1 = m.Get();
 		auto _n1 = n.Get();
 
-		cl::host::DebugSingleMatrix::RandomShuffleColumnsPair(m, n, 2345);
+		cl::test::mat::RandomShuffleColumnsPair(m, n, 2345);
 		auto _m2 = m.Get();
 		auto _n2 = n.Get();
 
@@ -190,11 +190,11 @@ namespace clt
 
 	TEST_F(HostMatrixTests, SubMatrix)
 	{
-		cl::host::DebugSingleMatrix m = cl::host::DebugSingleMatrix::RandomGaussian(10, 20, 1234);
+		cl::test::mat m = cl::test::mat::RandomGaussian(10, 20, 1234);
 
 		const size_t nStart = 4;
 		const size_t nEnd = 17;
-		cl::host::DebugSingleMatrix n(m, nStart, nEnd);
+		cl::test::mat n(m, nStart, nEnd);
 
 		ASSERT_EQ(n.nRows(), m.nRows());
 		ASSERT_EQ(n.nCols(), nEnd - nStart);

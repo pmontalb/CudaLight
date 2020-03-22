@@ -17,8 +17,6 @@ namespace cl
 	class ColumnWiseMatrix : public Buffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>
 	{
 	public:
-		static_assert(memorySpace == MemorySpace::Host || memorySpace == MemorySpace::Device, "Unsupported memory space");
-
 		using stdType = typename Traits<mathDomain>::stdType;
 		friend class Buffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>;
 		template<MemorySpace ms, MathDomain md>
@@ -264,22 +262,76 @@ namespace cl
 	};
 	
 	#pragma region Type aliases
+	
+	using GpuIntegerMatrix = ColumnWiseMatrix<MemorySpace::Device, MathDomain::Int>;
+	using GpuSingleMatrix = ColumnWiseMatrix<MemorySpace::Device, MathDomain::Float>;
+	using GpuFloatMatrix = GpuSingleMatrix;
+	using GpuDoubleMatrix = ColumnWiseMatrix<MemorySpace::Device, MathDomain::Double>;
 
-	typedef ColumnWiseMatrix<MemorySpace::Device, MathDomain::Int> GpuIntegerMatrix;
-	typedef ColumnWiseMatrix<MemorySpace::Device, MathDomain::Float> GpuSingleMatrix;
-	typedef GpuSingleMatrix GpuFloatMatrix;
-	typedef ColumnWiseMatrix<MemorySpace::Device, MathDomain::Double> GpuDoubleMatrix;
+	using CudaCpuIntegerMatrix = ColumnWiseMatrix<MemorySpace::Host, MathDomain::Int>;
+	using CudaCpuSingleMatrix = ColumnWiseMatrix<MemorySpace::Host, MathDomain::Float>;
+	using CudaCpuFloatMatrix = CudaCpuSingleMatrix;
+	using CudaCpuDoubleMatrix = ColumnWiseMatrix<MemorySpace::Host, MathDomain::Double>;
 
-	typedef ColumnWiseMatrix<MemorySpace::Host, MathDomain::Int> CpuIntegerMatrix;
-	typedef ColumnWiseMatrix<MemorySpace::Host, MathDomain::Float> CpuSingleMatrix;
-	typedef CpuSingleVector CpuFloatMatrix;
-	typedef ColumnWiseMatrix<MemorySpace::Host, MathDomain::Double> CpuDoubleMatrix;
+	using TestIntegerMatrix = ColumnWiseMatrix<MemorySpace::Test, MathDomain::Int>;
+	using TestSingleMatrix = ColumnWiseMatrix<MemorySpace::Test, MathDomain::Float>;
+	using TestFloatMatrix =TestSingleMatrix;
+	using TestDoubleMatrix = ColumnWiseMatrix<MemorySpace::Test, MathDomain::Double>;
 
-	typedef GpuSingleMatrix mat;
-	typedef GpuDoubleMatrix dmat;
-	typedef GpuIntegerMatrix imat;
+	using MklIntegerMatrix = ColumnWiseMatrix<MemorySpace::Mkl, MathDomain::Int>;
+	using MklSingleMatrix = ColumnWiseMatrix<MemorySpace::Mkl, MathDomain::Float>;
+	using MklFloatMatrix = MklSingleMatrix;
+	using MklDoubleMatrix = ColumnWiseMatrix<MemorySpace::Mkl, MathDomain::Double>;
+
+	namespace gpu
+	{
+		using mat = cl::GpuSingleMatrix;
+		using dmat = cl::GpuDoubleMatrix;
+		using imat = cl::GpuIntegerMatrix;
+	}
+
+	// by default we're gonna be using GPU
+	using mat = gpu::mat;
+	using dmat = gpu::dmat;
+	using imat = gpu::imat;
+
+	namespace cudaCpu
+	{
+		using mat = cl::CudaCpuSingleMatrix;
+		using dmat = cl::CudaCpuDoubleMatrix;
+		using imat = cl::CudaCpuIntegerMatrix;
+	}
+
+	namespace mkl
+	{
+		using mat = cl::MklSingleMatrix;
+		using dmat = cl::MklDoubleMatrix;
+		using imat = cl::MklIntegerMatrix;
+	}
+
+	namespace test
+	{
+		using mat = cl::TestSingleMatrix;
+		using dmat = cl::TestDoubleMatrix;
+		using imat = cl::TestIntegerMatrix;
+	}
 
 	#pragma endregion
+}
+
+// give possibility of avoiding writing cl::
+namespace mkl
+{
+	using mat = cl::mkl::mat;
+	using dmat = cl::mkl::dmat;
+	using imat = cl::mkl::imat;
+}
+
+namespace test
+{
+	using mat = cl::test::mat;
+	using dmat = cl::test::dmat;
+	using imat = cl::test::imat;
 }
 
 #include <ColumnWiseMatrix.tpp>

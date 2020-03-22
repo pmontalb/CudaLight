@@ -1,9 +1,9 @@
 
 #include <gtest/gtest.h>
 
-#include <HostVector.h>
-#include <HostColumnWiseMatrix.h>
-//#include <HostTensor.h>
+#include <Vector.h>
+#include <ColumnWiseMatrix.h>
+#include <Tensor.h>
 
 namespace clt
 {
@@ -406,111 +406,94 @@ namespace clt
 		}
 	}
 
-//	TEST_F(MklBlasTests, CubeWiseSum)
-//	{
-//		cl::host::HostTensor T(64, 128, 32);
-//		
-//		
-//		double x = 0.0;
-//		for (auto& matrix: T.matrices)
-//			matrix->Set(static_cast<float>(++x));
-//		
-//		const auto _T = T.Get();
-//		
-//		const auto cubeSum = T.CubeWiseSum();
-//		
-//		
-//		const auto _cubeSum = cubeSum.Get();
-//		
-//		
-//		ASSERT_EQ(cubeSum.nRows(), T.nRows());
-//		ASSERT_EQ(cubeSum.nCols(), T.nCols());
-//		for (size_t i = 0; i < T.nRows(); ++i)
-//		{
-//			for (size_t j = 0; j < T.nCols(); ++j)
-//			{
-//				double goldenCubeSum = 0.0;
-//				for (size_t k = 0; k < T.nMatrices(); ++k)
-//					goldenCubeSum += static_cast<double>(_T[i + j * T.nRows() + k * T.nRows() * T.nCols()]);
-//				
-//				ASSERT_NEAR(goldenCubeSum / static_cast<double>(_cubeSum[i + j * T.nRows()]) - 1.0, 0.0,5e-7)
-//				   << "i=" << i << "; j=" << j << "; idx=" << i + j * T.nRows() << "; sum=" << _cubeSum[i + j * T.nRows()];
-//			}
-//		}
-//		
-//		const auto sz = T.nRows() * T.nCols();
-//		cl::ivec nNonZeroRows(sz * T.nMatrices());
-//		nNonZeroRows.LinSpace(0, static_cast<int>(sz * T.nMatrices() - 1));
-//		nNonZeroRows.Scale(T.nMatrices());
-//		
-//		std::vector<int> nonZeroColumnIndicesCpu(nNonZeroRows.size());
-//		for (size_t i = 0; i < sz; ++i)
-//		{
-//			for (size_t k = 0; k < T.nMatrices(); ++k)
-//				nonZeroColumnIndicesCpu[k + T.nMatrices() * i] = static_cast<int>(k * sz + i);
-//		}
-//		cl::ivec nonZeroColumnIndices(nonZeroColumnIndicesCpu);
-//		cl::smat eye(sz, sz * T.nMatrices(), nonZeroColumnIndices, nNonZeroRows, 1.0);
-//
-//		for (size_t n = 0; n < 10; ++n)
-//		{
-//			cl::mkl::mat out(T.nRows(), T.nCols(), 0.0);
-//			T.CubeWiseSum(out, eye);
-//			const auto _cubeSum1 = out.Get();
-//			
-//			
-//			ASSERT_EQ(out.nRows(), T.nRows());
-//			ASSERT_EQ(out.nCols(), T.nCols());
-//			for (size_t i = 0; i < T.nRows(); ++i)
-//			{
-//				for (size_t j = 0; j < T.nCols(); ++j)
-//				{
-//					double goldenCubeSum = 0.0;
-//					for (size_t k = 0; k < T.nMatrices(); ++k)
-//						goldenCubeSum += static_cast<double>(_T[i + j * T.nRows() + k * T.nRows() * T.nCols()]);
-//					
-//					ASSERT_NEAR(goldenCubeSum / static_cast<double>(_cubeSum1[i + j * T.nRows()]) - 1.0, 0.0,5e-7)
-//												<< "i=" << i << "; j=" << j << "; idx=" << i + j * T.nRows() << "; sum=" << _cubeSum1[i + j * T.nRows()] << ";n=" << n;
-//				}
-//			}
-//			
-//		}
-//	}
-//	
-//	TEST_F(MklBlasTests, BatchedKroneckerProduct)
-//	{
-//		unsigned nCubes = 64;
-//		
-//		cl::mkl::mat u(128, nCubes, 1.0);
-//		u.RandomUniform();
-//		
-//		auto _u = u.Get();
-//		
-//		cl::mkl::mat v(32, nCubes, 2.0);
-//		v.RandomGaussian();
-//		
-//		auto _v = v.Get();
-//		
-//		cl::host::HostTensor A = cl::host::HostTensor::KroneckerProduct(u, v, 1.0);
-//		
-//		auto _A = A.Get();
-//		ASSERT_EQ(A.nRows(), u.nRows());
-//		ASSERT_EQ(A.nCols(), v.nRows());
-//		ASSERT_EQ(A.nMatrices(), nCubes);
-//		
-//		for (size_t k = 0; k < nCubes; ++k)
-//		{
-//			for (size_t i = 0; i < A.nRows(); ++i)
-//			{
-//				for (size_t j = 0; j < A.nCols(); ++j)
-//				{
-//					float expected = 1.0f * _u[i + k * u.nRows()] * _v[j + k * v.nRows()];
-//					ASSERT_NEAR(_A[i + A.nRows() * j + A.nRows() * A.nCols() * k], expected, 5e-5) << "(" << i << ", " << j << ", " << k << ")";
-//				}
-//			}
-//		}
-//	}
-//	
+	TEST_F(MklBlasTests, CubeWiseSum)
+	{
+		cl::mkl::ten T(64, 128, 32);
+
+
+		double x = 0.0;
+		for (auto& matrix: T.matrices)
+			matrix->Set(static_cast<float>(++x));
+
+		const auto _T = T.Get();
+
+		const auto cubeSum = T.CubeWiseSum();
+		const auto _cubeSum = cubeSum.Get();
+
+		ASSERT_EQ(cubeSum.nRows(), T.nRows());
+		ASSERT_EQ(cubeSum.nCols(), T.nCols());
+		for (size_t i = 0; i < T.nRows(); ++i)
+		{
+			for (size_t j = 0; j < T.nCols(); ++j)
+			{
+				double goldenCubeSum = 0.0;
+				for (size_t k = 0; k < T.nMatrices(); ++k)
+					goldenCubeSum += static_cast<double>(_T[i + j * T.nRows() + k * T.nRows() * T.nCols()]);
+
+				ASSERT_NEAR(goldenCubeSum / static_cast<double>(_cubeSum[i + j * T.nRows()]) - 1.0, 0.0,5e-7)
+				   << "i=" << i << "; j=" << j << "; idx=" << i + j * T.nRows() << "; sum=" << _cubeSum[i + j * T.nRows()];
+			}
+		}
+
+		for (size_t n = 0; n < 10; ++n)
+		{
+			cl::mkl::mat out(T.nRows(), T.nCols(), 0.0);
+			T.CubeWiseSum(out);
+			const auto _cubeSum1 = out.Get();
+
+
+			ASSERT_EQ(out.nRows(), T.nRows());
+			ASSERT_EQ(out.nCols(), T.nCols());
+			for (size_t i = 0; i < T.nRows(); ++i)
+			{
+				for (size_t j = 0; j < T.nCols(); ++j)
+				{
+					double goldenCubeSum = 0.0;
+					for (size_t k = 0; k < T.nMatrices(); ++k)
+						goldenCubeSum += static_cast<double>(_T[i + j * T.nRows() + k * T.nRows() * T.nCols()]);
+
+					ASSERT_NEAR(goldenCubeSum / static_cast<double>(_cubeSum1[i + j * T.nRows()]) - 1.0, 0.0,5e-7)
+												<< "i=" << i << "; j=" << j << "; idx=" << i + j * T.nRows() << "; sum=" << _cubeSum1[i + j * T.nRows()] << ";n=" << n;
+				}
+			}
+
+		}
+	}
+
+	TEST_F(MklBlasTests, BatchedKroneckerProduct)
+	{
+		unsigned nCubes = 64;
+
+		cl::mkl::mat u(128, nCubes, 1.0);
+		u.RandomUniform();
+
+		auto _u = u.Get();
+
+		cl::mkl::mat v(32, nCubes, 2.0);
+		v.RandomGaussian();
+
+		auto _v = v.Get();
+
+		cl::mkl::ten A = cl::mkl::ten::KroneckerProduct(u, v, 1.0);
+
+		auto _A = A.Get();
+		ASSERT_EQ(A.nRows(), u.nRows());
+		ASSERT_EQ(A.nCols(), v.nRows());
+		ASSERT_EQ(A.nMatrices(), nCubes);
+
+		for (size_t k = 0; k < nCubes; ++k)
+		{
+			for (size_t i = 0; i < A.nRows(); ++i)
+			{
+				for (size_t j = 0; j < A.nCols(); ++j)
+				{
+					float expected = 1.0f * _u[i + k * u.nRows()] * _v[j + k * v.nRows()];
+					ASSERT_NEAR(_A[i + A.nRows() * j + A.nRows() * A.nCols() * k], expected, 5e-5) << "(" << i << ", " << j << ", " << k << ")";
+				}
+			}
+		}
+	}
+
 	TEST_F(MklBlasTests, ColumnWiseAbsoluteMinMax)
 	{
 		cl::mkl::mat A = cl::mkl::mat::LinSpace(-1.0f, 1.0f, 32, 128);

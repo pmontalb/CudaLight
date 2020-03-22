@@ -18,10 +18,10 @@ namespace clt
 		cl::GpuDoubleVector v2(10, 1.2345);
 		dm::DeviceManager::CheckDeviceSanity();
 
-		cl::CpuSingleVector v3(10, 1.2345f);
+		cl::CudaCpuSingleVector v3(10, 1.2345f);
 		dm::DeviceManager::CheckDeviceSanity();
 
-		cl::CpuDoubleVector v4(10, 1.2345);
+		cl::CudaCpuDoubleVector v4(10, 1.2345);
 		dm::DeviceManager::CheckDeviceSanity();
 	}
 

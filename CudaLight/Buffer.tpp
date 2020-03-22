@@ -7,6 +7,10 @@
 
 #include <Types.h>
 #include <Npy++.h>
+#include <HostRoutines/MemoryManager.h>
+#include <HostRoutines/BufferInitializer.h>
+#include <HostRoutines/BlasWrappers.h>
+#include <HostRoutines/Extra.h>
 
 namespace cl
 {
@@ -48,6 +52,10 @@ namespace cl
 		case MemorySpace::Host:
 			dm::detail::AllocHost(buffer);
 			break;
+		case MemorySpace::Test:
+		case MemorySpace::Mkl:
+			routines::Alloc(buffer);
+			break;
 		default:
 			throw NotSupportedException();
 		}
@@ -59,7 +67,10 @@ namespace cl
 	{
 		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
-		dm::detail::AutoCopy(buffer, static_cast<const bi*>(&rhs)->_buffer);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::AutoCopy(buffer, static_cast<const bi*>(&rhs)->_buffer);
+		else
+			routines::Copy(buffer, static_cast<const bi*>(&rhs)->_buffer);
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
@@ -76,9 +87,14 @@ namespace cl
 
 		MemoryBuffer rhsBuf;
 		auto pointer = reinterpret_cast<ptr_t>(rhs.data());
-		rhsBuf = MemoryBuffer(pointer, static_cast<unsigned>(rhs.size()), MemorySpace::Host, _Traits<T>::clType);
 
-		dm::detail::AutoCopy(buffer, rhsBuf);
+		const MemorySpace rhsMemorySpace = ms == MemorySpace::Host || ms == MemorySpace::Device ? MemorySpace::Host : ms;
+		rhsBuf = MemoryBuffer(pointer, static_cast<unsigned>(rhs.size()), rhsMemorySpace, _Traits<T>::clType);
+
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::AutoCopy(buffer, rhsBuf);
+		else
+			routines::Copy(buffer, rhsBuf);
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
@@ -86,7 +102,11 @@ namespace cl
 	{
 		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
-		dm::detail::Initialize(buffer, static_cast<double>(value));
+
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Initialize(buffer, static_cast<double>(value));
+		else
+			routines::Initialize(buffer, static_cast<double>(value));
 	}
 	
 	template<typename bi, MemorySpace ms, MathDomain md>
@@ -94,7 +114,11 @@ namespace cl
 	{
 		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
-		dm::detail::Reciprocal(buffer);
+
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Reciprocal(buffer);
+		else
+			routines::Reciprocal(buffer);
 	}
 	
 	template<typename bi, MemorySpace ms, MathDomain md>
@@ -102,7 +126,11 @@ namespace cl
 	{
 		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
-		dm::detail::LinSpace(buffer, static_cast<double>(x0), static_cast<double>(x1));
+
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::LinSpace(buffer, static_cast<double>(x0), static_cast<double>(x1));
+		else
+			routines::LinSpace(buffer, static_cast<double>(x0), static_cast<double>(x1));
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
@@ -110,7 +138,11 @@ namespace cl
 	{
 		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
-		dm::detail::RandUniform(buffer, seed);
+
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::RandUniform(buffer, seed);
+		else
+			routines::RandUniform(buffer, seed);
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
@@ -118,29 +150,46 @@ namespace cl
 	{
 		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
-		dm::detail::RandNormal(buffer, seed);
+
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::RandNormal(buffer, seed);
+		else
+			routines::RandNormal(buffer, seed);
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
 	std::vector<typename Traits<md>::stdType> Buffer<bi, ms, md>::Get() const
 	{
-		dm::detail::ThreadSynchronize();
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+		{
+			dm::detail::ThreadSynchronize();
 
-		const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
-		assert(buffer.pointer != 0);
+			const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
+			assert(buffer.pointer != 0);
 
-		MemoryBuffer newBuf(buffer);
-		newBuf.memorySpace = MemorySpace::Host;
+			MemoryBuffer newBuf(buffer);
+			newBuf.memorySpace = MemorySpace::Host;
 
-		dm::detail::AllocHost(newBuf);
-		dm::detail::AutoCopy(newBuf, buffer);
+			dm::detail::AllocHost(newBuf);
+			dm::detail::AutoCopy(newBuf, buffer);
 
-		std::vector<typename Traits<md>::stdType> ret(buffer.size);
-		detail::Fill<md>(ret, newBuf);
+			std::vector<typename Traits<md>::stdType> ret(buffer.size);
+			detail::Fill<md>(ret, newBuf);
 
-		dm::detail::FreeHost(newBuf);
+			dm::detail::FreeHost(newBuf);
 
-		return ret;
+			return ret;
+		}
+		else
+		{
+			const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
+			assert(buffer.pointer != 0);
+
+			std::vector<typename Traits<md>::stdType> ret(buffer.size);
+			detail::Fill<md>(ret, buffer);
+
+			return ret;
+		}
 	}
 
 	template<typename bi, MemorySpace ms, MathDomain md>
@@ -158,6 +207,10 @@ namespace cl
 			break;
 		case MemorySpace::Host:
 			dm::detail::FreeHost(buffer);
+			break;
+		case MemorySpace::Test:
+		case MemorySpace::Mkl:
+			routines::Free(buffer);
 			break;
 		default:
 			throw NotSupportedException();
@@ -195,7 +248,11 @@ namespace cl
 		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
-		dm::detail::AddEqual(buffer, static_cast<const bi*>(&rhs)->_buffer, 1.0);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::AddEqual(buffer, static_cast<const bi*>(&rhs)->_buffer, 1.0);
+		else
+			routines::AddEqual(buffer, static_cast<const bi*>(&rhs)->_buffer, 1.0);
+
 		return *this;
 	}
 
@@ -208,7 +265,10 @@ namespace cl
 		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
-		dm::detail::AddEqual(buffer, static_cast<const bi&>(rhs)._buffer, -1.0);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::AddEqual(buffer, static_cast<const bi&>(rhs)._buffer, -1.0);
+		else
+			routines::AddEqual(buffer, static_cast<const bi&>(rhs)._buffer, -1.0);
 		return *this;
 	}
 
@@ -221,7 +281,10 @@ namespace cl
 		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
-		dm::detail::ElementwiseProduct(buffer, buffer, static_cast<const bi*>(&rhs)->_buffer, 1.0);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::ElementwiseProduct(buffer, buffer, static_cast<const bi*>(&rhs)->_buffer, 1.0);
+		else
+			routines::ElementwiseProduct(buffer, buffer, static_cast<const bi*>(&rhs)->_buffer, 1.0);
 
 		return *this;
 	}
@@ -231,8 +294,12 @@ namespace cl
 	{
 		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
-		
-		dm::detail::ElementwiseProduct(buffer, buffer, static_cast<const bi*>(&rhs)->_buffer, alpha);
+
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::ElementwiseProduct(buffer, buffer, static_cast<const bi*>(&rhs)->_buffer, alpha);
+		else
+			routines::ElementwiseProduct(buffer, buffer, static_cast<const bi*>(&rhs)->_buffer, alpha);
+
 		return *this;
 	}
 	
@@ -246,7 +313,10 @@ namespace cl
 		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
-		dm::detail::AddEqual(buffer, static_cast<const bi*>(&rhs)->_buffer, alpha);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::AddEqual(buffer, static_cast<const bi*>(&rhs)->_buffer, alpha);
+		else
+			routines::AddEqual(buffer, static_cast<const bi*>(&rhs)->_buffer, alpha);
 		return *this;
 	}
 
@@ -256,7 +326,11 @@ namespace cl
 		MemoryBuffer& buffer = static_cast<bi*>(this)->_buffer;
 		assert(buffer.pointer != 0);
 
-		dm::detail::Scale(buffer, alpha);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Scale(buffer, alpha);
+		else
+			routines::Scale(buffer, alpha);
+
 		return *this;
 	}
 
@@ -267,7 +341,10 @@ namespace cl
 		assert(buffer.pointer != 0);
 
 		int ret = -1;
-		dm::detail::ArgAbsMin(ret, buffer);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::ArgAbsMin(ret, buffer);
+		else
+			routines::ArgAbsMin(ret, buffer);
 
 		return ret;
 	}
@@ -279,7 +356,10 @@ namespace cl
 		assert(buffer.pointer != 0);
 
 		int ret = -1;
-		dm::detail::ArgAbsMax(ret, buffer);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::ArgAbsMax(ret, buffer);
+		else
+			routines::ArgAbsMax(ret, buffer);
 
 		return ret;
 	}
@@ -291,7 +371,10 @@ namespace cl
 		assert(buffer.pointer != 0);
 
 		double ret = 0.0;
-		dm::detail::AbsMin(ret, buffer);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::AbsMin(ret, buffer);
+		else
+			routines::AbsMin(ret, buffer);
 
 		return static_cast<typename Traits<md>::stdType>(ret);
 	}
@@ -303,7 +386,10 @@ namespace cl
 		assert(buffer.pointer != 0);
 
 		double ret = 0.0;
-		dm::detail::AbsMax(ret, buffer);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::AbsMax(ret, buffer);
+		else
+			routines::AbsMax(ret, buffer);
 
 		return static_cast<typename Traits<md>::stdType>(ret);
 	}
@@ -315,7 +401,10 @@ namespace cl
 		assert(buffer.pointer != 0);
 
 		double ret = 0.0;
-		dm::detail::Min(ret, buffer);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Min(ret, buffer);
+		else
+			routines::Min(ret, buffer);
 
 		return static_cast<typename Traits<md>::stdType>(ret);
 	}
@@ -327,7 +416,10 @@ namespace cl
 		assert(buffer.pointer != 0);
 
 		double ret = 0.0;
-		dm::detail::Max(ret, buffer);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Max(ret, buffer);
+		else
+			routines::Max(ret, buffer);
 
 		return static_cast<typename Traits<md>::stdType>(ret);
 	}
@@ -339,7 +431,10 @@ namespace cl
 		assert(buffer.pointer != 0);
 
 		double ret = -1;
-		dm::detail::Sum(ret, buffer);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Sum(ret, buffer);
+		else
+			routines::Sum(ret, buffer);
 
 		return static_cast<typename Traits<md>::stdType>(ret);
 	}
@@ -351,7 +446,10 @@ namespace cl
 		assert(buffer.pointer != 0);
 		
 		double ret = -1;
-		dm::detail::EuclideanNorm(ret, buffer);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::EuclideanNorm(ret, buffer);
+		else
+			routines::EuclideanNorm(ret, buffer);
 		
 		return static_cast<typename Traits<md>::stdType>(ret);
 	}
@@ -363,7 +461,10 @@ namespace cl
 		cache.memorySpace = ms;
 		cache.mathDomain = md;
 		cache.size = size();
-		dm::detail::Alloc(cache);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Alloc(cache);
+		else
+			routines::Alloc(cache);
 		
 		const MemoryBuffer& buffer = static_cast<const bi*>(this)->_buffer;
 		assert(rhs.size() == size());
@@ -376,23 +477,40 @@ namespace cl
 			cache.memorySpace = ms;
 			cache.mathDomain = md;
 			cache.size = size();
-			dm::detail::Alloc(cache);
+			if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+				dm::detail::Alloc(cache);
+			else
+				routines::Alloc(cache);
 		}
 		
 		// calculate the difference
-		dm::detail::Subtract(cache, buffer, static_cast<const bi*>(&rhs)->_buffer);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Subtract(cache, buffer, static_cast<const bi*>(&rhs)->_buffer);
+		else
+			routines::Subtract(cache, buffer, static_cast<const bi*>(&rhs)->_buffer);
 		
 		// calculate how many non-zeros, overriding cache
-		dm::detail::IsNonZero(cache, cache);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::IsNonZero(cache, cache);
+		else
+			routines::IsNonZero(cache, cache);
 		
 		double ret = -1;
-		dm::detail::Sum(ret, cache);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Sum(ret, cache);
+		else
+			routines::Sum(ret, cache);
 		
 		// we are counting the zero entries
 		ret = size() - ret;
 		
 		if (needToFreeCache)
-			dm::detail::Free(cache);
+		{
+			if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+				dm::detail::Free(cache);
+			else
+				routines::Free(cache);
+		}
 		
 		return static_cast<int>(ret);
 	}
@@ -406,13 +524,22 @@ namespace cl
 		assert(static_cast<const bi*>(&rhs)->_buffer.pointer != 0);
 		
 		// calculate the difference
-		dm::detail::Subtract(cacheCount, buffer, static_cast<const bi*>(&rhs)->_buffer);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Subtract(cacheCount, buffer, static_cast<const bi*>(&rhs)->_buffer);
+		else
+			routines::Subtract(cacheCount, buffer, static_cast<const bi*>(&rhs)->_buffer);
 
 		// calculate how many non-zeros, overriding cache
-		dm::detail::IsNonZero(cacheCount, cacheCount);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::IsNonZero(cacheCount, cacheCount);
+		else
+			routines::IsNonZero(cacheCount, cacheCount);
 
 		double ret = -1;
-		dm::detail::SumWithProvidedCache(ret, cacheCount, cacheSum, oneElementCache);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::SumWithProvidedCache(ret, cacheCount, cacheSum, oneElementCache);
+		else
+			routines::Sum(ret, cacheCount);
 
 		// we are counting the zero entries
 		ret = size() - ret;

@@ -16,10 +16,10 @@ namespace clt
 		cl::GpuDoubleMatrix m2(10, 5, 1.2345);
 		dm::DeviceManager::CheckDeviceSanity();
 
-		cl::CpuSingleMatrix m3(10, 5, 1.2345f);
+		cl::cudaCpu::mat m3(10, 5, 1.2345f);
 		dm::DeviceManager::CheckDeviceSanity();
 
-		cl::CpuDoubleMatrix m4(10, 5, 1.2345);
+		cl::cudaCpu::dmat m4(10, 5, 1.2345);
 		dm::DeviceManager::CheckDeviceSanity();
 	}
 

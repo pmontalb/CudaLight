@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <HostVector.h>
+#include <Vector.h>
 
 #include <algorithm>
 
@@ -26,8 +26,8 @@ namespace clt
 		cl::mkl::dvec v4(v3);
 		ASSERT_TRUE(v3 == v4);
 		
-		cl::host::DebugIntegerVector v5(10, 10);
-		cl::host::DebugIntegerVector v6(v5);
+		cl::mkl::ivec v5(10, 10);
+		cl::mkl::ivec v6(v5);
 		ASSERT_TRUE(v5 == v6);
 	}
 	

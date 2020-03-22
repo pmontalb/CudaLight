@@ -5,14 +5,14 @@
 
 namespace clt
 {
-	class HostExtraRoutinesTests : public ::testing::Test
+	class MklExtraRoutinesTests : public ::testing::Test
 	{
 	};
 
-	TEST_F(HostExtraRoutinesTests, Sum)
+	TEST_F(MklExtraRoutinesTests, Sum)
 	{
 		const size_t size = 1024;
-		auto v1 = cl::test::dvec::LinSpace(-1.0, 1.0, size);
+		auto v1 = cl::mkl::dvec::LinSpace(-1.0, 1.0, size);
 		auto _v1 = v1.Get();
 
 		double sum = v1.Sum();
@@ -22,7 +22,7 @@ namespace clt
 
 		ASSERT_NEAR(sumSanity, sum, 1e-12);
 
-		auto v2 = cl::test::vec::LinSpace(-1.0, 1.0, size + 1);
+		auto v2 = cl::mkl::vec::LinSpace(-1.0, 1.0, size + 1);
 		auto _v2 = v2.Get();
 
 		float sum2 = v2.Sum();
@@ -32,7 +32,7 @@ namespace clt
 
 		ASSERT_NEAR(sumSanity2, sum2, 1e-7);
 
-		cl::test::ivec v3(size, 1);
+		cl::mkl::ivec v3(size, 1);
 		auto _v3 = v3.Get();
 
 		int sum3 = v3.Sum();
@@ -43,9 +43,9 @@ namespace clt
 		ASSERT_NEAR(sumSanity3, sum3, 0);
 	}
 
-	TEST_F(HostExtraRoutinesTests, AbsoluteMinMax)
+	TEST_F(MklExtraRoutinesTests, AbsoluteMinMax)
 	{
-		auto x = cl::test::vec::LinSpace(-1.0f, 1.0f, 128);
+		auto x = cl::mkl::vec::LinSpace(-1.0f, 1.0f, 128);
 		auto _x = x.Get();
 
 		float xMin = x.AbsoluteMinimum();
@@ -64,9 +64,9 @@ namespace clt
 		ASSERT_TRUE(std::fabs(_max - xMax) <= 1e-7f);
 	}
 
-	TEST_F(HostExtraRoutinesTests, MinMax)
+	TEST_F(MklExtraRoutinesTests, MinMax)
 	{
-		auto x = cl::test::vec::LinSpace(-1.0f, 1.0f, 128);
+		auto x = cl::mkl::vec::LinSpace(-1.0f, 1.0f, 128);
 		auto _x = x.Get();
 
 		float xMin = x.Minimum();

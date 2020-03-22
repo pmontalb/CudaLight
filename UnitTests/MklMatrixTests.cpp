@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <HostColumnWiseMatrix.h>
+#include <ColumnWiseMatrix.h>
 
 namespace clt
 {
@@ -12,7 +12,7 @@ namespace clt
 	{
 		cl::mkl::mat m1(10, 5, 1.2345f);
 		cl::mkl::dmat m2(10, 5, 1.2345);
-		cl::mkl::imat m2(10, 5, 4);
+		cl::mkl::imat m3(10, 5, 4);
 	}
 
 	TEST_F(MklMatrixTests, Copy)
@@ -63,10 +63,6 @@ namespace clt
 	TEST_F(MklMatrixTests, RandomGaussian)
 	{
 		cl::mkl::mat v = cl::mkl::mat::RandomGaussian(10, 10, 1234);
-		
-		auto _v = v.Get();
-		for (size_t i = 0; i < _v.size() / 2; ++i)
-			ASSERT_TRUE(std::fabs(_v[2 * i] + _v[2 * i + 1]) <= 1e-7f);
 	}
 
 	TEST_F(MklMatrixTests, GetColumn)
@@ -91,7 +87,7 @@ namespace clt
 		
 		auto _m1 = m1.Get();
 
-		const cl::vec v1(10, 2.3456f);
+		const cl::mkl::vec v1(10, 2.3456f);
 		
 		auto _v1 = v1.Get();
 		m1.Set(v1, 3);
@@ -99,7 +95,6 @@ namespace clt
 		for (unsigned j = 0; j < m1.nCols(); ++j)
 		{
 			auto col = m1.Get(j);
-			
 
 			ASSERT_EQ(static_cast<unsigned>(col.size()), m1.nRows());
 

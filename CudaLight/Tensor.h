@@ -118,21 +118,75 @@ namespace cl
 
 	#pragma region Type aliases
 
-	typedef Tensor<MemorySpace::Device, MathDomain::Int> GpuIntegerTensor;
-	typedef Tensor<MemorySpace::Device, MathDomain::Float> GpuSingleTensor;
-	typedef GpuSingleTensor GpuFloatTensor;
-	typedef Tensor<MemorySpace::Device, MathDomain::Double> GpuDoubleTensor;
+	using GpuIntegerTensor = Tensor<MemorySpace::Device, MathDomain::Int>;
+	using GpuSingleTensor = Tensor<MemorySpace::Device, MathDomain::Float>;
+	using GpuFloatTensor = GpuSingleTensor;
+	using GpuDoubleTensor = Tensor<MemorySpace::Device, MathDomain::Double>;
 
-	typedef Tensor<MemorySpace::Host, MathDomain::Int> CpuIntegerTensor;
-	typedef Tensor<MemorySpace::Host, MathDomain::Float> CpuSingleTensor;
-	typedef CpuSingleTensor CpuFloatTensor;
-	typedef Tensor<MemorySpace::Host, MathDomain::Double> CpuDoubleTensor;
+	using CudaCpuIntegerTensor = Tensor<MemorySpace::Host, MathDomain::Int>;
+	using CudaCpuSingleTensor = Tensor<MemorySpace::Host, MathDomain::Float>;
+	using CudaCpuFloatTensor = CudaCpuSingleTensor;
+	using CudaCpuDoubleTensor = Tensor<MemorySpace::Host, MathDomain::Double>;
 
-	typedef GpuSingleTensor ten;
-	typedef GpuDoubleTensor dten;
-	typedef GpuIntegerTensor iten;
+	using TestIntegerTensor = Tensor<MemorySpace::Test, MathDomain::Int>;
+	using TestSingleTensor = Tensor<MemorySpace::Test, MathDomain::Float>;
+	using TestFloatTensor =TestSingleTensor;
+	using TestDoubleTensor = Tensor<MemorySpace::Test, MathDomain::Double>;
+
+	using MklIntegerTensor = Tensor<MemorySpace::Mkl, MathDomain::Int>;
+	using MklSingleTensor = Tensor<MemorySpace::Mkl, MathDomain::Float>;
+	using MklFloatTensor = MklSingleTensor;
+	using MklDoubleTensor = Tensor<MemorySpace::Mkl, MathDomain::Double>;
+
+	namespace gpu
+	{
+		using ten = cl::GpuSingleTensor;
+		using dten = cl::GpuDoubleTensor;
+		using iten = cl::GpuIntegerTensor;
+	}
+
+	// by default we're gonna be using GPU
+	using ten = gpu::ten;
+	using dten = gpu::dten;
+	using iten = gpu::iten;
+
+	namespace cudaCpu
+	{
+		using ten = cl::CudaCpuSingleTensor;
+		using dten = cl::CudaCpuDoubleTensor;
+		using iten = cl::CudaCpuIntegerTensor;
+	}
+
+	namespace mkl
+	{
+		using ten = cl::MklSingleTensor;
+		using dten = cl::MklDoubleTensor;
+		using iten = cl::MklIntegerTensor;
+	}
+
+	namespace test
+	{
+		using ten = cl::TestSingleTensor;
+		using dten = cl::TestDoubleTensor;
+		using iten = cl::TestIntegerTensor;
+	}
 
 	#pragma endregion
+}
+
+// give possibility of avoiding writing cl::
+namespace mkl
+{
+	using ten = cl::mkl::ten;
+	using dten = cl::mkl::dten;
+	using iten = cl::mkl::iten;
+}
+
+namespace test
+{
+	using ten = cl::test::ten;
+	using dten = cl::test::dten;
+	using iten = cl::test::iten;
 }
 
 #include <Tensor.tpp>

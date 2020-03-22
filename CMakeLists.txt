@@ -50,7 +50,10 @@ if (MKL_FOUND)
     set(MKL_WRAPPERS_INCLUDE ${MKL_INCLUDE_DIR})
     set(MKL_WRAPPERS_DEPENDENCIES ${MKL_LIBRARIES})
     set(MKL_TEST_SOURCE     UnitTests/MklVectorTests.cpp
-                            UnitTests/MklBlasTests.cpp)
+                            UnitTests/MklMatrixTests.cpp
+                            UnitTests/MklTensorTests.cpp
+                            UnitTests/MklBlasTests.cpp
+                            UnitTests/MklExtraRoutinesTests.cpp)
 endif()
 
 create_library(
@@ -103,6 +106,7 @@ create_test(
 
         UnitTests/HostVectorTests.cpp
         UnitTests/HostMatrixTests.cpp
+        UnitTests/HostTensorTests.cpp
         UnitTests/HostBlasTests.cpp
         UnitTests/HostExtraRoutinesTests.cpp
         UnitTests/HostSerializationTests.cpp

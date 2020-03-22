@@ -22,7 +22,10 @@ namespace cl
 	Tensor<ms, md>::Tensor(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const typename Traits<md>::stdType value)
 		: Tensor(nRows, nCols, nMatrices)
 	{
-		dm::detail::Initialize(_buffer, static_cast<double>(value));
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Initialize(_buffer, static_cast<double>(value));
+		else
+			routines::Initialize(_buffer, static_cast<double>(value));
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -51,14 +54,20 @@ namespace cl
 	Tensor<ms, md>::Tensor(const ColumnWiseMatrix<ms, md>& rhs)
 		: Tensor(rhs.nRows(), rhs.nCols(), 1)
 	{
-		dm::detail::AutoCopy(matrices[0]->GetBuffer(), static_cast<MemoryBuffer>(rhs.GetBuffer()));
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::AutoCopy(matrices[0]->GetBuffer(), static_cast<MemoryBuffer>(rhs.GetBuffer()));
+		else
+			routines::Copy(matrices[0]->GetBuffer(), static_cast<MemoryBuffer>(rhs.GetBuffer()));
 	}
 
 	template<MemorySpace ms, MathDomain md>
 	Tensor<ms, md>::Tensor(const Vector<ms, md>& rhs)
 		: Tensor(rhs.size(), 1, 1)
 	{
-		dm::detail::AutoCopy(matrices[0]->columns[0]->GetBuffer(), rhs.GetBuffer());
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::AutoCopy(matrices[0]->columns[0]->GetBuffer(), rhs.GetBuffer());
+		else
+			routines::Copy(matrices[0]->columns[0]->GetBuffer(), rhs.GetBuffer());
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -106,7 +115,10 @@ namespace cl
 		assert(rhs._buffer.pointer != 0);
 		assert(rhs.size() != 0);
 
-		dm::detail::AutoCopy(matrices[0]->_buffer, rhs._buffer);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::AutoCopy(matrices[0]->_buffer, rhs._buffer);
+		else
+			routines::Copy(matrices[0]->_buffer, rhs._buffer);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -116,7 +128,10 @@ namespace cl
 		assert(rhs._buffer.pointer != 0);
 		assert(rhs.size() != 0);
 
-		dm::detail::AutoCopy(matrices[0]->columns[0]->_buffer, rhs._buffer);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::AutoCopy(matrices[0]->columns[0]->_buffer, rhs._buffer);
+		else
+			routines::Copy(matrices[0]->columns[0]->_buffer, rhs._buffer);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -276,9 +291,14 @@ namespace cl
 		MemoryCube tmp1(out.GetBuffer().pointer, out.nRows(), 1, nMatrices(), _buffer.memorySpace, _buffer.mathDomain);
 		MemoryCube tmp2(_buffer.pointer, _buffer.nRows, _buffer.nCols, 0, _buffer.memorySpace, _buffer.mathDomain);
 		MemoryCube tmp3(cacheOnes.GetBuffer().pointer, cacheOnes.size(), 0, 0, _buffer.memorySpace, _buffer.mathDomain);
-		dm::detail::BatchedMultiply(tmp1, tmp2, tmp3,
-									tmp2.nRows * tmp2.nCols,0,
-									MatrixOperation::None, MatrixOperation::None, 1.0, 0.0);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::BatchedMultiply(tmp1, tmp2, tmp3,
+										tmp2.nRows * tmp2.nCols,0,
+										MatrixOperation::None, MatrixOperation::None, 1.0, 0.0);
+		else
+			routines::BatchedMultiply(tmp1, tmp2, tmp3,
+										tmp2.nRows * tmp2.nCols,0,
+										MatrixOperation::None, MatrixOperation::None, 1.0, 0.0);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -301,7 +321,13 @@ namespace cl
 			for (size_t k = 0; k < out.nMatrices(); ++k)
 				dm::detail::KroneckerProduct(out.matrices[k]->GetTile(), lhs.columns[k]->GetBuffer(), rhs.columns[k]->GetBuffer(), alpha);
 		#else
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
 			dm::detail::BatchedTransposedKroneckerProduct(out.GetCube(), lhs.GetTile(), rhs.GetTile(), alpha);
+		else
+		{
+			for (size_t k = 0; k < out.nMatrices(); ++k)
+				routines::KroneckerProduct(out.matrices[k]->GetTile(), lhs.columns[k]->GetBuffer(), rhs.columns[k]->GetBuffer(), alpha);
+		}
 		#endif
 
 	}
@@ -312,7 +338,12 @@ namespace cl
 		assert(lhs.nRows() == out.nRows());
 		assert(out.nCols() == rhs.nRows());
 		for (size_t k = 0; k < lhs.nCols(); ++k)
-			dm::detail::KroneckerProduct(out.GetTile(), lhs.columns[k]->GetBuffer(), rhs.columns[k]->GetBuffer(), alpha);
+		{
+			if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+				dm::detail::KroneckerProduct(out.GetTile(), lhs.columns[k]->GetBuffer(), rhs.columns[k]->GetBuffer(), alpha);
+			else
+				routines::KroneckerProduct(out.GetTile(), lhs.columns[k]->GetBuffer(), rhs.columns[k]->GetBuffer(), alpha);
+		}
 	}
 
 #pragma endregion

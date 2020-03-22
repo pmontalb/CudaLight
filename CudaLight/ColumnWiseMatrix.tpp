@@ -33,7 +33,10 @@ namespace cl
 	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const unsigned nRows, const unsigned nCols, const typename Traits<md>::stdType value)
 		: ColumnWiseMatrix(nRows, nCols)
 	{
-		dm::detail::Initialize(_buffer, static_cast<double>(value));
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Initialize(_buffer, static_cast<double>(value));
+		else
+			routines::Initialize(_buffer, static_cast<double>(value));
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -99,7 +102,10 @@ namespace cl
 	ColumnWiseMatrix<ms, md>::ColumnWiseMatrix(const Vector<ms, md>& rhs)
 		: ColumnWiseMatrix(rhs.size(), 1)
 	{
-		dm::detail::AutoCopy(columns[0]->GetBuffer(), rhs.GetBuffer());
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::AutoCopy(columns[0]->GetBuffer(), rhs.GetBuffer());
+		else
+			routines::Copy(columns[0]->GetBuffer(), rhs.GetBuffer());
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -113,14 +119,20 @@ namespace cl
 	void ColumnWiseMatrix<ms, md>::MakeIdentity()
 	{
 		assert(nRows() == nCols());
-		dm::detail::Eye(this->_buffer);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Eye(this->_buffer);
+		else
+			routines::Eye(this->_buffer);
 	}
 
 	template<MemorySpace ms, MathDomain md>
 	Vector<ms, md> ColumnWiseMatrix<ms, md>::Flatten() const
 	{
 		Vector<ms, md> ret(this->size());
-		dm::detail::AutoCopy(ret.GetBuffer(), _buffer);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::AutoCopy(ret.GetBuffer(), _buffer);
+		else
+			routines::Copy(ret.GetBuffer(), _buffer);
 		return ret;
 	}
 
@@ -131,7 +143,10 @@ namespace cl
 		assert(rhs.GetBuffer().pointer != 0);
 		assert(_buffer.pointer != 0);
 
-		dm::detail::AutoCopy(columns[0]->buffer, rhs.GetBuffer());
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::AutoCopy(columns[0]->buffer, rhs.GetBuffer());
+		else
+			routines::Copy(columns[0]->buffer, rhs.GetBuffer());
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -151,7 +166,10 @@ namespace cl
 	template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::RandomShuffleColumns(const unsigned seed)
 	{
-		dm::detail::RandShuffleColumns(this->_buffer, seed);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::RandShuffleColumns(this->_buffer, seed);
+		else
+			routines::RandShuffleColumns(this->_buffer, seed);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -188,7 +206,10 @@ namespace cl
 	{
 		assert(_buffer.pointer != 0);
 		assert(nCols() == alpha.size());
-		dm::detail::ScaleColumns(_buffer, alpha.GetBuffer());
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::ScaleColumns(_buffer, alpha.GetBuffer());
+		else
+			routines::ScaleColumns(_buffer, alpha.GetBuffer());
 	}
 	
 	template<MemorySpace ms, MathDomain md>
@@ -234,7 +255,10 @@ namespace cl
 		assert(nCols() == rhs.nCols());
 
 		ColumnWiseMatrix ret(*this);
-		dm::detail::AddEqualMatrix(ret._buffer, rhs._buffer, lhsOperation, rhsOperation, alpha, beta);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::AddEqualMatrix(ret._buffer, rhs._buffer, lhsOperation, rhsOperation, alpha, beta);
+		else
+			routines::AddEqualMatrix(ret._buffer, rhs._buffer, lhsOperation, rhsOperation, alpha, beta);
 
 		return ret;
 	}
@@ -245,7 +269,10 @@ namespace cl
 		assert(nCols() == rhs.nRows());
 
 		ColumnWiseMatrix ret(nRows(), rhs.nCols());
-		dm::detail::Multiply(ret._buffer, this->_buffer, rhs._buffer, MatrixOperation::None, MatrixOperation::None, 1.0, 0.0);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Multiply(ret._buffer, this->_buffer, rhs._buffer, MatrixOperation::None, MatrixOperation::None, 1.0, 0.0);
+		else
+			routines::Multiply(ret._buffer, this->_buffer, rhs._buffer, MatrixOperation::None, MatrixOperation::None, 1.0, 0.0);
 
 		return ret;
 	}
@@ -256,9 +283,16 @@ namespace cl
 		assert(nCols() == rhs.nRows());
 
 		ColumnWiseMatrix ret(nRows(), rhs.nCols());
-		dm::detail::Multiply(ret.buffer, this->buffer, rhs.buffer, MatrixOperation::None, MatrixOperation::None, this->nRows(), rhs.nRows());
-
-		dm::detail::AutoCopy(_buffer, ret.buffer);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+		{
+			dm::detail::Multiply(ret.buffer, this->buffer, rhs.buffer, MatrixOperation::None, MatrixOperation::None, this->nRows(), rhs.nRows());
+			dm::detail::AutoCopy(_buffer, ret.buffer);
+		}
+		else
+		{
+			routines::Multiply(ret.buffer, this->buffer, rhs.buffer, MatrixOperation::None, MatrixOperation::None, this->nRows(), rhs.nRows());
+			routines::Copy(_buffer, ret.buffer);
+		}
 		return *this;
 	}
 
@@ -268,7 +302,10 @@ namespace cl
 		assert(nCols() == rhs.size());
 
 		Vector<ms, md> ret(nRows());
-		dm::detail::Dot(ret.GetBuffer(), this->_buffer, rhs.GetBuffer());
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Dot(ret.GetBuffer(), this->_buffer, rhs.GetBuffer());
+		else
+			routines::Dot(ret.GetBuffer(), this->_buffer, rhs.GetBuffer());
 
 		return ret;
 	}
@@ -280,8 +317,11 @@ namespace cl
 		assert(nCols() == rhs.nCols());
 		
 		assert(_buffer.pointer != 0);
-		
-		dm::detail::AddEqualMatrix(_buffer, rhs._buffer, lhsOperation, rhsOperation, alpha, beta);
+
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::AddEqualMatrix(_buffer, rhs._buffer, lhsOperation, rhsOperation, alpha, beta);
+		else
+			routines::AddEqualMatrix(_buffer, rhs._buffer, lhsOperation, rhsOperation, alpha, beta);
 		return *this;
 	}
 
@@ -302,9 +342,19 @@ namespace cl
 		assert((rowWise && ones.size() == nRows()) || (!rowWise && ones.size() == nCols()));
 		
 		if (rowWise)
-			dm::detail::KroneckerProduct(_buffer, ones.GetBuffer(), rhs.GetBuffer(), alpha);
+		{
+			if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+				dm::detail::KroneckerProduct(_buffer, ones.GetBuffer(), rhs.GetBuffer(), alpha);
+			else
+				routines::KroneckerProduct(_buffer, ones.GetBuffer(), rhs.GetBuffer(), alpha);
+		}
 		else
-			dm::detail::KroneckerProduct(_buffer, rhs.GetBuffer(), ones.GetBuffer(), alpha);
+		{
+			if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+				dm::detail::KroneckerProduct(_buffer, rhs.GetBuffer(), ones.GetBuffer(), alpha);
+			else
+				routines::KroneckerProduct(_buffer, rhs.GetBuffer(), ones.GetBuffer(), alpha);
+		}
 		
 		return *this;
 	}
@@ -407,8 +457,11 @@ namespace cl
 		shiftedOutBuffer.pointer += rowOffset + colRhsOffset;
 		shiftedLhsBuffer.pointer += rowOffset + colOffset;
 		shiftedRhsBuffer.pointer += rowRhsOffset + colRhsOffset;
-		
-		dm::detail::SubMultiply(shiftedOutBuffer, shiftedLhsBuffer, shiftedRhsBuffer, static_cast<unsigned>(nRows), static_cast<unsigned>(nCols), static_cast<unsigned>(nColsRhs), lhsOperation, rhsOperation, alpha, beta);
+
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::SubMultiply(shiftedOutBuffer, shiftedLhsBuffer, shiftedRhsBuffer, static_cast<unsigned>(nRows), static_cast<unsigned>(nCols), static_cast<unsigned>(nColsRhs), lhsOperation, rhsOperation, alpha, beta);
+		else
+			routines::SubMultiply(shiftedOutBuffer, shiftedLhsBuffer, shiftedRhsBuffer, static_cast<unsigned>(nRows), static_cast<unsigned>(nCols), static_cast<unsigned>(nColsRhs), lhsOperation, rhsOperation, alpha, beta);
 	}
 
 template<MemorySpace ms, MathDomain md>
@@ -432,7 +485,10 @@ template<MemorySpace ms, MathDomain md>
 			assert(nRows() == rhs.size());
 			assert(nCols() == out.size());
 		}
-		dm::detail::Dot(out.GetBuffer(), this->_buffer, rhs.GetBuffer(), lhsOperation, alpha, beta);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Dot(out.GetBuffer(), this->_buffer, rhs.GetBuffer(), lhsOperation, alpha, beta);
+		else
+			routines::Dot(out.GetBuffer(), this->_buffer, rhs.GetBuffer(), lhsOperation, alpha, beta);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -447,7 +503,10 @@ template<MemorySpace ms, MathDomain md>
 	template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::KroneckerProduct(ColumnWiseMatrix<ms, md>& out, const Vector<ms, md>& lhs, const Vector<ms, md>& rhs, const double alpha)
 	{
-		dm::detail::KroneckerProduct(out._buffer, lhs.GetBuffer(), rhs.GetBuffer(), alpha);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::KroneckerProduct(out._buffer, lhs.GetBuffer(), rhs.GetBuffer(), alpha);
+		else
+			routines::KroneckerProduct(out._buffer, lhs.GetBuffer(), rhs.GetBuffer(), alpha);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -469,7 +528,10 @@ template<MemorySpace ms, MathDomain md>
 	template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::RowWiseSum(Vector<ms, md>& out, Vector<ms, md>& cache) const
 	{
-		dm::detail::RowWiseSum(out.GetBuffer(), this->_buffer, cache.GetBuffer());
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::RowWiseSum(out.GetBuffer(), this->_buffer, cache.GetBuffer());
+		else
+			routines::RowWiseSum(out.GetBuffer(), this->_buffer, cache.GetBuffer());
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -491,13 +553,19 @@ template<MemorySpace ms, MathDomain md>
 	template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::ColumnWiseSum(Vector<ms, md>& out, Vector<ms, md>& cache) const
 	{
-		dm::detail::RowWiseSum(out.GetBuffer(), this->_buffer, cache.GetBuffer(), MatrixOperation::Transpose);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::RowWiseSum(out.GetBuffer(), this->_buffer, cache.GetBuffer(), MatrixOperation::Transpose);
+		else
+			routines::RowWiseSum(out.GetBuffer(), this->_buffer, cache.GetBuffer(), MatrixOperation::Transpose);
 	}
 
 template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::Invert(const MatrixOperation lhsOperation)
 	{
-		dm::detail::Invert(this->_buffer, lhsOperation);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Invert(this->_buffer, lhsOperation);
+		else
+			routines::Invert(this->_buffer, lhsOperation);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -505,7 +573,10 @@ template<MemorySpace ms, MathDomain md>
 	{
 		assert(nRows() == rhs.nRows());
 		assert(nCols() == rhs.nCols());
-		dm::detail::Solve(this->_buffer, rhs._buffer, lhsOperation);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Solve(this->_buffer, rhs._buffer, lhsOperation);
+		else
+			routines::Solve(this->_buffer, rhs._buffer, lhsOperation);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -514,7 +585,10 @@ template<MemorySpace ms, MathDomain md>
 		assert(nRows() == rhs.size());
 
 		MemoryTile tmp(rhs.GetBuffer());
-		dm::detail::Solve(this->buffer, tmp, lhsOperation);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Solve(this->buffer, tmp, lhsOperation);
+		else
+			routines::Solve(this->buffer, tmp, lhsOperation);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -523,7 +597,10 @@ template<MemorySpace ms, MathDomain md>
 		assert(out.GetBuffer().pointer != 0);
 		assert(out.size() == nCols());
 
-		dm::detail::ColumnWiseArgAbsMin(out.GetBuffer(), _buffer);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::ColumnWiseArgAbsMin(out.GetBuffer(), _buffer);
+		else
+			routines::ColumnWiseArgAbsMin(out.GetBuffer(), _buffer);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -541,7 +618,10 @@ template<MemorySpace ms, MathDomain md>
 		assert(out.GetBuffer().pointer != 0);
 		assert(out.size() == nCols());
 
-		dm::detail::ColumnWiseArgAbsMax(out.GetBuffer(), _buffer);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::ColumnWiseArgAbsMax(out.GetBuffer(), _buffer);
+		else
+			routines::ColumnWiseArgAbsMax(out.GetBuffer(), _buffer);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -608,7 +688,10 @@ template<MemorySpace ms, MathDomain md>
 	template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::RandomShuffleColumnsPair(ColumnWiseMatrix<ms, md>& m1, ColumnWiseMatrix<ms, md>& m2, const unsigned seed)
 	{
-		dm::detail::RandShuffleColumnsPair(m1.GetTile(), m2.GetTile(), seed);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::RandShuffleColumnsPair(m1.GetTile(), m2.GetTile(), seed);
+		else
+			routines::RandShuffleColumnsPair(m1.GetTile(), m2.GetTile(), seed);
 	}
 
 	template<MemorySpace ms, MathDomain md>
@@ -708,6 +791,9 @@ template<MemorySpace ms, MathDomain md>
 	template<MemorySpace ms, MathDomain md>
 	void ColumnWiseMatrix<ms, md>::MakeTriple(Vector<ms, MathDomain::Float>& triple, const Vector<ms, md>& x, const Vector<ms, md>& y, const Vector<ms, md>& z)
 	{
-		dm::detail::MakeTriple(triple.GetBuffer(), x.GetBuffer(), y.GetBuffer(), z.GetBuffer());
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::MakeTriple(triple.GetBuffer(), x.GetBuffer(), y.GetBuffer(), z.GetBuffer());
+		else
+			routines::MakeTriple(triple.GetBuffer(), x.GetBuffer(), y.GetBuffer(), z.GetBuffer());
 	}
 }

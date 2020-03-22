@@ -24,10 +24,10 @@ namespace clt
 		cl::GpuDoubleSparseMatrix m2(4, 6, gpuNonZeroCols, gpuNonZeroRows, 1.2345);
 		dm::DeviceManager::CheckDeviceSanity();
 
-		cl::CpuIntegerVector cpuNonZeroCols(static_cast<unsigned>(_NonZeroCols.size()));
+		cl::cudaCpu::ivec cpuNonZeroCols(static_cast<unsigned>(_NonZeroCols.size()));
 		cpuNonZeroCols.ReadFrom(_NonZeroCols);
 
-		cl::CpuIntegerVector cpuNonZeroRows(static_cast<unsigned>(_NonZeroRows.size()));
+		cl::cudaCpu::ivec cpuNonZeroRows(static_cast<unsigned>(_NonZeroRows.size()));
 		cpuNonZeroRows.ReadFrom(_NonZeroRows);
 		cl::CpuSingleSparseMatrix m3(4, 6, cpuNonZeroCols, cpuNonZeroRows, 1.2345f);
 		dm::DeviceManager::CheckDeviceSanity();

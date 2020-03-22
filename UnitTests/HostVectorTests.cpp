@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <HostVector.h>
+#include <Vector.h>
 
 #include <algorithm>
 
@@ -12,28 +12,28 @@ namespace clt
 	
 	TEST_F(HostVectorTests, Allocation)
 	{
-		cl::host::DebugSingleVector v1(10, 1.2345f);
-		cl::host::DebugDoubleVector v2(10, 1.2345);
+		cl::test::vec v1(10, 1.2345f);
+		cl::test::dvec v2(10, 1.2345);
 	}
 	
 	TEST_F(HostVectorTests, Copy)
 	{
-		cl::host::DebugSingleVector v1(10, 1.2345f);
-		cl::host::DebugSingleVector v2(v1);
+		cl::test::vec v1(10, 1.2345f);
+		cl::test::vec v2(v1);
 		ASSERT_TRUE(v1 == v2);
 		
-		cl::host::DebugDoubleVector v3(10, 1.2345);
-		cl::host::DebugDoubleVector v4(v3);
+		cl::test::dvec v3(10, 1.2345);
+		cl::test::dvec v4(v3);
 		ASSERT_TRUE(v3 == v4);
 		
-		cl::host::DebugIntegerVector v5(10, 10);
-		cl::host::DebugIntegerVector v6(v5);
+		cl::test::ivec v5(10, 10);
+		cl::test::ivec v6(v5);
 		ASSERT_TRUE(v5 == v6);
 	}
 	
 	TEST_F(HostVectorTests, Linspace)
 	{
-		cl::host::DebugFloatVector v = cl::host::DebugFloatVector::LinSpace(0.0, 1.0, 10);
+		cl::test::vec v = cl::test::vec::LinSpace(0.0, 1.0, 10);
 
 		auto _v = v.Get();
 		ASSERT_TRUE(std::fabs(_v[0] - 0.0f) <= 1e-7f);
@@ -42,7 +42,7 @@ namespace clt
 	
 	TEST_F(HostVectorTests, RandomUniform)
 	{
-		cl::host::DebugFloatVector v = cl::host::DebugFloatVector::RandomUniform(10, 1234);
+		cl::test::vec v = cl::test::vec::RandomUniform(10, 1234);
 
 		auto _v = v.Get();
 		for (const auto& iter: _v)
@@ -51,17 +51,17 @@ namespace clt
 	
 	TEST_F(HostVectorTests, RandomGaussian)
 	{
-		cl::host::DebugFloatVector v = cl::host::DebugFloatVector::RandomGaussian(10, 1234);
+		cl::test::vec v = cl::test::vec::RandomGaussian(10, 1234);
 		v.Print();
 	}
 	
 	TEST_F(HostVectorTests, RandomShuffle)
 	{
-		cl::host::DebugFloatVector v = cl::host::DebugFloatVector::RandomGaussian(10, 1234);
+		cl::test::vec v = cl::test::vec::RandomGaussian(10, 1234);
 
 		auto _v1 = v.Get();
 		
-		cl::host::DebugFloatVector::RandomShuffle(v, 1273);
+		cl::test::vec::RandomShuffle(v, 1273);
 		auto _v2 = v.Get();
 		auto _v3 = v.Get();
 		
@@ -76,13 +76,13 @@ namespace clt
 	
 	TEST_F(HostVectorTests, RandomShufflePair)
 	{
-		cl::host::DebugFloatVector u = cl::host::DebugFloatVector::RandomGaussian(10, 1234);
-		cl::host::DebugFloatVector v = cl::host::DebugFloatVector::RandomGaussian(10, 1234);
+		cl::test::vec u = cl::test::vec::RandomGaussian(10, 1234);
+		cl::test::vec v = cl::test::vec::RandomGaussian(10, 1234);
 
 		auto _u1 = v.Get();
 		auto _v1 = v.Get();
 		
-		cl::host::DebugFloatVector::RandomShufflePair(u, v, 1273);
+		cl::test::vec::RandomShufflePair(u, v, 1273);
 		auto _u2 = u.Get();
 		auto _u3 = u.Get();
 		auto _v2 = v.Get();
@@ -129,7 +129,7 @@ namespace clt
 	
 	TEST_F(HostVectorTests, EuclideanNorm)
 	{
-		cl::host::DebugFloatVector u = cl::host::DebugFloatVector::RandomGaussian(10, 1234);
+		cl::test::vec u = cl::test::vec::RandomGaussian(10, 1234);
 
 		auto _u = u.Get();
 		
