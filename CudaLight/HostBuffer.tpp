@@ -3,7 +3,6 @@
 #include <iostream>
 #include <iomanip>
 #include <assert.h>
-#include <limits>
 
 #include <Types.h>
 #include <Npy++.h>

@@ -4,11 +4,11 @@
 #include <string>
 #include <memory>
 
-#include <Buffer.h>
+#include <HostBuffer.h>
 #include <Types.h>
-#include <Vector.h>
+#include <HostVector.h>
 
-namespace cl
+namespace cl { namespace host
 {
 	template<MemorySpace memorySpace, MathDomain mathDomain>
 	class CompressedSparseRowMatrix;
@@ -17,7 +17,7 @@ namespace cl
 	class ColumnWiseMatrix : public Buffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>
 	{
 	public:
-		static_assert(memorySpace == MemorySpace::Host || memorySpace == MemorySpace::Device, "Unsupported memory space");
+		static_assert(memorySpace != MemorySpace::Host && memorySpace != MemorySpace::Device, "Unsupported memory space");
 
 		using stdType = typename Traits<mathDomain>::stdType;
 		friend class Buffer<ColumnWiseMatrix<memorySpace, mathDomain>, memorySpace, mathDomain>;
@@ -264,24 +264,26 @@ namespace cl
 	};
 	
 	#pragma region Type aliases
+		
+	typedef ColumnWiseMatrix<MemorySpace::Test, MathDomain::Int> DebugIntegerMatrix;
+	typedef ColumnWiseMatrix<MemorySpace::Test, MathDomain::Float> DebugSingleMatrix;
+	typedef DebugSingleMatrix DebugFloatMatrix;
+	typedef ColumnWiseMatrix<MemorySpace::Test, MathDomain::Double> DebugDoubleMatrix;
 
-	typedef ColumnWiseMatrix<MemorySpace::Device, MathDomain::Int> GpuIntegerMatrix;
-	typedef ColumnWiseMatrix<MemorySpace::Device, MathDomain::Float> GpuSingleMatrix;
-	typedef GpuSingleMatrix GpuFloatMatrix;
-	typedef ColumnWiseMatrix<MemorySpace::Device, MathDomain::Double> GpuDoubleMatrix;
-
-	typedef ColumnWiseMatrix<MemorySpace::Host, MathDomain::Int> CpuIntegerMatrix;
-	typedef ColumnWiseMatrix<MemorySpace::Host, MathDomain::Float> CpuSingleMatrix;
-	typedef CpuSingleVector CpuFloatMatrix;
-	typedef ColumnWiseMatrix<MemorySpace::Host, MathDomain::Double> CpuDoubleMatrix;
-
-	typedef GpuSingleMatrix mat;
-	typedef GpuDoubleMatrix dmat;
-	typedef GpuIntegerMatrix imat;
+	typedef ColumnWiseMatrix<MemorySpace::Mkl, MathDomain::Int> MklIntegerMatrix;
+	typedef ColumnWiseMatrix<MemorySpace::Mkl, MathDomain::Float> MklSingleMatrix;
+	typedef MklSingleMatrix MklFloatMatrix;
+	typedef ColumnWiseMatrix<MemorySpace::Mkl, MathDomain::Double> MklDoubleMatrix;
 
 	#pragma endregion
-}
+}}
 
-#include <ColumnWiseMatrix.tpp>
+namespace cl { namespace mkl {
+	typedef cl::host::MklSingleMatrix mat;
+	typedef cl::host::MklDoubleMatrix dmat;
+	typedef cl::host::MklIntegerMatrix imat;
+}}
+
+#include <HostColumnWiseMatrix.tpp>
 
 

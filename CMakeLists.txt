@@ -63,6 +63,8 @@ create_library(
         HostRoutines/BlasWrappers.cpp
         HostRoutines/Extra.cpp
 
+        HostRoutines/ForgeHelpers.cpp
+
         ${MKL_WRAPPERS_SOURCES}
 
     PUBLIC_INCLUDE_DIRECTORIES
@@ -100,6 +102,7 @@ create_test(
         ${MKL_TEST_SOURCE}
 
         UnitTests/HostVectorTests.cpp
+        UnitTests/HostMatrixTests.cpp
         UnitTests/HostBlasTests.cpp
         UnitTests/HostExtraRoutinesTests.cpp
         UnitTests/HostSerializationTests.cpp

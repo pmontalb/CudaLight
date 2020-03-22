@@ -17,6 +17,7 @@ namespace cl
 	class Vector : public Buffer<Vector<memorySpace, mathDomain>, memorySpace, mathDomain>
 	{
 	public:
+		static_assert(memorySpace == MemorySpace::Host || memorySpace == MemorySpace::Device, "Unsupported memory space");
 		using stdType = typename Traits<mathDomain>::stdType;
 
 		friend class Buffer<Vector<memorySpace, mathDomain>, memorySpace, mathDomain>;

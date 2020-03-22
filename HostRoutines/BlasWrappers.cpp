@@ -1048,7 +1048,8 @@ namespace cl { namespace routines {
 	*/
 	void RowWiseSum(MemoryBuffer& x, const MemoryTile& A, MemoryBuffer& cache, const MatrixOperation aOperation)
 	{
-		if (cache.size != A.nCols)
+		auto dim = aOperation == MatrixOperation::None ? A.nCols : A.nRows;
+		if (cache.size != dim)
 		{
 			if (cache.pointer != 0)
 				Free(cache);
@@ -1057,7 +1058,7 @@ namespace cl { namespace routines {
 
 		if (cache.pointer == 0)
 		{
-			cache = MemoryBuffer(cache.pointer, A.nCols, A.memorySpace, A.mathDomain);
+			cache = MemoryBuffer(cache.pointer, dim, A.memorySpace, A.mathDomain);
 			Alloc(cache);
 			Initialize(cache, 1.0);
 		}

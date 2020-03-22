@@ -107,6 +107,7 @@
 
 #else
 
+	#include <cmath>
 	namespace mkl
 	{
 	#include <mkl.h>
@@ -208,25 +209,23 @@
 		template<>
 		inline void ElementwiseProduct<MathDomain::Float>(MemoryBuffer& z, const MemoryBuffer& x, const MemoryBuffer& y, const double alpha)
 		{
-			mkl::cblas_ssbmv(columnMajorLayout, mkl::CBLAS_UPLO::CblasUpper,
-							 static_cast<int>(z.size), 0,  // Just the diagonal; 0 super-diagonal bands
-							 static_cast<float>(alpha),
-							 reinterpret_cast<float*>(x.pointer), 1,
-							 reinterpret_cast<float*>(y.pointer), 1,
-							 0.0f,
-							 reinterpret_cast<float*>(z.pointer), 1);
+			mkl::vsMul(static_cast<int>(z.size),
+					   reinterpret_cast<float*>(x.pointer),
+					   reinterpret_cast<float*>(y.pointer),
+					   reinterpret_cast<float*>(z.pointer));
+			if (std::fabs(alpha - 1.0) > 1e-7)
+				Scale<MathDomain::Float>(z, alpha);
 		}
 
 		template<>
 		inline void ElementwiseProduct<MathDomain::Double>(MemoryBuffer& z, const MemoryBuffer& x, const MemoryBuffer& y, const double alpha)
 		{
-			mkl::cblas_dsbmv(columnMajorLayout, mkl::CBLAS_UPLO::CblasUpper,
-							 static_cast<int>(z.size), 0,  // Just the diagonal; 0 super-diagonal bands
-							 alpha,
-							 reinterpret_cast<double*>(x.pointer), 1,
-							 reinterpret_cast<double*>(y.pointer), 1,
-							 0.0,
-							 reinterpret_cast<double*>(z.pointer), 1);
+			mkl::vdMul(static_cast<int>(z.size),
+					   reinterpret_cast<double*>(x.pointer),
+					   reinterpret_cast<double*>(y.pointer),
+					   reinterpret_cast<double*>(z.pointer));
+			if (std::fabs(alpha - 1.0) > 1e-7)
+				Scale<MathDomain::Float>(z, alpha);
 		}
 
 		template<MathDomain md>
@@ -468,15 +467,17 @@
 		inline void ColumnWiseArgAbsMin<MathDomain::Float>(MemoryBuffer& argMin, const MemoryTile& A)
 		{
 			auto* argMinPtr = reinterpret_cast<int*>(argMin.pointer);
+			// 1 added for compatibility
 			for (size_t j = 0; j < A.nCols; ++j)
-				argMinPtr[j] = static_cast<int>(mkl::cblas_isamin(static_cast<int>(A.nRows), reinterpret_cast<float*>(A.pointer + j * A.nRows * A.ElementarySize()), 1));
+				argMinPtr[j] = 1 + static_cast<int>(mkl::cblas_isamin(static_cast<int>(A.nRows), reinterpret_cast<float*>(A.pointer + j * A.nRows * A.ElementarySize()), 1));
 		}
 		template<>
 		inline void ColumnWiseArgAbsMin<MathDomain::Double>(MemoryBuffer& argMin, const MemoryTile& A)
 		{
+			// 1 added for compatibility
 			auto* argMinPtr = reinterpret_cast<int*>(argMin.pointer);
 			for (size_t j = 0; j < A.nCols; ++j)
-				argMinPtr[j] = static_cast<int>(mkl::cblas_idamin(static_cast<int>(A.nRows), reinterpret_cast<double*>(A.pointer + j * A.nRows * A.ElementarySize()), 1));
+				argMinPtr[j] = 1 + static_cast<int>(mkl::cblas_idamin(static_cast<int>(A.nRows), reinterpret_cast<double*>(A.pointer + j * A.nRows * A.ElementarySize()), 1));
 		}
 
 		template<MathDomain md>
@@ -499,16 +500,18 @@
 		template<>
 		inline void ColumnWiseArgAbsMax<MathDomain::Float>(MemoryBuffer& argMax, const MemoryTile& A)
 		{
+			// 1 added for compatibility
 			auto* argMaxPtr = reinterpret_cast<int*>(argMax.pointer);
 			for (size_t j = 0; j < A.nCols; ++j)
-				argMaxPtr[j] = static_cast<int>(mkl::cblas_isamax(static_cast<int>(A.nRows), reinterpret_cast<float*>(A.pointer + j * A.nRows * A.ElementarySize()), 1));
+				argMaxPtr[j] = 1 + static_cast<int>(mkl::cblas_isamax(static_cast<int>(A.nRows), reinterpret_cast<float*>(A.pointer + j * A.nRows * A.ElementarySize()), 1));
 		}
 		template<>
 		inline void ColumnWiseArgAbsMax<MathDomain::Double>(MemoryBuffer& argMax, const MemoryTile& A)
 		{
+			// 1 added for compatibility
 			auto* argMaxPtr = reinterpret_cast<int*>(argMax.pointer);
 			for (size_t j = 0; j < A.nCols; ++j)
-				argMaxPtr[j] = static_cast<int>(mkl::cblas_idamax(static_cast<int>(A.nRows), reinterpret_cast<double*>(A.pointer + j * A.nRows * A.ElementarySize()), 1));
+				argMaxPtr[j] = 1 + static_cast<int>(mkl::cblas_idamax(static_cast<int>(A.nRows), reinterpret_cast<double*>(A.pointer + j * A.nRows * A.ElementarySize()), 1));
 		}
 
 		// norm = ||x||_2
