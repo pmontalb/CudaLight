@@ -235,7 +235,7 @@ namespace cl
 
 		static ColumnWiseMatrix MatrixFromInputStream(std::istream& is);
 		
-		static ColumnWiseMatrix MatrixFromBinaryFile(const std::string& fileName, const bool compressed = false, const bool useMemoryMapping = false);
+		static ColumnWiseMatrix MatrixFromBinaryFile(const std::string& fileName, const bool transposed = false, const bool compressed = false, const bool useMemoryMapping = false);
 		
 		static void MatrixFromBinaryFile(ColumnWiseMatrix& out, const std::string& fileName, const bool compressed = false, const std::string mode = "w");
 		

@@ -94,7 +94,7 @@ namespace clt
 		m1.LinSpace(0.0f, 1.0f);
 		m1.ToBinaryFile("m1.npz", true);
 		
-		cl::mat m2 = cl::mat::MatrixFromBinaryFile("m1.npz", true);
+		cl::mat m2 = cl::mat::MatrixFromBinaryFile("m1.npz", false, true);
 		m1.Print("m1=");
 		m2.Print("m2=");
 		

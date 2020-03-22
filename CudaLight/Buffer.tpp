@@ -706,9 +706,9 @@ namespace cl
 		}
 		
 		if (!compressed)
-			npypp::Save(fileName, matTranspose, { static_cast<size_t>(nCols), static_cast<size_t>(nRows) }, mode);
+			npypp::Save(fileName, matTranspose, { static_cast<size_t>(nRows), static_cast<size_t>(nCols) }, mode);
 		else
-			npypp::SaveCompressed(fileName, matTranspose, { static_cast<size_t>(nCols), static_cast<size_t>(nRows) }, mode);
+			npypp::SaveCompressed(fileName, matTranspose, { static_cast<size_t>(nRows), static_cast<size_t>(nCols) }, mode);
 	}
 
 	template<typename T>

@@ -722,11 +722,12 @@ template<MemorySpace ms, MathDomain md>
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::MatrixFromBinaryFile(const std::string& fileName, const bool compressed, const bool useMemoryMapping)
+	ColumnWiseMatrix<ms, md> ColumnWiseMatrix<ms, md>::MatrixFromBinaryFile(const std::string& fileName, const bool transposed, const bool compressed, const bool useMemoryMapping)
 	{
 		std::vector<typename Vector<ms, md>::stdType> _mat {};
 		unsigned nRows = 0, nCols = 0;
-		cl::MatrixFromBinaryFile(_mat, nRows, nCols, fileName, false, compressed, useMemoryMapping);
+		cl::MatrixFromBinaryFile(_mat, nRows, nCols, fileName, transposed, compressed, useMemoryMapping);
+		//std::swap(nRows, nCols);
 
 		ColumnWiseMatrix<ms, md> ret(nRows, nCols);
 		ret.ReadFrom(_mat);
