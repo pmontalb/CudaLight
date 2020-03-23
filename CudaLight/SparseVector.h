@@ -80,21 +80,75 @@ namespace cl
 
 	#pragma region Type aliases
 
-	typedef SparseVector<MemorySpace::Device, MathDomain::Int> GpuIntegerSparseVector;
-	typedef SparseVector<MemorySpace::Device, MathDomain::Float> GpuSingleSparseVector;
-	typedef GpuSingleSparseVector GpuFloatSparseVector;
-	typedef SparseVector<MemorySpace::Device, MathDomain::Double> GpuDoubleSparseVector;
+	using GpuIntegerSparseVector = SparseVector<MemorySpace::Device, MathDomain::Int>;
+	using GpuSingleSparseVector = SparseVector<MemorySpace::Device, MathDomain::Float>;
+	using GpuFloatSparseVector = GpuSingleSparseVector;
+	using GpuDoubleSparseVector = SparseVector<MemorySpace::Device, MathDomain::Double>;
 
-	typedef SparseVector<MemorySpace::Host, MathDomain::Int> CpuIntegerSparseVector;
-	typedef SparseVector<MemorySpace::Host, MathDomain::Float> CpuSingleSparseVector;
-	typedef CpuSingleSparseVector CpuFloatSparseVector;
-	typedef SparseVector<MemorySpace::Host, MathDomain::Double> CpuDoubleSparseVector;
+	using CudaCpuIntegerSparseVector = SparseVector<MemorySpace::Host, MathDomain::Int>;
+	using CudaCpuSingleSparseVector = SparseVector<MemorySpace::Host, MathDomain::Float>;
+	using CudaCpuFloatSparseVector = CudaCpuSingleSparseVector;
+	using CudaCpuDoubleSparseVector = SparseVector<MemorySpace::Host, MathDomain::Double>;
 
-	typedef GpuSingleSparseVector svec;
-	typedef GpuDoubleSparseVector dsvec;
-	typedef GpuIntegerSparseVector isvec;
+	using TestIntegerSparseVector = SparseVector<MemorySpace::Test, MathDomain::Int>;
+	using TestSingleSparseVector = SparseVector<MemorySpace::Test, MathDomain::Float>;
+	using TestFloatSparseVector =TestSingleSparseVector;
+	using TestDoubleSparseVector = SparseVector<MemorySpace::Test, MathDomain::Double>;
+
+	using MklIntegerSparseVector = SparseVector<MemorySpace::Mkl, MathDomain::Int>;
+	using MklSingleSparseVector = SparseVector<MemorySpace::Mkl, MathDomain::Float>;
+	using MklFloatSparseVector = MklSingleSparseVector;
+	using MklDoubleSparseVector = SparseVector<MemorySpace::Mkl, MathDomain::Double>;
+
+	namespace gpu
+	{
+		using svec = cl::GpuSingleSparseVector;
+		using dsvec = cl::GpuDoubleSparseVector;
+		using isvec = cl::GpuIntegerSparseVector;
+	}
+
+	// by default we're gonna be using GPU
+	using svec = gpu::svec;
+	using dsvec = gpu::dsvec;
+	using isvec = gpu::isvec;
+
+	namespace cudaCpu
+	{
+		using svec = cl::CudaCpuSingleSparseVector;
+		using sdvec = cl::CudaCpuDoubleSparseVector;
+		using isvec = cl::CudaCpuIntegerSparseVector;
+	}
+
+	namespace mkl
+	{
+		using svec = cl::MklSingleSparseVector;
+		using dsvec = cl::MklDoubleSparseVector;
+		using isvec = cl::MklIntegerSparseVector;
+	}
+
+	namespace test
+	{
+		using svec = cl::TestSingleSparseVector;
+		using dsvec = cl::TestDoubleSparseVector;
+		using isvec = cl::TestIntegerSparseVector;
+	}
 
 	#pragma endregion
+}
+
+// give possibility of avoiding writing cl::
+namespace mkl
+{
+	using svec = cl::mkl::svec;
+	using dsvec = cl::mkl::dsvec;
+	using isvec = cl::mkl::isvec;
+}
+
+namespace test
+{
+	using svec = cl::test::svec;
+	using dsvec = cl::test::dsvec;
+	using isvec = cl::test::isvec;
 }
 
 #include <SparseVector.tpp>

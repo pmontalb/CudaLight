@@ -53,6 +53,7 @@ if (MKL_FOUND)
                             UnitTests/MklMatrixTests.cpp
                             UnitTests/MklTensorTests.cpp
                             UnitTests/MklBlasTests.cpp
+                            UnitTests/MklSparseVectorTests.cpp
                             UnitTests/MklExtraRoutinesTests.cpp)
 endif()
 
@@ -64,6 +65,7 @@ create_library(
         HostRoutines/MemoryManager.cpp
 
         HostRoutines/BlasWrappers.cpp
+        HostRoutines/SparseWrappers.cpp
         HostRoutines/Extra.cpp
 
         HostRoutines/ForgeHelpers.cpp

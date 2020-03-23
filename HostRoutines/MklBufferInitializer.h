@@ -8,44 +8,19 @@
 	namespace cl { namespace routines { namespace mkr {
 
 		template<MathDomain md>
-		void Copy(MemoryBuffer& dest, const MemoryBuffer& source);
-
-		template<>
-		inline void Copy<MathDomain::Float>(MemoryBuffer& dest, const MemoryBuffer& source)
-		{
-			throw NotImplementedException();
-		}
-		template<>
-		inline void Copy<MathDomain::Double>(MemoryBuffer& dest, const MemoryBuffer& source)
+		void Copy(MemoryBuffer&, const MemoryBuffer&)
 		{
 			throw NotImplementedException();
 		}
 
 		template<MathDomain md>
-		static void RandUniform(MemoryBuffer& buf, const unsigned seed = 1234);
-
-		template<>
-		inline void RandUniform<MathDomain::Float>(MemoryBuffer& buf, const unsigned seed)
-		{
-			throw NotImplementedException();
-		}
-		template<>
-		inline void RandUniform<MathDomain::Double>(MemoryBuffer& buf, const unsigned seed)
+		static void RandUniform(MemoryBuffer&, const unsigned seed)
 		{
 			throw NotImplementedException();
 		}
 
 		template<MathDomain md>
-		static void RandNormal(MemoryBuffer& buf, const unsigned seed = 1234);
-
-		template<>
-		inline void RandNormal<MathDomain::Double>(MemoryBuffer& buf, const unsigned seed)
-		{
-			throw NotImplementedException();
-		}
-
-		template<>
-		inline void RandNormal<MathDomain::Float>(MemoryBuffer& buf, const unsigned seed)
+		static void RandNormal(MemoryBuffer&, const unsigned)
 		{
 			throw NotImplementedException();
 		}

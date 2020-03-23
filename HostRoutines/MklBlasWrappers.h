@@ -9,98 +9,98 @@
 #ifndef USE_MKL
 
 	template<MathDomain md>
-	static void Add(MemoryBuffer& z, const MemoryBuffer& x, const MemoryBuffer& y, const double alpha)
+	static void Add(MemoryBuffer&, const MemoryBuffer&, const MemoryBuffer&, const double)
 	{
 		throw NotImplementedException();
 	}
 
 	template<MathDomain md>
-	static void AddEqual(MemoryBuffer& z, const MemoryBuffer& x, const double alpha)
+	static void AddEqual(MemoryBuffer&, const MemoryBuffer&, const double)
 	{
 		throw NotImplementedException();
 	}
 
 	template<MathDomain md>
-	static void AddEqualMatrix(MemoryTile& A, const MemoryTile& B, const MatrixOperation aOperation, const MatrixOperation bOperation, const double alpha, const double beta)
+	static void AddEqualMatrix(MemoryTile&, const MemoryTile&, const MatrixOperation, const MatrixOperation, const double, const double)
 	{
 		throw NotImplementedException();
 	}
 
 	template<MathDomain md>
-	static void Scale(MemoryBuffer& z, const double alpha)
+	static void Scale(MemoryBuffer&, const double)
 	{
 		throw NotImplementedException();
 	}
 
 	template<MathDomain md>
-	static void ScaleColumns(MemoryTile& z, const MemoryBuffer& alpha)
+	static void ScaleColumns(MemoryTile&, const MemoryBuffer&)
 	{
 		throw NotImplementedException();
 	}
 
 	template<MathDomain md>
-	static void ElementwiseProduct(MemoryBuffer& z, const MemoryBuffer& x, const MemoryBuffer& y, const double alpha)
+	static void ElementwiseProduct(MemoryBuffer&, const MemoryBuffer&, const MemoryBuffer&, const double)
 	{
 		throw NotImplementedException();
 	}
 
 	template<MathDomain md>
-	static void SubMultiply(MemoryTile& A, const MemoryTile& B, const MemoryTile& C, const unsigned nRowsB, const unsigned nColsB, const unsigned nColsC, const MatrixOperation bOperation, const MatrixOperation cOperation, const double alpha, const double beta)
+	static void SubMultiply(MemoryTile&, const MemoryTile&, const MemoryTile&, const unsigned, const unsigned, const unsigned, const MatrixOperation, const MatrixOperation, const double, const double)
 	{
 		throw NotImplementedException();
 	}
 
 	template<MathDomain md>
-	static void BatchedMultiply(MemoryCube& A, const MemoryCube& B, const MemoryCube& C, const unsigned strideB, const unsigned strideC, const MatrixOperation bOperation, const MatrixOperation cOperation, const double alpha, const double beta)
+	static void BatchedMultiply(MemoryCube&, const MemoryCube&, const MemoryCube&, const unsigned, const unsigned, const MatrixOperation, const MatrixOperation, const double, const double)
 	{
 		throw NotImplementedException();
 	}
 
 	template<MathDomain md>
-	static void Dot(MemoryBuffer& y, const MemoryTile& A, const MemoryBuffer& x, const MatrixOperation aOperation, const double alpha = 1.0, const double beta = 0.0)
+	static void Dot(MemoryBuffer&, const MemoryTile&, const MemoryBuffer&, const MatrixOperation, const double alpha, const double beta)
 	{
 		throw NotImplementedException();
 	}
 
 	template<MathDomain md>
-	static void KroneckerProduct(MemoryTile& A, const MemoryBuffer& x, const MemoryBuffer& y, const double alpha)
+	static void KroneckerProduct(MemoryTile&, const MemoryBuffer&, const MemoryBuffer&, const double)
 	{
 		throw NotImplementedException();
 	}
 
 	template<MathDomain md>
-	static void Solve(const MemoryTile& A, MemoryTile& B, const MatrixOperation aOperation)
+	static void Solve(const MemoryTile&, MemoryTile&, const MatrixOperation)
 	{
 		throw NotImplementedException();
 	}
 
 	template<MathDomain md>
-	static void ArgAbsMin(int& argMin, const MemoryBuffer& x)
+	static void ArgAbsMin(int&, const MemoryBuffer&)
 	{
 		throw NotImplementedException();
 	}
 
 	template<MathDomain md>
-	static void ColumnWiseArgAbsMin(MemoryBuffer& argMin, const MemoryTile& A)
+	static void ColumnWiseArgAbsMin(MemoryBuffer&, const MemoryTile&)
 	{
 		throw NotImplementedException();
 	}
 
 	template<MathDomain md>
-	static void ArgAbsMax(int& argMax, const MemoryBuffer& x)
+	static void ArgAbsMax(int&, const MemoryBuffer&)
 	{
 		throw NotImplementedException();
 	}
 
 	template<MathDomain md>
-	static void ColumnWiseArgAbsMax(MemoryBuffer& argMax, const MemoryTile& A)
+	static void ColumnWiseArgAbsMax(MemoryBuffer&, const MemoryTile&)
 	{
 		throw NotImplementedException();
 	}
 
 	// norm = ||x||_2
 	template<MathDomain md>
-	static void EuclideanNorm(double& norm, const MemoryBuffer& z)
+	static void EuclideanNorm(double&, const MemoryBuffer&)
 	{
 		throw NotImplementedException();
 	}
@@ -110,7 +110,7 @@
 	#include <cmath>
 	namespace mkl
 	{
-	#include <mkl.h>
+		#include <mkl.h>
 	}
 
 	namespace cl { namespace routines { namespace mkr {

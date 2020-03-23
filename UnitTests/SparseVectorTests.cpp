@@ -21,10 +21,10 @@ namespace clt
 
 		cl::cudaCpu::ivec cpuIndices(static_cast<unsigned>(indices.size()));
 		cpuIndices.ReadFrom(indices);
-		cl::CpuSingleSparseVector v3(10, cpuIndices, 1.2345f);
+		cl::CudaCpuSingleSparseVector v3(10, cpuIndices, 1.2345f);
 		dm::DeviceManager::CheckDeviceSanity();
 
-		cl::CpuDoubleSparseVector v4(10, cpuIndices, 1.2345);
+		cl::CudaCpuDoubleSparseVector v4(10, cpuIndices, 1.2345);
 		dm::DeviceManager::CheckDeviceSanity();
 	}
 

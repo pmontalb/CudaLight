@@ -410,7 +410,6 @@ namespace clt
 	{
 		cl::mkl::ten T(64, 128, 32);
 
-
 		double x = 0.0;
 		for (auto& matrix: T.matrices)
 			matrix->Set(static_cast<float>(++x));

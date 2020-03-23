@@ -1,5 +1,7 @@
 #pragma once
 
+#include <HostRoutines/SparseWrappers.h>
+
 namespace cl
 {
 	template< MemorySpace ms, MathDomain md>
@@ -24,7 +26,10 @@ namespace cl
 	SparseVector<ms, md>::SparseVector(const unsigned size, const Vector<ms, MathDomain::Int>& nonZeroIndices_, const typename Traits<md>::stdType value)
 		: SparseVector(size, nonZeroIndices_)
 	{
-		dm::detail::Initialize(values.GetBuffer(), static_cast<double>(value));
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Initialize(values.GetBuffer(), static_cast<double>(value));
+		else
+			routines::Initialize(values.GetBuffer(), static_cast<double>(value));
 	}
 
 	template< MemorySpace ms, MathDomain md>
@@ -43,7 +48,10 @@ namespace cl
 	SparseVector<ms, md>::SparseVector(const unsigned size, const unsigned nNonZeros, const typename Traits<md>::stdType value)
 		: SparseVector(size, nNonZeros)
 	{
-		dm::detail::Initialize(static_cast<MemoryBuffer>(_buffer), value);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Initialize(_buffer, static_cast<double>(value));
+		else
+			routines::Initialize(_buffer, static_cast<double>(value));
 	}
 
 	template< MemorySpace ms, MathDomain md>
@@ -67,7 +75,7 @@ namespace cl
 		Alloc(values._buffer);
 		values.ReadFrom(nonZeroValues);
 
-		nonZeroIndices._buffer = MemoryBuffer(0, static_cast<unsigned>(_nonZeroIndices.size()), ms, md);
+		nonZeroIndices._buffer = MemoryBuffer(0, static_cast<unsigned>(_nonZeroIndices.size()), ms, MathDomain::Int);
 		Alloc(this->nonZeroIndices._buffer);
 		nonZeroIndices.ReadFrom(_nonZeroIndices);
 
@@ -119,7 +127,11 @@ namespace cl
 		assert(_buffer.pointer != 0);
 
 		Vector<ms, md> ret(rhs.size());
-		dm::detail::SparseAdd(ret._buffer, _buffer, rhs._buffer, 1.0);
+
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::SparseAdd(ret._buffer, _buffer, rhs._buffer, 1.0);
+		else
+			routines::SparseAdd(ret._buffer, _buffer, rhs._buffer, 1.0);
 		return ret;
 	}
 
@@ -131,7 +143,10 @@ namespace cl
 		assert(_buffer.pointer != 0);
 
 		Vector<ms, md> ret(rhs.size());
-		dm::detail::SparseSubtract(ret._buffer, _buffer, rhs._buffer);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::SparseSubtract(ret._buffer, _buffer, rhs._buffer);
+		else
+			routines::SparseSubtract(ret._buffer, _buffer, rhs._buffer);
 		return ret;
 	}
 
@@ -143,7 +158,10 @@ namespace cl
 		assert(_buffer.pointer != 0);
 
 		Vector<ms, md> ret(rhs.size());
-		dm::detail::SparseAdd(ret._buffer, _buffer, rhs._buffer, alpha);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::SparseAdd(ret._buffer, _buffer, rhs._buffer, alpha);
+		else
+			routines::SparseAdd(ret._buffer, _buffer, rhs._buffer, alpha);
 		return ret;
 	}
 

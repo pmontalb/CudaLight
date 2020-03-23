@@ -7,12 +7,12 @@
 
 	namespace cl { namespace routines { namespace mkr
 	{
-		static inline void Alloc(MemoryBuffer &buf)
+		static inline void Alloc(MemoryBuffer &)
 		{
 			throw NotImplementedException();
 		}
 
-		static inline void Free(MemoryBuffer &buf)
+		static inline void Free(MemoryBuffer &)
 		{
 			throw NotImplementedException();
 		}
@@ -22,7 +22,7 @@
 
 	namespace mkl
 	{
-	#include <mkl.h>
+		#include <mkl.h>
 	}
 
 	namespace cl { namespace routines { namespace mkr
