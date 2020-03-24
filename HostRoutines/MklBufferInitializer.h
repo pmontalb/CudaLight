@@ -41,18 +41,12 @@
 		template<>
 		inline void Copy<MathDomain::Float>(MemoryBuffer& dest, const MemoryBuffer& source)
 		{
-			static constexpr int incx = 1;
-			static constexpr int incy = 1;
-			const auto sz = static_cast<int>(dest.size);
-			mkl::scopy(&sz, reinterpret_cast<const float*>(source.pointer), &incx, reinterpret_cast<float*>(dest.pointer), &incy);
+			mkl::cblas_scopy(static_cast<int>(dest.size), reinterpret_cast<const float*>(source.pointer), 1, reinterpret_cast<float*>(dest.pointer), 1);
 		}
 		template<>
 		inline void Copy<MathDomain::Double>(MemoryBuffer& dest, const MemoryBuffer& source)
 		{
-			static constexpr int incx = 1;
-			static constexpr int incy = 1;
-			const auto sz = static_cast<int>(dest.size);
-			mkl::dcopy(&sz, reinterpret_cast<const double*>(source.pointer), &incx, reinterpret_cast<double*>(dest.pointer), &incy);
+			mkl::cblas_dcopy(static_cast<int>(dest.size), reinterpret_cast<const double*>(source.pointer), 1, reinterpret_cast<double*>(dest.pointer), 1);
 		}
 
 		template<MathDomain md>

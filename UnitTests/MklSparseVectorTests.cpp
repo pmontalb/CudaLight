@@ -17,7 +17,7 @@ namespace clt
 		cl::MklDoubleSparseVector v2(10, gpuIndices, 1.2345);
 	}
 
-	TEST_F(MklSparseVectorTests,Copy)
+	TEST_F(MklSparseVectorTests, Copy)
 	{
 		std::vector<int> indices = { 0, 5 };
 		cl::mkl::ivec gpuIndices(static_cast<unsigned>(indices.size()));
@@ -39,7 +39,7 @@ namespace clt
 		ASSERT_TRUE(v5 == v6);
 	}
 
-	TEST_F(MklSparseVectorTests,ReadFromDense)
+	TEST_F(MklSparseVectorTests, ReadFromDense)
 	{
 		std::vector<float> denseVector(50);
 		denseVector[10] = 2.7182f;

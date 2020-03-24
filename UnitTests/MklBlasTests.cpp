@@ -297,10 +297,8 @@ namespace clt
 	{
 		cl::mkl::mat v = GetInvertibleMatrix(128);
 
-
 		cl::mkl::mat vMinus1(v);
 		vMinus1.Invert();
-
 
 		auto eye = v.Multiply(vMinus1);
 		auto _eye = eye.Get();

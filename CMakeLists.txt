@@ -54,6 +54,8 @@ if (MKL_FOUND)
                             UnitTests/MklTensorTests.cpp
                             UnitTests/MklBlasTests.cpp
                             UnitTests/MklSparseVectorTests.cpp
+                            UnitTests/MklSparseMatrixTests.cpp
+                            UnitTests/MklSparseTests.cpp
                             UnitTests/MklExtraRoutinesTests.cpp)
 endif()
 

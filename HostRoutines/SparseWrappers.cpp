@@ -4,6 +4,106 @@
 #include "Common.h"
 
 namespace cl { namespace routines {
+	void AllocateCsrHandle(SparseMemoryTile& A)
+	{
+		switch (A.mathDomain)
+		{
+			case MathDomain::Float:
+			{
+				switch (A.memorySpace)
+				{
+					case MemorySpace::Mkl:
+						mkr::AllocateCsrHandle<MathDomain::Float>(A);
+						break;
+					case MemorySpace::Test:
+						break;
+					default:
+						throw NotImplementedException();
+				}
+				break;
+			}
+			case MathDomain::Double:
+			{
+				switch (A.memorySpace)
+				{
+					case MemorySpace::Mkl:
+						mkr::AllocateCsrHandle<MathDomain::Double>(A);
+						break;
+					case MemorySpace::Test:
+						break;
+					default:
+						throw NotImplementedException();
+				}
+				break;
+			}
+			case MathDomain::Int:
+			{
+				switch (A.memorySpace)
+				{
+					case MemorySpace::Mkl:
+						throw NotImplementedException();
+					case MemorySpace::Test:
+						break;
+					default:
+						throw NotImplementedException();
+				}
+				break;
+			}
+			default:
+				throw NotImplementedException();
+		}
+	}
+
+	extern void DestroyCsrHandle(SparseMemoryTile& A)
+	{
+		switch (A.mathDomain)
+		{
+			case MathDomain::Float:
+			{
+				switch (A.memorySpace)
+				{
+					case MemorySpace::Mkl:
+						mkr::DestroyCsrHandle<MathDomain::Float>(A);
+						break;
+					case MemorySpace::Test:
+						break;
+					default:
+						throw NotImplementedException();
+				}
+				break;
+			}
+			case MathDomain::Double:
+			{
+				switch (A.memorySpace)
+				{
+					case MemorySpace::Mkl:
+						mkr::DestroyCsrHandle<MathDomain::Double>(A);
+						break;
+					case MemorySpace::Test:
+						break;
+					default:
+						throw NotImplementedException();
+				}
+				break;
+			}
+			case MathDomain::Int:
+			{
+				switch (A.memorySpace)
+				{
+					case MemorySpace::Mkl:
+						throw NotImplementedException();
+					case MemorySpace::Test:
+						break;
+					default:
+						throw NotImplementedException();
+				}
+				break;
+			}
+			default:
+				throw NotImplementedException();
+		}
+	}
+
 	/**
 	* zDense = alpha * xSparse + yDense
 	*/
@@ -101,7 +201,7 @@ namespace cl { namespace routines {
 	/**
 	*	yDense = ASparse * xDense
 	*/
-	void SparseDot(MemoryBuffer& y, const SparseMemoryTile& A, const MemoryBuffer& x, const MatrixOperation aOperation, const double alpha, const double beta)
+	void SparseDot(MemoryBuffer& y, SparseMemoryTile& A, const MemoryBuffer& x, const MatrixOperation aOperation, const double alpha, const double beta)
 	{
 		switch (A.mathDomain)
 		{
@@ -142,7 +242,6 @@ namespace cl { namespace routines {
 					default:
 						throw NotImplementedException();
 				}
-				break;
 			}
 			default:
 				throw NotImplementedException();
@@ -152,7 +251,7 @@ namespace cl { namespace routines {
 	/**
 	*	ADense = BSparse * CDense
 	*/
-	void SparseMultiply(MemoryTile& A, const SparseMemoryTile& B, const MemoryTile& C, const MatrixOperation bOperation, const double alpha)
+	void SparseMultiply(MemoryTile& A, SparseMemoryTile& B, const MemoryTile& C, const MatrixOperation bOperation, const double alpha)
 	{
 		switch (A.mathDomain)
 		{
@@ -193,7 +292,6 @@ namespace cl { namespace routines {
 					default:
 						throw NotImplementedException();
 				}
-				break;
 			}
 			default:
 				throw NotImplementedException();

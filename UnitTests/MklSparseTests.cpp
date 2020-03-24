@@ -1,0 +1,62 @@
+#include <gtest/gtest.h>
+
+#include <SparseVector.h>
+#include <CompressedSparseRowMatrix.h>
+
+namespace clt
+{
+	class MklSparseTests : public ::testing::Test
+	{
+	};
+
+	TEST_F(MklSparseTests, Add)
+	{
+		std::vector<int> _indices = { 0, 5, 10, 50, 75 };
+		mkl::ivec indices(static_cast<unsigned>(_indices.size()));
+		indices.ReadFrom(_indices);
+
+		mkl::svec v1(100, indices, 1.2345f);
+		auto _v1 = v1.Get();
+
+		mkl::vec v2 = mkl::vec::RandomUniform(v1.denseSize, 1234);
+		
+		auto _v2 = v2.Get();
+
+		auto v3 = v1 + v2;
+		auto _v3 = v3.Get();
+
+		for (size_t i = 0; i < v1.size(); ++i)
+			ASSERT_TRUE(std::fabs(_v3[i] - _v1[i] - _v2[i]) <= 1.5e-7f) << i << " | " << std::fabs(_v3[i] - _v1[i] - _v2[i]);
+	}
+
+	TEST_F(MklSparseTests, Multiply)
+	{
+		std::vector<int> _NonZeroCols = { 0, 1, 1, 3, 2, 3, 4, 5 };
+		mkl::ivec gpuNonZeroCols(static_cast<unsigned>(_NonZeroCols.size()));
+		gpuNonZeroCols.ReadFrom(_NonZeroCols);
+
+		std::vector<int> _NonZeroRows = { 0, 2, 4, 7, 8 };
+		mkl::ivec gpuNonZeroRows(static_cast<unsigned>(_NonZeroRows.size()));
+		gpuNonZeroRows.ReadFrom(_NonZeroRows);
+
+		mkl::smat m1(4, 6, gpuNonZeroCols, gpuNonZeroRows, 1.2345f);
+		auto _m1 = m1.Get();
+
+		mkl::mat m2(6, 8, 9.8765f);
+		auto _m2 = m2.Get();
+
+		auto m3 = m1 * m2;
+		auto _m3 = m3.Get();
+
+		for (size_t i = 0; i < m1.nRows(); ++i)
+		{
+			for (size_t j = 0; j < m2.nCols(); ++j)
+			{
+				double m1m2 = 0.0;
+				for (size_t k = 0; k < m1.nCols(); ++k)
+					m1m2 += static_cast<double>(_m1[i + k * m1.nRows()] * _m2[k + j * m2.nRows()]);
+				ASSERT_TRUE(std::fabs(m1m2 - static_cast<double>(_m3[i + j * m1.nRows()])) <= 5e-5) << i << "|" << j << "|" << m1m2 << "|" << _m3[i + j * m1.nRows()];
+			}
+		}
+	}
+}

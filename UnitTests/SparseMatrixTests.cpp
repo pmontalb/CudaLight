@@ -29,10 +29,10 @@ namespace clt
 
 		cl::cudaCpu::ivec cpuNonZeroRows(static_cast<unsigned>(_NonZeroRows.size()));
 		cpuNonZeroRows.ReadFrom(_NonZeroRows);
-		cl::CpuSingleSparseMatrix m3(4, 6, cpuNonZeroCols, cpuNonZeroRows, 1.2345f);
+		cl::CudaCpuSingleSparseMatrix m3(4, 6, cpuNonZeroCols, cpuNonZeroRows, 1.2345f);
 		dm::DeviceManager::CheckDeviceSanity();
 
-		cl::CpuDoubleSparseMatrix m4(4, 6, cpuNonZeroCols, cpuNonZeroRows, 1.2345);
+		cl::CudaCpuDoubleSparseMatrix m4(4, 6, cpuNonZeroCols, cpuNonZeroRows, 1.2345);
 		dm::DeviceManager::CheckDeviceSanity();
 	}
 

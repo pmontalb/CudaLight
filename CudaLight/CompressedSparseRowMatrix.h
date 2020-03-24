@@ -7,6 +7,8 @@
 #include <Vector.h>
 #include <ColumnWiseMatrix.h>
 
+#include <HostRoutines/SparseWrappers.h>
+
 namespace cl
 {
 	/**
@@ -35,6 +37,19 @@ namespace cl
         {
             this->dtor(_buffer);
             _buffer.pointer = 0;
+            
+            if (_buffer.thirdPartyHandle == 0)
+			{
+            	switch (_buffer.memorySpace)
+				{
+					case MemorySpace::Device:
+					case MemorySpace::Host:
+						dm::detail::DestroyCsrHandle(_buffer);
+						break;
+					default:
+						routines::DestroyCsrHandle(_buffer);
+				}
+			}
         }
 
 		const MemoryBuffer& GetBuffer() const noexcept final { return values.GetBuffer(); }
@@ -86,25 +101,7 @@ namespace cl
 		*/
 		void SyncPointers();
 	};
-
-	#pragma region Type aliases
-
-	typedef CompressedSparseRowMatrix<MemorySpace::Device, MathDomain::Int> GpuIntegerSparseMatrix;
-	typedef CompressedSparseRowMatrix<MemorySpace::Device, MathDomain::Float> GpuSingleSparseMatrix;
-	typedef GpuSingleSparseMatrix GpuFloatSparseMatrix;
-	typedef CompressedSparseRowMatrix<MemorySpace::Device, MathDomain::Double> GpuDoubleSparseMatrix;
-
-	typedef CompressedSparseRowMatrix<MemorySpace::Host, MathDomain::Int> CpuIntegerSparseMatrix;
-	typedef CompressedSparseRowMatrix<MemorySpace::Host, MathDomain::Float> CpuSingleSparseMatrix;
-	typedef CpuSingleSparseMatrix CpuFloatSparseMatrix;
-	typedef CompressedSparseRowMatrix<MemorySpace::Host, MathDomain::Double> CpuDoubleSparseMatrix;
-
-	typedef GpuSingleSparseMatrix smat;
-	typedef GpuDoubleSparseMatrix dsmat;
-	typedef GpuIntegerSparseMatrix ismat;
-
-	#pragma endregion
-
+	
 	#pragma region
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
@@ -124,6 +121,78 @@ namespace cl
 	Vector<ms, md> Dot(Vector<ms, md>& out, const Vector<ms, md>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0);
 
 	#pragma endregion 
+
+	#pragma region Type aliases
+
+	using GpuIntegerSparseMatrix = CompressedSparseRowMatrix<MemorySpace::Device, MathDomain::Int>;
+	using GpuSingleSparseMatrix = CompressedSparseRowMatrix<MemorySpace::Device, MathDomain::Float>;
+	using GpuFloatSparseMatrix = GpuSingleSparseMatrix;
+	using GpuDoubleSparseMatrix = CompressedSparseRowMatrix<MemorySpace::Device, MathDomain::Double>;
+
+	using CudaCpuIntegerSparseMatrix = CompressedSparseRowMatrix<MemorySpace::Host, MathDomain::Int>;
+	using CudaCpuSingleSparseMatrix = CompressedSparseRowMatrix<MemorySpace::Host, MathDomain::Float>;
+	using CudaCpuFloatSparseMatrix = CudaCpuSingleSparseMatrix;
+	using CudaCpuDoubleSparseMatrix = CompressedSparseRowMatrix<MemorySpace::Host, MathDomain::Double>;
+
+	using TestIntegerSparseMatrix = CompressedSparseRowMatrix<MemorySpace::Test, MathDomain::Int>;
+	using TestSingleSparseMatrix = CompressedSparseRowMatrix<MemorySpace::Test, MathDomain::Float>;
+	using TestFloatSparseMatrix =TestSingleSparseMatrix;
+	using TestDoubleSparseMatrix = CompressedSparseRowMatrix<MemorySpace::Test, MathDomain::Double>;
+
+	using MklIntegerSparseMatrix = CompressedSparseRowMatrix<MemorySpace::Mkl, MathDomain::Int>;
+	using MklSingleSparseMatrix = CompressedSparseRowMatrix<MemorySpace::Mkl, MathDomain::Float>;
+	using MklFloatSparseMatrix = MklSingleSparseMatrix;
+	using MklDoubleSparseMatrix = CompressedSparseRowMatrix<MemorySpace::Mkl, MathDomain::Double>;
+
+	namespace gpu
+	{
+		using smat = cl::GpuFloatSparseMatrix;
+		using dsmat = cl::GpuDoubleSparseMatrix ;
+		using ismat = cl::GpuIntegerSparseMatrix;
+	}
+
+	// by default we're gonna be using GPU
+	using smat = gpu::smat;
+	using dsmat = gpu::dsmat;
+	using ismat = gpu::ismat;
+
+	namespace cudaCpu
+	{
+		using smat = cl::CudaCpuSingleSparseMatrix;
+		using dsmat = cl::CudaCpuDoubleSparseMatrix;
+		using ismat = cl::CudaCpuIntegerSparseMatrix;
+	}
+
+	namespace mkl
+	{
+		using smat = cl::MklSingleSparseMatrix;
+		using dsmat = cl::MklDoubleSparseMatrix;
+		using ismat = cl::MklIntegerSparseMatrix;
+	}
+
+	namespace test
+	{
+		using smat = cl::TestSingleSparseMatrix;
+		using dsmat = cl::TestDoubleSparseMatrix;
+		using ismat = cl::TestIntegerSparseMatrix;
+	}
+
+	#pragma endregion
+}
+
+// give possibility of avoiding writing cl::
+namespace mkl
+{
+	using smat = cl::MklSingleSparseMatrix;
+	using dsmat = cl::MklDoubleSparseMatrix;
+	using ismat = cl::MklIntegerSparseMatrix;
+}
+
+namespace test
+{
+	using smat = cl::TestSingleSparseMatrix;
+	using dsmat = cl::TestDoubleSparseMatrix;
+	using ismat = cl::TestIntegerSparseMatrix;
 }
 
 #include <CompressedSparseRowMatrix.tpp>

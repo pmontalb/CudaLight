@@ -28,14 +28,20 @@ namespace cl
 	CompressedSparseRowMatrix<ms, md>::CompressedSparseRowMatrix(const unsigned nRows, const unsigned nCols, Vector<ms, MathDomain::Int>&& nonZeroColumnIndices_, Vector<ms, MathDomain::Int>&& nNonZeroRows_, const typename Traits<md>::stdType value)
 			: CompressedSparseRowMatrix(nRows, nCols, std::move(nonZeroColumnIndices_), std::move(nNonZeroRows_))
 	{
-		dm::detail::Initialize(values.GetBuffer(), static_cast<double>(value));
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Initialize(values.GetBuffer(), static_cast<double>(value));
+		else
+			routines::Initialize(values.GetBuffer(), static_cast<double>(value));
 	}
 	
 	template< MemorySpace ms, MathDomain md>
 	CompressedSparseRowMatrix<ms, md>::CompressedSparseRowMatrix(const unsigned nRows, const unsigned nCols, const Vector<ms, MathDomain::Int>& nonZeroColumnIndices_, const Vector<ms, MathDomain::Int>& nNonZeroRows_, const typename Traits<md>::stdType value)
 		: CompressedSparseRowMatrix(nRows, nCols, nonZeroColumnIndices_, nNonZeroRows_)
 	{
-		dm::detail::Initialize(values.GetBuffer(), static_cast<double>(value));
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::Initialize(values.GetBuffer(), static_cast<double>(value));
+		else
+			routines::Initialize(values.GetBuffer(), static_cast<double>(value));
 	}
 
 	template< MemorySpace ms, MathDomain md>
@@ -80,11 +86,11 @@ namespace cl
 		Alloc(values._buffer);
 		values.ReadFrom(nonZeroValues);
 		
-		nonZeroColumnIndices._buffer = MemoryBuffer(0, static_cast<unsigned>(_nonZeroColumnIndices.size()), ms, md);
+		nonZeroColumnIndices._buffer = MemoryBuffer(0, static_cast<unsigned>(_nonZeroColumnIndices.size()), ms, MathDomain::Int);
 		Alloc(nonZeroColumnIndices._buffer);
 		nonZeroColumnIndices.ReadFrom(_nonZeroColumnIndices);
 		
-		nNonZeroRows._buffer = MemoryBuffer(0, static_cast<unsigned>(_nNonZeroRows.size()), ms, md);
+		nNonZeroRows._buffer = MemoryBuffer(0, static_cast<unsigned>(_nNonZeroRows.size()), ms, MathDomain::Int);
 		Alloc(nNonZeroRows._buffer);
 		nNonZeroRows.ReadFrom(_nNonZeroRows);
 		
@@ -168,7 +174,14 @@ template< MemorySpace ms, MathDomain md>
 		assert(nCols() == rhs.nRows());
 
 		ColumnWiseMatrix<ms, md> ret(nRows(), rhs.nCols());
-		dm::detail::SparseMultiply(ret._buffer, this->_buffer, rhs._buffer, MatrixOperation::None, 1.0);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::SparseMultiply(ret._buffer,
+									   const_cast<SparseMemoryTile&>(this->_buffer),  // this is needed as we might need to set thee thirdPartyHandle member
+									   rhs._buffer, MatrixOperation::None, 1.0);
+		else
+			routines::SparseMultiply(ret._buffer,
+									   const_cast<SparseMemoryTile&>(this->_buffer),  // this is needed as we might need to set thee thirdPartyHandle member
+									   rhs._buffer, MatrixOperation::None, 1.0);
 
 		return ret;
 	}
@@ -179,7 +192,10 @@ template< MemorySpace ms, MathDomain md>
 		assert(nRows() == rhs.size());
 
 		Vector<ms, md> ret(rhs.size());
-		dm::detail::SparseDot(ret._buffer, this->_buffer, rhs._buffer);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::SparseDot(ret._buffer, this->_buffer, rhs._buffer);
+		else
+			routines::SparseDot(ret._buffer, this->_buffer, rhs._buffer);
 
 		return ret;
 	}
@@ -197,7 +213,14 @@ template< MemorySpace ms, MathDomain md>
 	void CompressedSparseRowMatrix<ms, md>::Multiply(ColumnWiseMatrix<ms, md>& out, const ColumnWiseMatrix<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha) const
 	{
 		assert(nCols() == rhs.nRows());
-		dm::detail::SparseMultiply(out._buffer, this->_buffer, rhs._buffer, lhsOperation, alpha);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::SparseMultiply(out._buffer,
+									   const_cast<SparseMemoryTile&>(this->_buffer),
+									   rhs._buffer, lhsOperation, alpha);
+		else
+			routines::SparseMultiply(out._buffer,
+									   const_cast<SparseMemoryTile&>(this->_buffer),
+									   rhs._buffer, lhsOperation, alpha);
 	}
 
 	template< MemorySpace ms, MathDomain md>
@@ -213,7 +236,10 @@ template< MemorySpace ms, MathDomain md>
 	void CompressedSparseRowMatrix<ms, md>::Dot(Vector<ms, md>& out, const Vector<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha) const
 	{
 		assert(nRows() == rhs.size());
-		dm::detail::SparseDot(out._buffer, this->_buffer, rhs._buffer, lhsOperation, alpha);
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::SparseDot(out._buffer, this->_buffer, rhs._buffer, lhsOperation, alpha);
+		else
+			routines::SparseDot(out._buffer, this->_buffer, rhs._buffer, lhsOperation, alpha);
 	}
 
 #pragma endregion 
