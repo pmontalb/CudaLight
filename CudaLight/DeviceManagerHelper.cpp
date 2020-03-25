@@ -258,7 +258,7 @@ __CREATE_FUNCTION_9_ARG(BatchedMultiply, CuBlasKernelExceptionFactory, MemoryCub
 __CREATE_FUNCTION_6_ARG(Dot, CuBlasKernelExceptionFactory, MemoryBuffer&, y, const MemoryTile&, A, const MemoryBuffer&, x, const MatrixOperation, aOperation, const double, alpha, const double, beta)
 __CREATE_FUNCTION_1_ARG(CumulativeRowSum, CuBlasKernelExceptionFactory, MemoryTile&, A)
 __CREATE_FUNCTION_1_ARG(Eye, CuBlasKernelExceptionFactory, MemoryTile&, A)
-__CREATE_FUNCTION_3_ARG(Solve, CuBlasKernelExceptionFactory, const MemoryTile&, A, MemoryTile&, B, const MatrixOperation, aOperation)
+__CREATE_FUNCTION_4_ARG(Solve, CuBlasKernelExceptionFactory, const MemoryTile&, A, MemoryTile&, B, const MatrixOperation, aOperation, const LinearSystemSolverType, solver)
 __CREATE_FUNCTION_2_ARG(Invert, CuBlasKernelExceptionFactory, MemoryTile&, A, const MatrixOperation, aOperation)
 __CREATE_FUNCTION_4_ARG(KroneckerProduct, CuBlasKernelExceptionFactory, MemoryTile&, A, const MemoryBuffer&, x, const MemoryBuffer&, y, const double, alpha)
 __CREATE_FUNCTION_4_ARG(BatchedTransposedKroneckerProduct, CuBlasKernelExceptionFactory, MemoryCube&, T, const MemoryTile&, x, const MemoryTile&, y, const double, alpha)
@@ -278,6 +278,7 @@ __CREATE_FUNCTION_4_ARG(SparseAdd, CuSparseKernelExceptionFactory, MemoryBuffer&
 __CREATE_FUNCTION_3_ARG(SparseSubtract, CuSparseKernelExceptionFactory, MemoryBuffer&, z, const SparseMemoryBuffer&, x, const MemoryBuffer&, y)
 __CREATE_FUNCTION_6_ARG(SparseDot, CuSparseKernelExceptionFactory, MemoryBuffer&, y, SparseMemoryTile&, A, const MemoryBuffer&, x, const MatrixOperation, aOperation, const double, alpha,const double, beta)
 __CREATE_FUNCTION_5_ARG(SparseMultiply, CuSparseKernelExceptionFactory, MemoryTile&, A, SparseMemoryTile&, B, const MemoryTile&, C, const MatrixOperation, bOperation, const double, alpha)
+__CREATE_FUNCTION_3_ARG(SparseSolve, CuBlasKernelExceptionFactory, const SparseMemoryTile&, A, MemoryTile&, B, const LinearSystemSolverType, solver)
 
 //CubWrappers
 __CREATE_FUNCTION_2_ARG(Sum, CudaKernelExceptionFactory, double&, sum, const MemoryBuffer&, v)

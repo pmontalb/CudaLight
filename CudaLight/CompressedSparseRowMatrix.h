@@ -28,8 +28,8 @@ namespace cl
 		// copy denseVector to host, numerically finds the non-zero indices, and then copy back to device
 		explicit CompressedSparseRowMatrix(const ColumnWiseMatrix<memorySpace, mathDomain>& denseMatrix);
 		CompressedSparseRowMatrix(const std::vector<stdType>& denseMatrix, const size_t nRows, const size_t nCols);
-		explicit CompressedSparseRowMatrix(const CompressedSparseRowMatrix& rhs);
-		explicit CompressedSparseRowMatrix(CompressedSparseRowMatrix&& rhs) noexcept;
+		CompressedSparseRowMatrix(const CompressedSparseRowMatrix& rhs);
+		CompressedSparseRowMatrix(CompressedSparseRowMatrix&& rhs) noexcept;
 
 		void ReadFrom(const std::vector<stdType>& denseMatrix, const size_t nRows, const size_t nCols);
 
@@ -81,8 +81,19 @@ namespace cl
 		
 		Vector<memorySpace, mathDomain> Dot(const Vector<memorySpace, mathDomain>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0) const;
 		void Dot(Vector<memorySpace, mathDomain>& out, const Vector<memorySpace, mathDomain>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0) const;
-		
-		#pragma endregion
+
+		/**
+		* Solve A * X = B, B is overwritten
+		*/
+		void Solve(ColumnWiseMatrix<memorySpace, mathDomain>& rhs, LinearSystemSolverType solver = LinearSystemSolverType::Lu) const;
+
+		/**
+		* Solve A * x = b, b is overwritten
+		*/
+		void Solve(Vector<memorySpace, mathDomain>& rhs, LinearSystemSolverType solver = LinearSystemSolverType::Lu) const;
+
+
+#pragma endregion
 
 	protected:
 		SparseMemoryTile _buffer = SparseMemoryTile(0, 0, 0, 0, 0, 0, memorySpace, mathDomain);
@@ -105,22 +116,34 @@ namespace cl
 	#pragma region
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	ColumnWiseMatrix<ms, md> Multiply(const ColumnWiseMatrix<ms, md>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0);
+	static ColumnWiseMatrix<ms, md> Multiply(const ColumnWiseMatrix<ms, md>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0);
 	/**
 	* Same version as above, but gives the possibility of reusing the output buffer
 	*/
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	void Multiply(ColumnWiseMatrix<ms, md>& out, const ColumnWiseMatrix<ms, md>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0);
+	static void Multiply(ColumnWiseMatrix<ms, md>& out, const ColumnWiseMatrix<ms, md>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0);
 
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Vector<ms, md> Dot(const Vector<ms, md>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0);
+	static Vector<ms, md> Dot(const Vector<ms, md>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0);
 	/**
 	* Same version as above, but gives the possibility of reusing the output buffer
 	*/
 	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-	Vector<ms, md> Dot(Vector<ms, md>& out, const Vector<ms, md>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0);
+	static Vector<ms, md> Dot(Vector<ms, md>& out, const Vector<ms, md>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, const double alpha = 1.0);
 
-	#pragma endregion 
+	/**
+	* Solve A * X = B, B is overwritten
+	*/
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	static void Solve(ColumnWiseMatrix<ms, md>& rhs, const CompressedSparseRowMatrix<ms, md>& lhs, LinearSystemSolverType solver = LinearSystemSolverType::Lu);
+
+	/**
+	* Solve A * x = b, b is overwritten
+	*/
+	template<MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
+	void Solve(Vector<ms, md>& rhs, const CompressedSparseRowMatrix<ms, md>& lhs, LinearSystemSolverType solver = LinearSystemSolverType::Lu);
+
+#pragma endregion
 
 	#pragma region Type aliases
 

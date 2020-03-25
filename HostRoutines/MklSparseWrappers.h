@@ -26,12 +26,19 @@
 			throw NotImplementedException();
 		}
 
+		template<MathDomain md>
+		static void SparseSolve(SparseMemoryTile&, MemoryTile&, LinearSystemSolverType)
+		{
+			throw NotImplementedException();
+		}
+
 #else
 
 	#include <cmath>
 	namespace mkl
 	{
 		#include <mkl.h>
+		#include <mkl_sparse_qr.h>
 	}
 
 	namespace cl { namespace routines { namespace mkr {
@@ -163,6 +170,95 @@
 								 mkl::sparse_layout_t::SPARSE_LAYOUT_COLUMN_MAJOR,
 								 reinterpret_cast<double*>(C.pointer), static_cast<int>(A.nCols), static_cast<int>(A.leadingDimension),
 								 0.0, reinterpret_cast<double*>(A.pointer), static_cast<int>(A.leadingDimension));
+		}
+
+		template<MathDomain md>
+		static void SparseSolve(SparseMemoryTile& A, MemoryTile& B, LinearSystemSolverType solver);
+		template<>
+		inline void SparseSolve<MathDomain::Float>(SparseMemoryTile& A, MemoryTile& B, LinearSystemSolverType solver)
+		{
+			SparseMemoryTile aCopy(A);
+			aCopy.pointer = 0;
+			Alloc(aCopy);
+
+			switch (solver)
+			{
+				case LinearSystemSolverType::Qr:
+				{
+					if (A.thirdPartyHandle == 0)
+						AllocateCsrHandle<MathDomain::Float>(A);
+
+					mkl::matrix_descr descr{};
+					descr.diag = mkl::sparse_diag_type_t::SPARSE_DIAG_NON_UNIT;
+					descr.mode = mkl::sparse_fill_mode_t::SPARSE_FILL_MODE_FULL;
+					descr.type = mkl::sparse_matrix_type_t::SPARSE_MATRIX_TYPE_GENERAL;
+					auto err = mkl::mkl_sparse_qr_reorder(reinterpret_cast<mkl::sparse_matrix_t>(A.thirdPartyHandle), descr);
+					if (err != mkl::SPARSE_STATUS_SUCCESS)
+						throw MklException(__func__);
+
+					err = mkl::mkl_sparse_s_qr_factorize(reinterpret_cast<mkl::sparse_matrix_t>(A.thirdPartyHandle), reinterpret_cast<float*>(aCopy.pointer));
+					if (err != mkl::SPARSE_STATUS_SUCCESS)
+						throw MklException(__func__);
+
+					err = mkl::mkl_sparse_s_qr_solve(mkl::SPARSE_OPERATION_NON_TRANSPOSE,
+											   reinterpret_cast<mkl::sparse_matrix_t>(A.thirdPartyHandle),
+											   reinterpret_cast<float *>(aCopy.pointer),
+											   mkl::SPARSE_LAYOUT_COLUMN_MAJOR, static_cast<int>(B.nCols),
+											   reinterpret_cast<float *>(B.pointer), static_cast<int>(B.leadingDimension),
+											   reinterpret_cast<float *>(B.pointer), static_cast<int>(B.leadingDimension));
+					if (err != mkl::SPARSE_STATUS_SUCCESS)
+						throw MklException(__func__);
+
+					break;
+				}
+				default:
+					throw NotImplementedException();
+			}
+
+			Free(aCopy);
+		}
+
+		template<>
+		inline void SparseSolve<MathDomain::Double>(SparseMemoryTile& A, MemoryTile& B, LinearSystemSolverType solver)
+		{
+			SparseMemoryTile aCopy(A);
+			aCopy.pointer = 0;
+			Alloc(aCopy);
+
+			switch (solver)
+			{
+				case LinearSystemSolverType::Qr:
+				{
+					if (A.thirdPartyHandle == 0)
+						AllocateCsrHandle<MathDomain::Double>(A);
+
+					mkl::matrix_descr descr{};
+					descr.diag = mkl::sparse_diag_type_t::SPARSE_DIAG_NON_UNIT;
+					descr.mode = mkl::sparse_fill_mode_t::SPARSE_FILL_MODE_FULL;
+					descr.type = mkl::sparse_matrix_type_t::SPARSE_MATRIX_TYPE_GENERAL;
+					auto err = mkl::mkl_sparse_qr_reorder(reinterpret_cast<mkl::sparse_matrix_t>(A.thirdPartyHandle), descr);
+					if (err != mkl::SPARSE_STATUS_SUCCESS)
+						throw MklException(__func__);
+					err = mkl::mkl_sparse_d_qr_factorize(reinterpret_cast<mkl::sparse_matrix_t>(A.thirdPartyHandle), reinterpret_cast<double *>(aCopy.pointer));
+					if (err != mkl::SPARSE_STATUS_SUCCESS)
+						throw MklException(__func__);
+
+					err = mkl::mkl_sparse_d_qr_solve(mkl::SPARSE_OPERATION_NON_TRANSPOSE,
+											   reinterpret_cast<mkl::sparse_matrix_t>(A.thirdPartyHandle),
+											   reinterpret_cast<double *>(aCopy.pointer),
+											   mkl::SPARSE_LAYOUT_COLUMN_MAJOR, 1,
+											   reinterpret_cast<double *>(B.pointer), static_cast<int>(B.leadingDimension),
+											   reinterpret_cast<double *>(B.pointer), static_cast<int>(B.leadingDimension));
+					if (err != mkl::SPARSE_STATUS_SUCCESS)
+						throw MklException(__func__);
+
+					break;
+				}
+				default:
+					throw NotImplementedException();
+			}
+
+			Free(aCopy);
 		}
 
 	}}}

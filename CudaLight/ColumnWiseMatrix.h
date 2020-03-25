@@ -168,12 +168,12 @@ namespace cl
 		/**
 		* Solve A * X = B, B is overwritten
 		*/
-		void Solve(ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation = MatrixOperation::None) const;
+		void Solve(ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, LinearSystemSolverType solver = LinearSystemSolverType::Lu) const;
 
 		/**
 		* Solve A * x = b, b is overwritten
 		*/
-		void Solve(Vector<memorySpace, mathDomain>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None) const;
+		void Solve(Vector<memorySpace, mathDomain>& rhs, const MatrixOperation lhsOperation = MatrixOperation::None, LinearSystemSolverType solver = LinearSystemSolverType::Lu) const;
 
 		Vector<memorySpace, MathDomain::Int> ColumnWiseArgAbsMinimum() const;
 		void ColumnWiseArgAbsMinimum(Vector<memorySpace, MathDomain::Int>& out) const;

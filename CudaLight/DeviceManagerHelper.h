@@ -176,7 +176,7 @@ __CREATE_FUNCTION_9_ARG(BatchedMultiply, MemoryCube&, A, const MemoryCube&, B, c
 __CREATE_FUNCTION_6_ARG(Dot, MemoryBuffer&, y, const MemoryTile&, A, const MemoryBuffer&, x, const MatrixOperation, aOperation = MatrixOperation::None, const double, alpha = 1.0, const double, beta = 0.0)
 __CREATE_FUNCTION_1_ARG(CumulativeRowSum, MemoryTile&, A)
 __CREATE_FUNCTION_1_ARG(Eye, MemoryTile&, A)
-__CREATE_FUNCTION_3_ARG(Solve, const MemoryTile&, A, MemoryTile&, B, const MatrixOperation, aOperation = MatrixOperation::None)
+__CREATE_FUNCTION_4_ARG(Solve, const MemoryTile&, A, MemoryTile&, B, const MatrixOperation, aOperation = MatrixOperation::None, const LinearSystemSolverType, solver = LinearSystemSolverType::Lu)
 __CREATE_FUNCTION_2_ARG(Invert, MemoryTile&, A, const MatrixOperation, aOperation = MatrixOperation::None)
 __CREATE_FUNCTION_4_ARG(KroneckerProduct, MemoryTile&, A, const MemoryBuffer&, x, const MemoryBuffer&, y, const double, alpha)
 __CREATE_FUNCTION_4_ARG(BatchedTransposedKroneckerProduct, MemoryCube&, T, const MemoryTile&, x, const MemoryTile&, y, const double, alpha)
@@ -196,6 +196,7 @@ __CREATE_FUNCTION_4_ARG(SparseAdd, MemoryBuffer&, z, const SparseMemoryBuffer&, 
 __CREATE_FUNCTION_3_ARG(SparseSubtract, MemoryBuffer&, z, const SparseMemoryBuffer&, x, const MemoryBuffer&, y)
 __CREATE_FUNCTION_6_ARG(SparseDot, MemoryBuffer&, y, SparseMemoryTile&, A, const MemoryBuffer&, x, const MatrixOperation, aOperation = MatrixOperation::None, const double, alpha = 1.0, const double, beta = 0.0)
 __CREATE_FUNCTION_5_ARG(SparseMultiply, MemoryTile&, A, SparseMemoryTile&, B, const MemoryTile&, C, const MatrixOperation, bOperation, const double, alpha)
+__CREATE_FUNCTION_3_ARG(SparseSolve, const SparseMemoryTile&, A, MemoryTile&, B, const LinearSystemSolverType, solver)
 
 //CubWrappers
 __CREATE_FUNCTION_2_ARG(Sum, double&, sum, const MemoryBuffer&, v)

@@ -26,4 +26,6 @@ namespace cl { namespace routines {
 	*	ADense = BSparse * CDense
 	*/
 	extern void SparseMultiply(MemoryTile& A, SparseMemoryTile& B, const MemoryTile& C, const MatrixOperation bOperation = MatrixOperation::None, const double alpha = 1.0);
+
+	extern void SparseSolve(SparseMemoryTile& A, MemoryTile& B, LinearSystemSolverType solver = LinearSystemSolverType::Lu);
 }}

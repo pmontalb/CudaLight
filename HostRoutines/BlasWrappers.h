@@ -98,7 +98,7 @@ namespace cl { namespace routines {
 	/**
 	* X such that A * X = B by means of LU factorization
 	*/
-	extern void Solve(const MemoryTile& A, MemoryTile& B, const MatrixOperation aOperation = MatrixOperation::None);
+	extern void Solve(const MemoryTile& A, MemoryTile& B, const MatrixOperation aOperation = MatrixOperation::None, const LinearSystemSolverType solver = LinearSystemSolverType::Lu);
 	
 	/**
 	* A = A^(-1) by means of LU factorization

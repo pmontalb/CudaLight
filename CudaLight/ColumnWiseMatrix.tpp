@@ -569,26 +569,26 @@ template<MemorySpace ms, MathDomain md>
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void ColumnWiseMatrix<ms, md>::Solve(ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation) const
+	void ColumnWiseMatrix<ms, md>::Solve(ColumnWiseMatrix& rhs, const MatrixOperation lhsOperation, LinearSystemSolverType solver) const
 	{
 		assert(nRows() == rhs.nRows());
 		assert(nCols() == rhs.nCols());
 		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
-			dm::detail::Solve(this->_buffer, rhs._buffer, lhsOperation);
+			dm::detail::Solve(this->_buffer, rhs._buffer, lhsOperation, solver);
 		else
-			routines::Solve(this->_buffer, rhs._buffer, lhsOperation);
+			routines::Solve(this->_buffer, rhs._buffer, lhsOperation, solver);
 	}
 
 	template<MemorySpace ms, MathDomain md>
-	void ColumnWiseMatrix<ms, md>::Solve(Vector<ms, md>& rhs, const MatrixOperation lhsOperation) const
+	void ColumnWiseMatrix<ms, md>::Solve(Vector<ms, md>& rhs, const MatrixOperation lhsOperation, LinearSystemSolverType solver) const
 	{
 		assert(nRows() == rhs.size());
 
 		MemoryTile tmp(rhs.GetBuffer());
 		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
-			dm::detail::Solve(this->buffer, tmp, lhsOperation);
+			dm::detail::Solve(this->buffer, tmp, lhsOperation, solver);
 		else
-			routines::Solve(this->buffer, tmp, lhsOperation);
+			routines::Solve(this->buffer, tmp, lhsOperation, solver);
 	}
 
 	template<MemorySpace ms, MathDomain md>

@@ -376,10 +376,10 @@
 		}
 
 		template<MathDomain md>
-		static void Solve(const MemoryTile& A, MemoryTile& B, const MatrixOperation aOperation);
+		static void Solve(const MemoryTile& A, MemoryTile& B, const MatrixOperation aOperation, const LinearSystemSolverType solver);
 
 		template<>
-		inline void Solve<MathDomain::Float>(const MemoryTile& A, MemoryTile& B, const MatrixOperation aOperation)
+		inline void Solve<MathDomain::Float>(const MemoryTile& A, MemoryTile& B, const MatrixOperation aOperation, const LinearSystemSolverType solver)
 		{
 			// Need to copy A, as it will be overwritten by its factorization
 			MemoryTile aCopy(A);
@@ -391,29 +391,75 @@
 			const auto ncb = static_cast<int>(B.nCols);
 			const auto ldb = static_cast<int>(B.leadingDimension);
 
-			// allocate memory for pivoting
-			MemoryBuffer pivot(0, A.nRows, A.memorySpace, MathDomain::Int);
-			Alloc(pivot);
-
 			// Initializes auxliary value for solver
 			int info = 0;
 
-			// Factorize A (and overwrite it with L)
-			mkl::sgetrf(&nra, &nra, reinterpret_cast<float*>(aCopy.pointer), &lda, reinterpret_cast<int*>(pivot.pointer), &info);
-			if (info != 0)
-				throw MklException(__func__);
+			switch (solver)
+			{
+				case LinearSystemSolverType::Lu:
+				{
+					// allocate memory for pivoting
+					MemoryBuffer pivot(0, A.nRows, A.memorySpace, MathDomain::Int);
+					Alloc(pivot);
 
-			// Solve factorized system
-			mkl::sgetrs(mklOperationGemm[static_cast<unsigned>(aOperation)], &nra, &ncb, reinterpret_cast<float*>(aCopy.pointer), &lda, reinterpret_cast<int*>(pivot.pointer), reinterpret_cast<float*>(B.pointer), &ldb, &info);
-			if (info != 0)
-				throw MklException(__func__);
+					// Factorize A (and overwrite it with L)
+					mkl::sgetrf(&nra, &nra, reinterpret_cast<float*>(aCopy.pointer), &lda, reinterpret_cast<int*>(pivot.pointer), &info);
+					if (info != 0)
+						throw MklException(__func__);
 
-			// free memory
-			Free(pivot);
+					// Solve factorized system
+					mkl::sgetrs(mklOperationGemm[static_cast<unsigned>(aOperation)], &nra, &ncb, reinterpret_cast<float*>(aCopy.pointer), &lda, reinterpret_cast<int*>(pivot.pointer), reinterpret_cast<float*>(B.pointer), &ldb, &info);
+					if (info != 0)
+						throw MklException(__func__);
+
+					// free memory
+					Free(pivot);
+
+					break;
+				}
+				case LinearSystemSolverType::Qr:
+				{
+					// allocate memory for tau
+					MemoryBuffer tau(0, A.nRows, A.memorySpace, MathDomain::Float);
+					Alloc(tau);
+
+					static constexpr size_t workBufferMultiple = { 64 };
+					const int workSize = static_cast<int>(A.nCols * workBufferMultiple);
+					// allocate memory for workBuffer
+					MemoryBuffer buffer(0, static_cast<unsigned>(workSize), A.memorySpace, MathDomain::Float);
+					Alloc(buffer);
+
+					// A = Q * R
+					mkl::sgeqrf(&nra, &nra, reinterpret_cast<float*>(aCopy.pointer), &lda, reinterpret_cast<float*>(tau.pointer), reinterpret_cast<float*>(buffer.pointer), &workSize, &info);
+					if (info != 0)
+						throw MklException(__func__);
+
+					// B = Q^T * B
+					mkl::sormqr("L", "T", 
+							&nra, &nra, &ncb, 
+							reinterpret_cast<float*>(aCopy.pointer), &lda, reinterpret_cast<float*>(tau.pointer), reinterpret_cast<float*>(B.pointer), &ldb, reinterpret_cast<float*>(buffer.pointer), &workSize, &info);
+					if (info != 0)
+						throw MklException(__func__);
+					
+					// Solve (x = R \ (Q^T * B))
+					mkl::cblas_strsm(columnMajorLayout, mkl::CBLAS_SIDE::CblasLeft, mkl::CBLAS_UPLO::CblasUpper, mklOperationsEnum[static_cast<unsigned>(aOperation)], mkl::CBLAS_DIAG::CblasNonUnit,
+									 nra, nra, 1.0, reinterpret_cast<float*>(aCopy.pointer), lda, reinterpret_cast<float*>(B.pointer), ldb);
+
+					// free memory
+					Free(tau);
+					Free(buffer);
+
+					break;
+				}
+				default:
+					throw NotImplementedException();
+			}
+			
+			Free(aCopy);
 		}
 
 		template<>
-		inline void Solve<MathDomain::Double>(const MemoryTile& A, MemoryTile& B, const MatrixOperation aOperation)
+		inline void Solve<MathDomain::Double>(const MemoryTile& A, MemoryTile& B, const MatrixOperation aOperation, const LinearSystemSolverType solver)
 		{
 			// Need to copy A, as it will be overwritten by its factorization
 			MemoryTile aCopy(A);
@@ -425,25 +471,67 @@
 			const auto ncb = static_cast<int>(B.nCols);
 			const auto ldb = static_cast<int>(B.leadingDimension);
 
-			// allocate memory for pivoting
-			MemoryBuffer pivot(0, A.nRows, A.memorySpace, MathDomain::Int);
-			Alloc(pivot);
-
 			// Initializes auxliary value for solver
 			int info = 0;
 
-			// Factorize A (and overwrite it with L)
-			mkl::dgetrf(&nra, &nra, reinterpret_cast<double*>(aCopy.pointer), &lda, reinterpret_cast<int*>(pivot.pointer), &info);
-			if (info != 0)
-				throw MklException(__func__);
+			switch (solver)
+			{
+				case LinearSystemSolverType::Lu:
+				{
+					// allocate memory for pivoting
+					MemoryBuffer pivot(0, A.nRows, A.memorySpace, MathDomain::Int);
+					Alloc(pivot);
 
-			// Solve factorized system
-			mkl::dgetrs(mklOperationGemm[static_cast<unsigned>(aOperation)], &nra, &ncb, reinterpret_cast<double*>(aCopy.pointer), &lda, reinterpret_cast<int*>(pivot.pointer), reinterpret_cast<double*>(B.pointer), &ldb, &info);
-			if (info != 0)
-				throw MklException(__func__);
+					// Factorize A (and overwrite it with L)
+					mkl::dgetrf(&nra, &nra, reinterpret_cast<double*>(aCopy.pointer), &lda, reinterpret_cast<int*>(pivot.pointer), &info);
+					if (info != 0)
+						throw MklException(__func__);
 
-			// free memory
-			Free(pivot);
+					// Solve factorized system
+					mkl::dgetrs(mklOperationGemm[static_cast<unsigned>(aOperation)], &nra, &ncb, reinterpret_cast<double*>(aCopy.pointer), &lda, reinterpret_cast<int*>(pivot.pointer), reinterpret_cast<double*>(B.pointer), &ldb, &info);
+					if (info != 0)
+						throw MklException(__func__);
+
+					// free memory
+					Free(pivot);
+
+					break;
+				}
+				case LinearSystemSolverType::Qr:
+				{
+					// allocate memory for tau
+					MemoryBuffer tau(0, A.nRows, A.memorySpace, MathDomain::Double);
+					Alloc(tau);
+
+					static constexpr size_t workBufferMultiple = { 64 };
+					const int workSize = static_cast<int>(A.nCols * workBufferMultiple);
+					// allocate memory for workBuffer
+					MemoryBuffer buffer(0, static_cast<unsigned>(workSize), A.memorySpace, MathDomain::Double);
+					Alloc(buffer);
+
+					// A = Q * R
+					mkl::dgeqrf(&nra, &nra, reinterpret_cast<double*>(aCopy.pointer), &lda, reinterpret_cast<double*>(tau.pointer), reinterpret_cast<double*>(buffer.pointer), &workSize, &info);
+					if (info != 0)
+						throw MklException(__func__);
+
+					// B = Q^T * B
+					mkl::dormqr("L", "T",
+								&nra, &nra, &ncb,
+								reinterpret_cast<double*>(aCopy.pointer), &lda, reinterpret_cast<double*>(tau.pointer), reinterpret_cast<double*>(B.pointer), &ldb, reinterpret_cast<double*>(buffer.pointer), &workSize, &info);
+					if (info != 0)
+						throw MklException(__func__);
+
+					// Solve (x = R \ (Q^T * B))
+					mkl::cblas_dtrsm(columnMajorLayout, mkl::CBLAS_SIDE::CblasLeft, mkl::CBLAS_UPLO::CblasUpper, mklOperationsEnum[static_cast<unsigned>(aOperation)], mkl::CBLAS_DIAG::CblasNonUnit,
+									 nra, nra, 1.0, reinterpret_cast<double*>(aCopy.pointer), lda, reinterpret_cast<double*>(B.pointer), ldb);
+
+					break;
+				}
+				default:
+					throw NotImplementedException();
+			}
+			
+			Free(aCopy);
 		}
 
 		template<MathDomain md>

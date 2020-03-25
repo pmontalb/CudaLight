@@ -9,6 +9,25 @@ namespace clt
 	{
 	};
 
+	static mkl::dsmat GetInvertibleSparseMatrix(unsigned nRows)
+	{
+		mkl::dmat A(nRows, nRows, 0.0);
+		auto _A = A.Get();
+
+		for (size_t i = 0; i < nRows; ++i)
+		{
+			_A[i + nRows * i] = 1.0;
+//			_A[i + nRows * i] += 2.0f;
+//			if (i < nRows - 1)
+//				_A[i + nRows * (i + 1)] += 0.001f;
+//			if (i > 0)
+//				_A[i + nRows * (i - 1)] += 0.001f;
+		}
+
+		A.ReadFrom(_A);
+		return mkl::dsmat(A);
+	}
+
 	TEST_F(MklSparseTests, Add)
 	{
 		std::vector<int> _indices = { 0, 5, 10, 50, 75 };
@@ -56,6 +75,32 @@ namespace clt
 				for (size_t k = 0; k < m1.nCols(); ++k)
 					m1m2 += static_cast<double>(_m1[i + k * m1.nRows()] * _m2[k + j * m2.nRows()]);
 				ASSERT_TRUE(std::fabs(m1m2 - static_cast<double>(_m3[i + j * m1.nRows()])) <= 5e-5) << i << "|" << j << "|" << m1m2 << "|" << _m3[i + j * m1.nRows()];
+			}
+		}
+	}
+
+	// TODO
+	TEST_F(MklSparseTests, DISABLED_SolveQr)
+	{
+		mkl::dsmat v = GetInvertibleSparseMatrix(128);
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _v = v.Get();
+
+		mkl::dmat u = mkl::dmat::RandomGaussian(128, 4, 1234);
+		auto _u = u.Get();
+		v.Solve(u, LinearSystemSolverType::Qr);
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _x = u.Get();
+
+		auto uSanity = v.Multiply(u);
+		auto _uSanity = uSanity.Get();
+
+		for (size_t i = 0; i < v.nRows(); ++i)
+		{
+			for (size_t j = 0; j < v.nRows(); ++j)
+			{
+				auto expected = _u[i + v.nRows() * j];
+				ASSERT_TRUE(std::fabs(_uSanity[i + v.nRows() * j] - expected) <= 5e-5) << std::fabs(_uSanity[i + v.nRows() * j] - expected);
 			}
 		}
 	}

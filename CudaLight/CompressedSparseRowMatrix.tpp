@@ -130,6 +130,7 @@ template< MemorySpace ms, MathDomain md>
 		auto _values = this->values.Get();
 		auto _nonZeroColumnIndices = this->nonZeroColumnIndices.Get();
 		auto _nNonZeroRows = this->nNonZeroRows.Get();
+		_nNonZeroRows.emplace_back(_buffer.size);
 
 		std::vector<typename Traits<md>::stdType> ret(denseSize());
 		size_t nz = 0;
@@ -242,6 +243,34 @@ template< MemorySpace ms, MathDomain md>
 			routines::SparseDot(out._buffer, this->_buffer, rhs._buffer, lhsOperation, alpha);
 	}
 
+	/**
+	* Solve A * X = B, B is overwritten
+	*/
+	template< MemorySpace ms, MathDomain md>
+	void CompressedSparseRowMatrix<ms, md>::Solve(ColumnWiseMatrix<ms, md>& rhs, LinearSystemSolverType solver) const
+	{
+		assert(nRows() == nCols());  // for now keep this assumption
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::SparseSolve(const_cast<SparseMemoryTile&>(_buffer), rhs.GetTile(), solver);
+		else
+			routines::SparseSolve(const_cast<SparseMemoryTile&>(_buffer),rhs.GetTile(), solver);
+	}
+
+	/**
+	* Solve A * x = b, b is overwritten
+	*/
+	template< MemorySpace ms, MathDomain md>
+	void CompressedSparseRowMatrix<ms, md>::Solve(Vector<ms, md>& rhs, LinearSystemSolverType solver) const
+	{
+		assert(nRows() == nCols());  // for now keep this assumption
+
+		MemoryTile tmp(rhs.GetBuffer());
+		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
+			dm::detail::SparseSolve(const_cast<SparseMemoryTile&>(_buffer), tmp, solver);
+		else
+			routines::SparseSolve(const_cast<SparseMemoryTile&>(_buffer),tmp, solver);
+	}
+
 #pragma endregion 
 
 	template<MemorySpace ms, MathDomain md>
@@ -266,5 +295,17 @@ template< MemorySpace ms, MathDomain md>
 	void Dot(Vector<ms, md>& out, const CompressedSparseRowMatrix<ms, md>& lhs, const Vector<ms, md>& rhs, const MatrixOperation lhsOperation, const double alpha)
 	{
 		lhs.Dot(out, rhs, lhsOperation, alpha);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	void Solve(ColumnWiseMatrix<ms, md>& rhs, CompressedSparseRowMatrix<ms, md>& lhs, LinearSystemSolverType solver)
+	{
+		lhs.Solve(rhs, solver);
+	}
+
+	template<MemorySpace ms, MathDomain md>
+	void Solve(Vector<ms, md>& rhs, CompressedSparseRowMatrix<ms, md>& lhs, LinearSystemSolverType solver)
+	{
+		lhs.Solve(rhs, solver);
 	}
 }

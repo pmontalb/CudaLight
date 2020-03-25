@@ -312,13 +312,13 @@ namespace clt
 		{
 			for (size_t j = 0; j < v.nRows(); ++j)
 			{
-				float expected = i == j ? 1.0 : 0.0;
+				float expected = i == j ? 1.0f : 0.0f;
 				ASSERT_TRUE(std::fabs(_eye[i + v.nRows() * j] - expected) <= 5e-5f);
 			}
 		}
 	}
 
-	TEST_F(CuBlasTests, Solve)
+	TEST_F(CuBlasTests, SolveLu)
 	{
 		cl::mat v = GetInvertibleMatrix(128);
 		dm::DeviceManager::CheckDeviceSanity();
@@ -326,7 +326,7 @@ namespace clt
 
 		cl::mat u = GetInvertibleMatrix(v.nRows(), 2345);
 		auto _u = u.Get();
-		v.Solve(u);
+		v.Solve(u, MatrixOperation::None, LinearSystemSolverType::Lu);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _x = u.Get();
 
@@ -339,6 +339,31 @@ namespace clt
 			{
 				float expected = _u[i + v.nRows() * j];
 				ASSERT_TRUE(std::fabs(_uSanity[i + v.nRows() * j] - expected) <= 5e-5f);
+			}
+		}
+	}
+
+	TEST_F(CuBlasTests, SolveQr)
+	{
+		cl::mat v = GetInvertibleMatrix(128);
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _v = v.Get();
+
+		cl::mat u = GetInvertibleMatrix(v.nRows(), 2345);
+		auto _u = u.Get();
+		v.Solve(u, MatrixOperation::None, LinearSystemSolverType::Qr);
+		dm::DeviceManager::CheckDeviceSanity();
+		auto _x = u.Get();
+
+		auto uSanity = v.Multiply(u);
+		auto _uSanity = uSanity.Get();
+
+		for (size_t i = 0; i < v.nRows(); ++i)
+		{
+			for (size_t j = 0; j < v.nRows(); ++j)
+			{
+				float expected = _u[i + v.nRows() * j];
+				ASSERT_TRUE(std::fabs(_uSanity[i + v.nRows() * j] - expected) <= 5e-5f) << std::fabs(_uSanity[i + v.nRows() * j] - expected);
 			}
 		}
 	}

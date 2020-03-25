@@ -1139,7 +1139,7 @@ namespace cl { namespace routines {
 	/**
 	* X such that A * X = B by means of LU factorization
 	*/
-	void Solve(const MemoryTile& A, MemoryTile& B, const MatrixOperation aOperation)
+	void Solve(const MemoryTile& A, MemoryTile& B, const MatrixOperation aOperation, const LinearSystemSolverType solver)
 	{
 		switch (A.mathDomain)
 		{
@@ -1148,7 +1148,7 @@ namespace cl { namespace routines {
 				switch (A.memorySpace)
 				{
 					case MemorySpace::Mkl:
-						mkr::Solve<MathDomain::Float>(A, B, aOperation);
+						mkr::Solve<MathDomain::Float>(A, B, aOperation, solver);
 						break;
 
 					default:
@@ -1161,7 +1161,7 @@ namespace cl { namespace routines {
 				switch (A.memorySpace)
 				{
 					case MemorySpace::Mkl:
-						mkr::Solve<MathDomain::Double>(A, B, aOperation);
+						mkr::Solve<MathDomain::Double>(A, B, aOperation, solver);
 						break;
 
 					default:
@@ -1577,7 +1577,7 @@ namespace cl { namespace routines {
 						auto *xPtr = GetPointer<MathDomain::Float>(x);
 
 						for (size_t i = 0; i < z.size; ++i)
-							zPtr[i] = std::fabs(xPtr[i]) < 1e-7f ? 0 : 1;
+							zPtr[i] = std::fabs(xPtr[i]) < 1e-7f ? 0.0f : 1.0f;
 						break;
 					}
 					default:

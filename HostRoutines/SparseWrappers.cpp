@@ -297,4 +297,51 @@ namespace cl { namespace routines {
 				throw NotImplementedException();
 		}
 	}
+
+	void SparseSolve(SparseMemoryTile& A, MemoryTile& B, LinearSystemSolverType solver)
+	{
+		switch (A.mathDomain)
+		{
+			case MathDomain::Float:
+			{
+				switch (A.memorySpace)
+				{
+					case MemorySpace::Mkl:
+						mkr::SparseSolve<MathDomain::Float>(A, B, solver);
+						break;
+
+					case MemorySpace::Test:
+					default:
+						throw NotImplementedException();
+				}
+				break;
+			}
+			case MathDomain::Double:
+			{
+				switch (A.memorySpace)
+				{
+					case MemorySpace::Mkl:
+						mkr::SparseSolve<MathDomain::Double>(A, B, solver);
+						break;
+
+					case MemorySpace::Test:
+					default:
+						throw NotImplementedException();
+				}
+				break;
+			}
+			case MathDomain::Int:
+			{
+				switch (A.memorySpace)
+				{
+					case MemorySpace::Test:
+					case MemorySpace::Mkl:
+					default:
+						throw NotImplementedException();
+				}
+			}
+			default:
+				throw NotImplementedException();
+		}
+	}
 }}
