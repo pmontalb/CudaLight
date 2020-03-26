@@ -29,7 +29,7 @@
 	{
 		static inline void Alloc(MemoryBuffer &buf)
 		{
-			static constexpr int alignmentBits = {64};
+			static constexpr int alignmentBits = { 64 };
 			buf.pointer = reinterpret_cast<ptr_t>(mkl::MKL_malloc(buf.TotalSize(), alignmentBits));
 			assert(buf.pointer != 0);
 		}

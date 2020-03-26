@@ -7,6 +7,7 @@
 #include <BlasWrappers.h>
 #include <MklAllWrappers.h>
 #include <OpenBlasAllWrappers.h>
+#include <GenericBlasAllWrappers.h>
 
 #include <cmath>
 
@@ -35,6 +36,9 @@ namespace cl { namespace routines {
 					case MemorySpace::OpenBlas:
 						obr::Add<MathDomain::Float>(z, x, y, alpha);
 						break;
+					case MemorySpace::GenericBlas:
+						gbr::Add<MathDomain::Float>(z, x, y, alpha);
+						break;
 
 					case MemorySpace::Test:
 					{
@@ -61,6 +65,9 @@ namespace cl { namespace routines {
 					case MemorySpace::OpenBlas:
 						obr::Add<MathDomain::Double>(z, x, y, alpha);
 						break;
+					case MemorySpace::GenericBlas:
+						gbr::Add<MathDomain::Double>(z, x, y, alpha);
+						break;
 
 					case MemorySpace::Test:
 					{
@@ -84,6 +91,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl: // TODO
 					case MemorySpace::OpenBlas: // TODO
+					case MemorySpace::GenericBlas: // TODO
 					{
 						auto *zPtr = GetPointer<MathDomain::Int>(z);
 						auto *xPtr = GetPointer<MathDomain::Int>(x);
@@ -132,6 +140,9 @@ namespace cl { namespace routines {
 					case MemorySpace::OpenBlas:
 						obr::AddEqual<MathDomain::Float>(z, x, alpha);
 						break;
+					case MemorySpace::GenericBlas:
+						gbr::AddEqual<MathDomain::Float>(z, x, alpha);
+						break;
 
 					case MemorySpace::Test:
 					{
@@ -157,6 +168,9 @@ namespace cl { namespace routines {
 					case MemorySpace::OpenBlas:
 						obr::AddEqual<MathDomain::Double>(z, x, alpha);
 						break;
+					case MemorySpace::GenericBlas:
+						gbr::AddEqual<MathDomain::Double>(z, x, alpha);
+						break;
 
 					case MemorySpace::Test:
 					{
@@ -179,6 +193,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:  // TODO
 					{
 						auto *zPtr = GetPointer<MathDomain::Int>(z);
 						auto *xPtr = GetPointer<MathDomain::Int>(x);
@@ -217,6 +232,9 @@ namespace cl { namespace routines {
 					case MemorySpace::OpenBlas:
 						obr::AddEqualMatrix<MathDomain::Float>(A, B, aOperation, bOperation, alpha, beta);
 						break;
+					case MemorySpace::GenericBlas:
+						gbr::AddEqualMatrix<MathDomain::Float>(A, B, aOperation, bOperation, alpha, beta);
+						break;
 
 					default:
 						throw NotImplementedException();
@@ -232,6 +250,9 @@ namespace cl { namespace routines {
 						break;
 					case MemorySpace::OpenBlas:
 						obr::AddEqualMatrix<MathDomain::Double>(A, B, aOperation, bOperation, alpha, beta);
+						break;
+					case MemorySpace::GenericBlas:
+						gbr::AddEqualMatrix<MathDomain::Double>(A, B, aOperation, bOperation, alpha, beta);
 						break;
 
 					default:
@@ -269,6 +290,9 @@ namespace cl { namespace routines {
 					case MemorySpace::OpenBlas:
 						obr::Scale<MathDomain::Float>(z, alpha);
 						break;
+					case MemorySpace::GenericBlas:
+						gbr::Scale<MathDomain::Float>(z, alpha);
+						break;
 
 					case MemorySpace::Test:
 					{
@@ -292,6 +316,9 @@ namespace cl { namespace routines {
 					case MemorySpace::OpenBlas:
 						obr::Scale<MathDomain::Double>(z, alpha);
 						break;
+					case MemorySpace::GenericBlas:
+						gbr::Scale<MathDomain::Double>(z, alpha);
+						break;
 
 					case MemorySpace::Test:
 					{
@@ -313,6 +340,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:  // TODO
 					{
 						auto *zPtr = GetPointer<MathDomain::Int>(z);
 
@@ -347,6 +375,9 @@ namespace cl { namespace routines {
 					case MemorySpace::OpenBlas:
 						obr::ScaleColumns<MathDomain::Float>(z, alpha);
 						break;
+					case MemorySpace::GenericBlas:
+						gbr::ScaleColumns<MathDomain::Float>(z, alpha);
+						break;
 
 					case MemorySpace::Test:
 					{
@@ -373,6 +404,9 @@ namespace cl { namespace routines {
 					case MemorySpace::OpenBlas:
 						obr::ScaleColumns<MathDomain::Double>(z, alpha);
 						break;
+					case MemorySpace::GenericBlas:
+						gbr::ScaleColumns<MathDomain::Double>(z, alpha);
+						break;
 
 					case MemorySpace::Test:
 					{
@@ -396,6 +430,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:  // TODO
 					{
 						auto *zPtr = GetPointer<MathDomain::Int>(z);
 						auto *aPtr = GetPointer<MathDomain::Int>(alpha);
@@ -439,6 +474,7 @@ namespace cl { namespace routines {
 
 					case MemorySpace::Test:
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:  // TODO
 					{
 						auto *zPtr = GetPointer<MathDomain::Float>(z);
 						auto *xPtr = GetPointer<MathDomain::Float>(x);
@@ -463,6 +499,7 @@ namespace cl { namespace routines {
 
 					case MemorySpace::Test:
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:  // TODO
 					{
 						auto *zPtr = GetPointer<MathDomain::Double>(z);
 						auto *xPtr = GetPointer<MathDomain::Double>(x);
@@ -484,6 +521,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:  // TODO
 					{
 						auto *zPtr = GetPointer<MathDomain::Int>(z);
 						auto *xPtr = GetPointer<MathDomain::Int>(x);
@@ -524,6 +562,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:  // TODO
 					{
 						auto *zPtr = GetPointer<MathDomain::Float>(z);
 						auto *xPtr = GetPointer<MathDomain::Float>(x);
@@ -545,6 +584,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:  // TODO
 					{
 						auto *zPtr = GetPointer<MathDomain::Double>(z);
 						auto *xPtr = GetPointer<MathDomain::Double>(x);
@@ -566,6 +606,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:  // TODO
 					{
 						auto *zPtr = GetPointer<MathDomain::Int>(z);
 						auto *xPtr = GetPointer<MathDomain::Int>(x);
@@ -615,6 +656,9 @@ namespace cl { namespace routines {
 					case MemorySpace::OpenBlas:
 						obr::SubMultiply<MathDomain::Float>(A, B, C, nRowsB, nColsB, nColsC, bOperation, cOperation, alpha, beta);
 						break;
+					case MemorySpace::GenericBlas:
+						gbr::SubMultiply<MathDomain::Float>(A, B, C, nRowsB, nColsB, nColsC, bOperation, cOperation, alpha, beta);
+						break;
 
 					case MemorySpace::Test:
 					{
@@ -646,6 +690,9 @@ namespace cl { namespace routines {
 					case MemorySpace::OpenBlas:
 						obr::SubMultiply<MathDomain::Double>(A, B, C, nRowsB, nColsB, nColsC, bOperation, cOperation, alpha, beta);
 						break;
+					case MemorySpace::GenericBlas:
+						gbr::SubMultiply<MathDomain::Double>(A, B, C, nRowsB, nColsB, nColsC, bOperation, cOperation, alpha, beta);
+						break;
 
 					case MemorySpace::Test:
 					{
@@ -672,6 +719,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl: // TODO
 					case MemorySpace::OpenBlas: // TODO
+					case MemorySpace::GenericBlas: // TODO
 					{
 						auto *aPtr = GetPointer<MathDomain::Int>(A);
 						auto *bPtr = GetPointer<MathDomain::Int>(B);
@@ -721,6 +769,7 @@ namespace cl { namespace routines {
 
 					case MemorySpace::Test:
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:  // TODO
 					{
 						for (unsigned n = 0; n < A.nCubes; ++n)
 						{
@@ -747,6 +796,7 @@ namespace cl { namespace routines {
 
 					case MemorySpace::Test:
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:  // TODO
 					{
 						for (unsigned n = 0; n < A.nCubes; ++n)
 						{
@@ -770,6 +820,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:  // TODO
 					{
 						for (unsigned n = 0; n < A.nCubes; ++n)
 						{
@@ -813,6 +864,9 @@ namespace cl { namespace routines {
 					case MemorySpace::OpenBlas:
 						obr::Dot<MathDomain::Float>(y, A, x, aOperation, alpha, beta);
 						break;
+					case MemorySpace::GenericBlas:
+						gbr::Dot<MathDomain::Float>(y, A, x, aOperation, alpha, beta);
+						break;
 
 					case MemorySpace::Test:
 					{
@@ -848,6 +902,9 @@ namespace cl { namespace routines {
 					case MemorySpace::OpenBlas:
 						obr::Dot<MathDomain::Double>(y, A, x, aOperation, alpha, beta);
 						break;
+					case MemorySpace::GenericBlas:
+						gbr::Dot<MathDomain::Double>(y, A, x, aOperation, alpha, beta);
+						break;
 
 					case MemorySpace::Test:
 					{
@@ -880,6 +937,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:  // TODO
 					{
 						auto *aPtr = GetPointer<MathDomain::Int>(x);
 						auto *xPtr = GetPointer<MathDomain::Int>(x);
@@ -925,6 +983,9 @@ namespace cl { namespace routines {
 					case MemorySpace::OpenBlas:
 						obr::KroneckerProduct<MathDomain::Float>(A, x, y, alpha);
 						break;
+					case MemorySpace::GenericBlas:
+						gbr::KroneckerProduct<MathDomain::Float>(A, x, y, alpha);
+						break;
 
 					case MemorySpace::Test:
 					{
@@ -952,6 +1013,9 @@ namespace cl { namespace routines {
 					case MemorySpace::OpenBlas:
 						obr::KroneckerProduct<MathDomain::Double>(A, x, y, alpha);
 						break;
+					case MemorySpace::GenericBlas:
+						gbr::KroneckerProduct<MathDomain::Double>(A, x, y, alpha);
+						break;
 
 					case MemorySpace::Test:
 					{
@@ -976,6 +1040,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl: // TODO
 					case MemorySpace::OpenBlas: // TODO
+					case MemorySpace::GenericBlas: // TODO
 					{
 						auto *aPtr = GetPointer<MathDomain::Int>(x);
 						auto *xPtr = GetPointer<MathDomain::Int>(x);
@@ -1019,6 +1084,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:  // TODO
 					{
 						MemoryTile t {};
 						MemoryBuffer _x {}, _y {};
@@ -1044,6 +1110,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:  // TODO
 					{
 						MemoryTile t {};
 						MemoryBuffer _x {}, _y {};
@@ -1069,6 +1136,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:  // TODO
 					{
 						MemoryTile t {};
 						MemoryBuffer _x {}, _y {};
@@ -1222,6 +1290,9 @@ namespace cl { namespace routines {
 					case MemorySpace::OpenBlas:
 						obr::Solve<MathDomain::Float>(A, B, aOperation, solver);
 						break;
+					case MemorySpace::GenericBlas:
+						gbr::Solve<MathDomain::Float>(A, B, aOperation, solver);
+						break;
 
 					default:
 						throw NotImplementedException();
@@ -1237,6 +1308,9 @@ namespace cl { namespace routines {
 						break;
 					case MemorySpace::OpenBlas:
 						obr::Solve<MathDomain::Double>(A, B, aOperation, solver);
+						break;
+					case MemorySpace::GenericBlas:
+						gbr::Solve<MathDomain::Double>(A, B, aOperation, solver);
 						break;
 
 					default:
@@ -1282,6 +1356,7 @@ namespace cl { namespace routines {
 
 					case MemorySpace::Test:
 					case MemorySpace::OpenBlas: // TODO: there's no isamin??
+					case MemorySpace::GenericBlas: // TODO: there's no isamin??
 					{
 						auto *xPtr = GetPointer<MathDomain::Float>(x);
 
@@ -1312,6 +1387,7 @@ namespace cl { namespace routines {
 
 					case MemorySpace::Test:
 					case MemorySpace::OpenBlas: // TODO: there's no isamin??
+					case MemorySpace::GenericBlas: // TODO: there's no isamin??
 					{
 						auto *xPtr = GetPointer<MathDomain::Double>(x);
 
@@ -1339,6 +1415,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas: // TODO
 					{
 						auto *xPtr = GetPointer<MathDomain::Int>(x);
 
@@ -1383,6 +1460,7 @@ namespace cl { namespace routines {
 
 					case MemorySpace::Test:
 					case MemorySpace::OpenBlas: // TODO: there's no isamin??
+					case MemorySpace::GenericBlas: // TODO: there's no isamin??
 					{
 						auto *argMinPtr = GetPointer<MathDomain::Int>(argMin);
 
@@ -1410,6 +1488,7 @@ namespace cl { namespace routines {
 
 					case MemorySpace::Test:
 					case MemorySpace::OpenBlas: // TODO: there's no isamin??
+					case MemorySpace::GenericBlas: // TODO: there's no isamin??
 					{
 						auto *argMinPtr = GetPointer<MathDomain::Int>(argMin);
 
@@ -1434,6 +1513,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas: // TODO
 					{
 						auto *argMinPtr = GetPointer<MathDomain::Int>(argMin);
 
@@ -1470,6 +1550,9 @@ namespace cl { namespace routines {
 					case MemorySpace::OpenBlas:
 						obr::ArgAbsMax<MathDomain::Float>(argMax, x);
 						break;
+					case MemorySpace::GenericBlas:
+						gbr::ArgAbsMax<MathDomain::Float>(argMax, x);
+						break;
 
 					case MemorySpace::Test:
 					{
@@ -1502,6 +1585,9 @@ namespace cl { namespace routines {
 					case MemorySpace::OpenBlas:
 						obr::ArgAbsMax<MathDomain::Double>(argMax, x);
 						break;
+					case MemorySpace::GenericBlas:
+						gbr::ArgAbsMax<MathDomain::Double>(argMax, x);
+						break;
 
 					case MemorySpace::Test:
 					{
@@ -1531,6 +1617,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:  // TODO
 					{
 						auto *xPtr = GetPointer<MathDomain::Int>(x);
 
@@ -1575,6 +1662,9 @@ namespace cl { namespace routines {
 					case MemorySpace::OpenBlas:
 						obr::ColumnWiseArgAbsMax<MathDomain::Float>(argMin, A);
 						break;
+					case MemorySpace::GenericBlas:
+						gbr::ColumnWiseArgAbsMax<MathDomain::Float>(argMin, A);
+						break;
 
 					case MemorySpace::Test:
 					{
@@ -1604,6 +1694,9 @@ namespace cl { namespace routines {
 					case MemorySpace::OpenBlas:
 						obr::ColumnWiseArgAbsMax<MathDomain::Double>(argMin, A);
 						break;
+					case MemorySpace::GenericBlas:
+						gbr::ColumnWiseArgAbsMax<MathDomain::Double>(argMin, A);
+						break;
 
 					case MemorySpace::Test:
 					{
@@ -1630,6 +1723,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:  // TODO
 					{
 						auto *argMinPtr = GetPointer<MathDomain::Int>(argMin);
 
@@ -1668,6 +1762,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:  // TODO
 					{
 						auto *zPtr = GetPointer<MathDomain::Float>(z);
 						auto *xPtr = GetPointer<MathDomain::Float>(x);
@@ -1688,6 +1783,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:  // TODO
 					{
 						auto *zPtr = GetPointer<MathDomain::Double>(z);
 						auto *xPtr = GetPointer<MathDomain::Double>(x);
@@ -1708,6 +1804,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:  // TODO
 					{
 						auto *zPtr = GetPointer<MathDomain::Int>(z);
 						auto *xPtr = GetPointer<MathDomain::Int>(x);
@@ -1741,6 +1838,9 @@ namespace cl { namespace routines {
 					case MemorySpace::OpenBlas:
 						obr::EuclideanNorm<MathDomain::Float>(norm, x);
 						break;
+					case MemorySpace::GenericBlas:
+						gbr::EuclideanNorm<MathDomain::Float>(norm, x);
+						break;
 
 					case MemorySpace::Test:
 					{
@@ -1769,6 +1869,9 @@ namespace cl { namespace routines {
 					case MemorySpace::OpenBlas:
 						obr::EuclideanNorm<MathDomain::Double>(norm, x);
 						break;
+					case MemorySpace::GenericBlas:
+						gbr::EuclideanNorm<MathDomain::Double>(norm, x);
+						break;
 
 					case MemorySpace::Test:
 						norm = 0.0;
@@ -1788,6 +1891,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:  // TODO
 					{
 						auto *xPtr = GetPointer<MathDomain::Int>(x);
 						norm = 0.0;

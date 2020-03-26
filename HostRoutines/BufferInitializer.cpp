@@ -22,6 +22,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:
 					case MemorySpace::OpenBlas:
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Float>(buf);
 
@@ -40,6 +41,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:
 					case MemorySpace::OpenBlas:
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Double>(buf);
 
@@ -58,6 +60,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:
 					case MemorySpace::OpenBlas:
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Int>(buf);
 
@@ -85,6 +88,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:
 					case MemorySpace::OpenBlas:
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Float>(buf);
 
@@ -103,6 +107,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:
 					case MemorySpace::OpenBlas:
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Double>(buf);
 
@@ -121,6 +126,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:
 					case MemorySpace::OpenBlas:
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Int>(buf);
 
@@ -148,6 +154,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Float>(buf);
 
@@ -166,6 +173,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Double>(buf);
 
@@ -184,6 +192,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Int>(buf);
 
@@ -218,6 +227,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Float>(buf);
 
@@ -236,6 +246,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Double>(buf);
 
@@ -254,6 +265,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Int>(buf);
 
@@ -284,6 +296,7 @@ namespace cl { namespace routines {
 
 					case MemorySpace::Test:
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Float>(buf);
 						std::random_device randomDevice;
@@ -311,6 +324,7 @@ namespace cl { namespace routines {
 
 					case MemorySpace::Test:
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Double>(buf);
 
@@ -349,6 +363,7 @@ namespace cl { namespace routines {
 
 					case MemorySpace::Test:
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Float>(buf);
 
@@ -377,6 +392,7 @@ namespace cl { namespace routines {
 
 					case MemorySpace::Test:
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Double>(buf);
 
@@ -414,6 +430,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl: // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Float>(buf);
 
@@ -434,6 +451,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl: // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Double>(buf);
 
@@ -454,6 +472,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl: // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Int>(buf);
 
@@ -485,6 +504,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Float>(buf);
 
@@ -508,6 +528,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Double>(buf);
 
@@ -531,6 +552,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Int>(buf);
 
@@ -563,6 +585,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Float>(buf);
 
@@ -585,6 +608,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Double>(buf);
 
@@ -607,6 +631,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Int>(buf);
 
@@ -636,6 +661,7 @@ namespace cl { namespace routines {
 			case MemorySpace::Test:
 			case MemorySpace::Mkl:  // TODO
 			case MemorySpace::OpenBlas:  // TODO
+			case MemorySpace::GenericBlas:
 				RandShuffle(buf1, seed);
 				RandShuffle(buf2, seed);
 				break;
@@ -655,6 +681,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Float>(buf);
 
@@ -689,6 +716,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Double>(buf);
 
@@ -723,6 +751,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas:  // TODO
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetPointer<MathDomain::Int>(buf);
 
@@ -764,6 +793,7 @@ namespace cl { namespace routines {
 			case MemorySpace::Test:
 			case MemorySpace::Mkl:  // TODO
 			case MemorySpace::OpenBlas:  // TODO
+			case MemorySpace::GenericBlas:
 				RandShuffleColumns(buf1, seed);
 				RandShuffleColumns(buf2, seed);
 				break;

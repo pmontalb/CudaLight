@@ -1,4 +1,3 @@
-#pragma once
 
 #include <Types.h>
 #include <Exceptions.h>
@@ -28,10 +27,7 @@
 
 #else
 
-	BLAS_NAMESPACE
-	{
-		#include <cblas.h>
-	}
+	#include <cblas.h>
 
 	namespace cl { namespace routines { ROUTINES_NAMESPACE {
 
@@ -41,12 +37,12 @@
 		template<>
 		inline void Copy<MathDomain::Float>(MemoryBuffer& dest, const MemoryBuffer& source)
 		{
-			GENERIC_API_NAMESPACE::cblas_scopy(static_cast<int>(dest.size), reinterpret_cast<const float*>(source.pointer), 1, reinterpret_cast<float*>(dest.pointer), 1);
+			cblas_scopy(static_cast<int>(dest.size), reinterpret_cast<const float*>(source.pointer), 1, reinterpret_cast<float*>(dest.pointer), 1);
 		}
 		template<>
 		inline void Copy<MathDomain::Double>(MemoryBuffer& dest, const MemoryBuffer& source)
 		{
-			GENERIC_API_NAMESPACE::cblas_dcopy(static_cast<int>(dest.size), reinterpret_cast<const double*>(source.pointer), 1, reinterpret_cast<double*>(dest.pointer), 1);
+			cblas_dcopy(static_cast<int>(dest.size), reinterpret_cast<const double*>(source.pointer), 1, reinterpret_cast<double*>(dest.pointer), 1);
 		}
 	}}}
 

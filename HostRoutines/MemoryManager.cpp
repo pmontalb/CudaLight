@@ -4,7 +4,11 @@
 #include <Types.h>
 #include <Exceptions.h>
 #include <MemoryManager.h>
-#include "MklAllWrappers.h"
+#include <MklAllWrappers.h>
+#include <OpenBlasAllWrappers.h>
+#include <GenericBlasAllWrappers.h>
+
+#include <cstdlib>
 
 namespace cl { namespace routines {
 
@@ -23,9 +27,14 @@ namespace cl { namespace routines {
 					case MemorySpace::Mkl:
 						mkr::Copy<MathDomain::Float>(dest, source);
 						break;
+					case MemorySpace::OpenBlas:
+						obr::Copy<MathDomain::Float>(dest, source);
+						break;
+					case MemorySpace::GenericBlas:
+						gbr::Copy<MathDomain::Float>(dest, source);
+						break;
 
 					case MemorySpace::Test:
-					case MemorySpace::OpenBlas: // TODO
 					{
 						auto *destPtr = GetPointer<MathDomain::Float>(dest);
 						const auto *sourcePtr = GetPointer<MathDomain::Float>(source);
@@ -45,9 +54,14 @@ namespace cl { namespace routines {
 					case MemorySpace::Mkl:
 						mkr::Copy<MathDomain::Double>(dest, source);
 						break;
+					case MemorySpace::OpenBlas:
+						obr::Copy<MathDomain::Double>(dest, source);
+						break;
+					case MemorySpace::GenericBlas:
+						gbr::Copy<MathDomain::Double>(dest, source);
+						break;
 
 					case MemorySpace::Test:
-					case MemorySpace::OpenBlas: // TODO
 					{
 						auto *destPtr = GetPointer<MathDomain::Double>(dest);
 						const auto *sourcePtr = GetPointer<MathDomain::Double>(source);
@@ -67,6 +81,7 @@ namespace cl { namespace routines {
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
 					case MemorySpace::OpenBlas: // TODO
+					case MemorySpace::GenericBlas: // TODO
 					{
 						auto *destPtr = GetPointer<MathDomain::Int>(dest);
 						const auto *sourcePtr = GetPointer<MathDomain::Int>(source);
@@ -97,10 +112,16 @@ namespace cl { namespace routines {
 						break;
 
 					case MemorySpace::Test:
-					case MemorySpace::OpenBlas: // TODO
+					case MemorySpace::OpenBlas:
+					case MemorySpace::GenericBlas:
 					{
 						auto** ptr = GetRefPointer<MathDomain::Float>(buf);
-						*ptr = new float[buf.size];  // TODO: alignment?
+
+						static constexpr size_t alignmentBits = { 64 };
+						auto err = posix_memalign(reinterpret_cast<void**>(ptr), alignmentBits, buf.TotalSize());
+						assert(err == 0);
+						assert(*ptr != nullptr);
+
 						break;
 					}
 					default:
@@ -117,10 +138,15 @@ namespace cl { namespace routines {
 						break;
 
 					case MemorySpace::Test:
-					case MemorySpace::OpenBlas: // TODO
+					case MemorySpace::OpenBlas:
+					case MemorySpace::GenericBlas:
 					{
 						auto* ptr = GetRefPointer<MathDomain::Double>(buf);
-						*ptr = new double[buf.size];
+
+						static constexpr size_t alignmentBits = { 64 };
+						auto err = posix_memalign(reinterpret_cast<void**>(ptr), alignmentBits, buf.TotalSize());
+						assert(err == 0);
+						assert(*ptr != nullptr);
 						break;
 					}
 
@@ -139,9 +165,14 @@ namespace cl { namespace routines {
 
 					case MemorySpace::Test:
 					case MemorySpace::OpenBlas: // TODO
+					case MemorySpace::GenericBlas: // TODO
 					{
 						auto* ptr = GetRefPointer<MathDomain::Int>(buf);
-						*ptr = new int[buf.size];
+
+						static constexpr size_t alignmentBits = { 64 };
+						auto err = posix_memalign(reinterpret_cast<void**>(ptr), alignmentBits, buf.TotalSize());
+						assert(err == 0);
+						assert(*ptr != nullptr);
 						break;
 					}
 					default:
@@ -167,10 +198,11 @@ namespace cl { namespace routines {
 						break;
 
 					case MemorySpace::Test:
-					case MemorySpace::OpenBlas: // TODO
+					case MemorySpace::OpenBlas:
+					case MemorySpace::GenericBlas:
 					{
 						auto **ptr = GetRefPointer<MathDomain::Float>(buf);
-						delete[] *ptr;  // TODO: alignment?
+						std::free(*ptr);
 						break;
 					}
 					default:
@@ -187,10 +219,11 @@ namespace cl { namespace routines {
 						break;
 
 					case MemorySpace::Test:
-					case MemorySpace::OpenBlas: // TODO
+					case MemorySpace::OpenBlas:
+					case MemorySpace::GenericBlas:
 					{
 						auto **ptr = GetRefPointer<MathDomain::Double>(buf);
-						delete[] *ptr;
+						std::free(*ptr);
 						break;
 					}
 					default:
@@ -207,10 +240,11 @@ namespace cl { namespace routines {
 						break;
 
 					case MemorySpace::Test:
-					case MemorySpace::OpenBlas: // TODO
+					case MemorySpace::OpenBlas:
+					case MemorySpace::GenericBlas:
 					{
 						auto *ptr = GetRefPointer<MathDomain::Int>(buf);
-						delete[] *ptr;
+						std::free(*ptr);
 						break;
 					}
 					default:
