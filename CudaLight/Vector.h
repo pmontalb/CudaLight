@@ -36,7 +36,7 @@ namespace cl
 
 		using Buffer<Vector, memorySpace, mathDomain>::Set;
 
-		inline ~Vector() override
+		inline virtual ~Vector() override
 		{
             this->dtor(_buffer);
             _buffer.pointer = 0;
