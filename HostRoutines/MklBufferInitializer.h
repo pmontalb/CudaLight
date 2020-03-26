@@ -14,7 +14,7 @@
 		}
 
 		template<MathDomain md>
-		static void RandUniform(MemoryBuffer&, const unsigned seed)
+		static void RandUniform(MemoryBuffer&, const unsigned)
 		{
 			throw NotImplementedException();
 		}

@@ -8,103 +8,105 @@
 
 #ifndef USE_MKL
 
-namespace cl { namespace routines { namespace mkr {
-	template<MathDomain md>
-	static void Add(MemoryBuffer&, const MemoryBuffer&, const MemoryBuffer&, const double)
+	namespace cl { namespace routines { namespace mkr
 	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void Add(MemoryBuffer&, const MemoryBuffer&, const MemoryBuffer&, const double)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void AddEqual(MemoryBuffer&, const MemoryBuffer&, const double)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void AddEqual(MemoryBuffer&, const MemoryBuffer&, const double)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void AddEqualMatrix(MemoryTile&, const MemoryTile&, const MatrixOperation, const MatrixOperation, const double, const double)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void AddEqualMatrix(MemoryTile&, const MemoryTile&, const MatrixOperation, const MatrixOperation, const double, const double)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void Scale(MemoryBuffer&, const double)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void Scale(MemoryBuffer&, const double)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void ScaleColumns(MemoryTile&, const MemoryBuffer&)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void ScaleColumns(MemoryTile&, const MemoryBuffer&)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void ElementwiseProduct(MemoryBuffer&, const MemoryBuffer&, const MemoryBuffer&, const double)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void ElementwiseProduct(MemoryBuffer&, const MemoryBuffer&, const MemoryBuffer&, const double)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void SubMultiply(MemoryTile&, const MemoryTile&, const MemoryTile&, const unsigned, const unsigned, const unsigned, const MatrixOperation, const MatrixOperation, const double, const double)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void SubMultiply(MemoryTile&, const MemoryTile&, const MemoryTile&, const unsigned, const unsigned, const unsigned, const MatrixOperation, const MatrixOperation, const double, const double)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void BatchedMultiply(MemoryCube&, const MemoryCube&, const MemoryCube&, const unsigned, const unsigned, const MatrixOperation, const MatrixOperation, const double, const double)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void BatchedMultiply(MemoryCube&, const MemoryCube&, const MemoryCube&, const unsigned, const unsigned, const MatrixOperation, const MatrixOperation, const double, const double)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void Dot(MemoryBuffer&, const MemoryTile&, const MemoryBuffer&, const MatrixOperation, const double alpha, const double beta)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void Dot(MemoryBuffer&, const MemoryTile&, const MemoryBuffer&, const MatrixOperation, const double, const double)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void KroneckerProduct(MemoryTile&, const MemoryBuffer&, const MemoryBuffer&, const double)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void KroneckerProduct(MemoryTile&, const MemoryBuffer&, const MemoryBuffer&, const double)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void Solve(const MemoryTile&, MemoryTile&, const MatrixOperation)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void Solve(const MemoryTile&, MemoryTile&, const MatrixOperation, const LinearSystemSolverType)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void ArgAbsMin(int&, const MemoryBuffer&)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void ArgAbsMin(int&, const MemoryBuffer&)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void ColumnWiseArgAbsMin(MemoryBuffer&, const MemoryTile&)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void ColumnWiseArgAbsMin(MemoryBuffer&, const MemoryTile&)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void ArgAbsMax(int&, const MemoryBuffer&)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void ArgAbsMax(int&, const MemoryBuffer&)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void ColumnWiseArgAbsMax(MemoryBuffer&, const MemoryTile&)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void ColumnWiseArgAbsMax(MemoryBuffer&, const MemoryTile&)
+		{
+			throw NotImplementedException();
+		}
 
-	// norm = ||x||_2
-	template<MathDomain md>
-	static void EuclideanNorm(double&, const MemoryBuffer&)
-	{
-		throw NotImplementedException();
-	}
+		// norm = ||x||_2
+		template<MathDomain md>
+		static void EuclideanNorm(double&, const MemoryBuffer&)
+		{
+			throw NotImplementedException();
+		}
+	}}}
 
 #else
 

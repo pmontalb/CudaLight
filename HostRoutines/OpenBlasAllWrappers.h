@@ -1,5 +1,12 @@
 #pragma once
 
+#include <Types.h>
+#include <BufferInitializer.h>
+#include <MemoryManager.h>
+
+#include <vector>
+#include <array>
+
 #ifdef lapack_complex_float
 	#undef lapack_complex_float
 #endif

@@ -15,7 +15,8 @@
 
 #ifndef GENERIC_API_DEFINE
 
-	namespace cl { namespace routines { ROUTINES_NAMESPACE {
+	namespace cl { namespace routines { ROUTINES_NAMESPACE
+	{
 
 		template<MathDomain md>
 		void Copy(MemoryBuffer&, const MemoryBuffer&)

@@ -1,11 +1,4 @@
 
-#include <Types.h>
-#include <BufferInitializer.h>
-#include <MemoryManager.h>
-
-#include <vector>
-#include <array>
-
 #ifndef GENERIC_API_NAMESPACE
 	#error "Wrong usage of this header"
 #endif
@@ -19,104 +12,105 @@
 
 #ifndef GENERIC_API_DEFINE
 
-namespace cl { namespace routines { ROUTINES_NAMESPACE {
-	template<MathDomain md>
-	static void Add(MemoryBuffer&, const MemoryBuffer&, const MemoryBuffer&, const double)
+	namespace cl { namespace routines { ROUTINES_NAMESPACE
 	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void Add(MemoryBuffer&, const MemoryBuffer&, const MemoryBuffer&, const double)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void AddEqual(MemoryBuffer&, const MemoryBuffer&, const double)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void AddEqual(MemoryBuffer&, const MemoryBuffer&, const double)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void AddEqualMatrix(MemoryTile&, const MemoryTile&, const MatrixOperation, const MatrixOperation, const double, const double)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void AddEqualMatrix(MemoryTile&, const MemoryTile&, const MatrixOperation, const MatrixOperation, const double, const double)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void Scale(MemoryBuffer&, const double)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void Scale(MemoryBuffer&, const double)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void ScaleColumns(MemoryTile&, const MemoryBuffer&)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void ScaleColumns(MemoryTile&, const MemoryBuffer&)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void ElementwiseProduct(MemoryBuffer&, const MemoryBuffer&, const MemoryBuffer&, const double)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void ElementwiseProduct(MemoryBuffer&, const MemoryBuffer&, const MemoryBuffer&, const double)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void SubMultiply(MemoryTile&, const MemoryTile&, const MemoryTile&, const unsigned, const unsigned, const unsigned, const MatrixOperation, const MatrixOperation, const double, const double)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void SubMultiply(MemoryTile&, const MemoryTile&, const MemoryTile&, const unsigned, const unsigned, const unsigned, const MatrixOperation, const MatrixOperation, const double, const double)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void BatchedMultiply(MemoryCube&, const MemoryCube&, const MemoryCube&, const unsigned, const unsigned, const MatrixOperation, const MatrixOperation, const double, const double)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void BatchedMultiply(MemoryCube&, const MemoryCube&, const MemoryCube&, const unsigned, const unsigned, const MatrixOperation, const MatrixOperation, const double, const double)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void Dot(MemoryBuffer&, const MemoryTile&, const MemoryBuffer&, const MatrixOperation, const double alpha, const double beta)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void Dot(MemoryBuffer&, const MemoryTile&, const MemoryBuffer&, const MatrixOperation, const double, const double)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void KroneckerProduct(MemoryTile&, const MemoryBuffer&, const MemoryBuffer&, const double)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void KroneckerProduct(MemoryTile&, const MemoryBuffer&, const MemoryBuffer&, const double)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void Solve(const MemoryTile&, MemoryTile&, const MatrixOperation)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void Solve(const MemoryTile&, MemoryTile&, const MatrixOperation, const LinearSystemSolverType)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void ArgAbsMin(int&, const MemoryBuffer&)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void ArgAbsMin(int&, const MemoryBuffer&)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void ColumnWiseArgAbsMin(MemoryBuffer&, const MemoryTile&)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void ColumnWiseArgAbsMin(MemoryBuffer&, const MemoryTile&)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void ArgAbsMax(int&, const MemoryBuffer&)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void ArgAbsMax(int&, const MemoryBuffer&)
+		{
+			throw NotImplementedException();
+		}
 
-	template<MathDomain md>
-	static void ColumnWiseArgAbsMax(MemoryBuffer&, const MemoryTile&)
-	{
-		throw NotImplementedException();
-	}
+		template<MathDomain md>
+		static void ColumnWiseArgAbsMax(MemoryBuffer&, const MemoryTile&)
+		{
+			throw NotImplementedException();
+		}
 
-	// norm = ||x||_2
-	template<MathDomain md>
-	static void EuclideanNorm(double&, const MemoryBuffer&)
-	{
-		throw NotImplementedException();
-	}
-}}
+		// norm = ||x||_2
+		template<MathDomain md>
+		static void EuclideanNorm(double&, const MemoryBuffer&)
+		{
+			throw NotImplementedException();
+		}
+	}}}
 
 #else
 
@@ -305,7 +299,7 @@ namespace cl { namespace routines { ROUTINES_NAMESPACE {
 	{
 		// Need to copy A, as it will be overwritten by its factorization
 		MemoryTile aCopy(A);
-		Alloc(aCopy);
+		::cl::routines::Alloc(aCopy);
 		Copy<MathDomain::Float>(aCopy, A);
 
 		const auto nra = static_cast<int>(A.nRows);
@@ -322,7 +316,7 @@ namespace cl { namespace routines { ROUTINES_NAMESPACE {
 			{
 				// allocate memory for pivoting
 				MemoryBuffer pivot(0, A.nRows, A.memorySpace, MathDomain::Int);
-				Alloc(pivot);
+				::cl::routines::Alloc(pivot);
 
 				// Factorize A (and overwrite it with L)
 				info = LAPACKE_sgetrf(static_cast<int>(columnMajorLayout), nra, nra, reinterpret_cast<float*>(aCopy.pointer), lda, reinterpret_cast<int*>(pivot.pointer));
@@ -335,7 +329,7 @@ namespace cl { namespace routines { ROUTINES_NAMESPACE {
 					throw OpenBlasException(__func__);
 
 				// free memory
-				Free(pivot);
+				::cl::routines::Free(pivot);
 
 				break;
 			}
@@ -343,7 +337,7 @@ namespace cl { namespace routines { ROUTINES_NAMESPACE {
 			{
 				// allocate memory for tau
 				MemoryBuffer tau(0, A.nRows, A.memorySpace, MathDomain::Float);
-				Alloc(tau);
+				::cl::routines::Alloc(tau);
 
 				// A = Q * R
 				/* int matrix_layout, lapack_int m, lapack_int n,
@@ -369,7 +363,7 @@ namespace cl { namespace routines { ROUTINES_NAMESPACE {
 								 nra, nra, 1.0, reinterpret_cast<float*>(aCopy.pointer), lda, reinterpret_cast<float*>(B.pointer), ldb);
 
 				// free memory
-				Free(tau);
+				::cl::routines::Free(tau);
 
 				break;
 			}
@@ -377,7 +371,7 @@ namespace cl { namespace routines { ROUTINES_NAMESPACE {
 				throw NotImplementedException();
 		}
 
-		Free(aCopy);
+		::cl::routines::Free(aCopy);
 	}
 
 	template<>
@@ -385,7 +379,7 @@ namespace cl { namespace routines { ROUTINES_NAMESPACE {
 	{
 		// Need to copy A, as it will be overwritten by its factorization
 		MemoryTile aCopy(A);
-		Alloc(aCopy);
+		::cl::routines::Alloc(aCopy);
 		Copy<MathDomain::Double>(aCopy, A);
 
 		const auto nra = static_cast<int>(A.nRows);
@@ -402,7 +396,7 @@ namespace cl { namespace routines { ROUTINES_NAMESPACE {
 			{
 				// allocate memory for pivoting
 				MemoryBuffer pivot(0, A.nRows, A.memorySpace, MathDomain::Int);
-				Alloc(pivot);
+				::cl::routines::Alloc(pivot);
 
 				// Factorize A (and overwrite it with L)
 				info = LAPACKE_dgetrf(static_cast<int>(columnMajorLayout), nra, nra, reinterpret_cast<double*>(aCopy.pointer), lda, reinterpret_cast<int*>(pivot.pointer));
@@ -415,7 +409,7 @@ namespace cl { namespace routines { ROUTINES_NAMESPACE {
 					throw OpenBlasException(__func__);
 
 				// free memory
-				Free(pivot);
+				::cl::routines::Free(pivot);
 
 				break;
 			}
@@ -423,7 +417,7 @@ namespace cl { namespace routines { ROUTINES_NAMESPACE {
 			{
 				// allocate memory for tau
 				MemoryBuffer tau(0, A.nRows, A.memorySpace, MathDomain::Double);
-				Alloc(tau);
+				::cl::routines::Alloc(tau);
 
 				// A = Q * R
 				/* int matrix_layout, lapack_int m, lapack_int n,
@@ -449,7 +443,7 @@ namespace cl { namespace routines { ROUTINES_NAMESPACE {
 										  nra, nra, 1.0, reinterpret_cast<double*>(aCopy.pointer), lda, reinterpret_cast<double*>(B.pointer), ldb);
 
 				// free memory
-				Free(tau);
+				::cl::routines::Free(tau);
 
 				break;
 			}
@@ -457,7 +451,7 @@ namespace cl { namespace routines { ROUTINES_NAMESPACE {
 				throw NotImplementedException();
 		}
 
-		Free(aCopy);
+		::cl::routines::Free(aCopy);
 	}
 
 	template<MathDomain md>

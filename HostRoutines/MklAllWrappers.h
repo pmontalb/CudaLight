@@ -8,6 +8,7 @@
 	#undef lapack_complex_double
 #endif
 
+#include <complex>
 #include <MklMemoryManager.h>
 #include <MklBufferInitializer.h>
 #include <MklBlasWrappers.h>

@@ -1,9 +1,10 @@
 
+#include <MemoryManager.h>
+
 #include <Common.h>
 #include <Flags.h>
 #include <Types.h>
 #include <Exceptions.h>
-#include <MemoryManager.h>
 #include <MklAllWrappers.h>
 #include <OpenBlasAllWrappers.h>
 #include <GenericBlasAllWrappers.h>
