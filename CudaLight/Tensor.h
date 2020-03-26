@@ -138,6 +138,11 @@ namespace cl
 	using MklFloatTensor = MklSingleTensor;
 	using MklDoubleTensor = Tensor<MemorySpace::Mkl, MathDomain::Double>;
 
+	using OpenBlasIntegerTensor = Tensor<MemorySpace::OpenBlas, MathDomain::Int>;
+	using OpenBlasSingleTensor = Tensor<MemorySpace::OpenBlas, MathDomain::Float>;
+	using OpenBlasFloatTensor = OpenBlasSingleTensor;
+	using OpenBlasDoubleTensor = Tensor<MemorySpace::OpenBlas, MathDomain::Double>;
+
 	namespace gpu
 	{
 		using ten = cl::GpuSingleTensor;
@@ -164,6 +169,13 @@ namespace cl
 		using iten = cl::MklIntegerTensor;
 	}
 
+	namespace oblas
+	{
+		using ten = cl::OpenBlasSingleTensor;
+		using dten = cl::OpenBlasDoubleTensor;
+		using iten = cl::OpenBlasIntegerTensor;
+	}
+
 	namespace test
 	{
 		using ten = cl::TestSingleTensor;
@@ -180,6 +192,13 @@ namespace mkl
 	using ten = cl::mkl::ten;
 	using dten = cl::mkl::dten;
 	using iten = cl::mkl::iten;
+}
+
+namespace oblas
+{
+	using ten = cl::oblas::ten;
+	using dten = cl::oblas::dten;
+	using iten = cl::oblas::iten;
 }
 
 namespace test

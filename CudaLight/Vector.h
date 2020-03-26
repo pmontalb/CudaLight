@@ -154,6 +154,11 @@ namespace cl
 	using MklFloatVector = MklSingleVector;
 	using MklDoubleVector = Vector<MemorySpace::Mkl, MathDomain::Double>;
 
+	using OpenBlasIntegerVector = Vector<MemorySpace::OpenBlas, MathDomain::Int>;
+	using OpenBlasSingleVector = Vector<MemorySpace::OpenBlas, MathDomain::Float>;
+	using OpenBlasFloatVector = OpenBlasSingleVector;
+	using OpenBlasDoubleVector = Vector<MemorySpace::OpenBlas, MathDomain::Double>;
+	
 	namespace gpu
 	{
 		using vec = cl::GpuSingleVector;
@@ -180,6 +185,13 @@ namespace cl
 		using ivec = cl::MklIntegerVector;
 	}
 
+	namespace oblas
+	{
+		using vec = cl::OpenBlasSingleVector;
+		using dvec = cl::OpenBlasDoubleVector;
+		using ivec = cl::OpenBlasIntegerVector;
+	}
+
 	namespace test
 	{
 		using vec = cl::TestSingleVector;
@@ -197,6 +209,14 @@ namespace mkl
 	using dvec = cl::mkl::dvec;
 	using ivec = cl::mkl::ivec;
 }
+
+namespace oblas
+{
+	using vec = cl::oblas::vec;
+	using dvec = cl::oblas::dvec;
+	using ivec = cl::oblas::ivec;
+}
+
 
 namespace test
 {

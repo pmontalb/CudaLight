@@ -4,7 +4,7 @@
 #include <Types.h>
 #include <Exceptions.h>
 #include <MemoryManager.h>
-#include "MklWrappers.h"
+#include "MklAllWrappers.h"
 
 namespace cl { namespace routines {
 
@@ -25,6 +25,7 @@ namespace cl { namespace routines {
 						break;
 
 					case MemorySpace::Test:
+					case MemorySpace::OpenBlas: // TODO
 					{
 						auto *destPtr = GetPointer<MathDomain::Float>(dest);
 						const auto *sourcePtr = GetPointer<MathDomain::Float>(source);
@@ -46,6 +47,7 @@ namespace cl { namespace routines {
 						break;
 
 					case MemorySpace::Test:
+					case MemorySpace::OpenBlas: // TODO
 					{
 						auto *destPtr = GetPointer<MathDomain::Double>(dest);
 						const auto *sourcePtr = GetPointer<MathDomain::Double>(source);
@@ -64,6 +66,7 @@ namespace cl { namespace routines {
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
+					case MemorySpace::OpenBlas: // TODO
 					{
 						auto *destPtr = GetPointer<MathDomain::Int>(dest);
 						const auto *sourcePtr = GetPointer<MathDomain::Int>(source);
@@ -94,9 +97,10 @@ namespace cl { namespace routines {
 						break;
 
 					case MemorySpace::Test:
+					case MemorySpace::OpenBlas: // TODO
 					{
 						auto** ptr = GetRefPointer<MathDomain::Float>(buf);
-						*ptr = new float[buf.size];
+						*ptr = new float[buf.size];  // TODO: alignment?
 						break;
 					}
 					default:
@@ -113,6 +117,7 @@ namespace cl { namespace routines {
 						break;
 
 					case MemorySpace::Test:
+					case MemorySpace::OpenBlas: // TODO
 					{
 						auto* ptr = GetRefPointer<MathDomain::Double>(buf);
 						*ptr = new double[buf.size];
@@ -133,6 +138,7 @@ namespace cl { namespace routines {
 						break;
 
 					case MemorySpace::Test:
+					case MemorySpace::OpenBlas: // TODO
 					{
 						auto* ptr = GetRefPointer<MathDomain::Int>(buf);
 						*ptr = new int[buf.size];
@@ -161,9 +167,10 @@ namespace cl { namespace routines {
 						break;
 
 					case MemorySpace::Test:
+					case MemorySpace::OpenBlas: // TODO
 					{
 						auto **ptr = GetRefPointer<MathDomain::Float>(buf);
-						delete[] *ptr;
+						delete[] *ptr;  // TODO: alignment?
 						break;
 					}
 					default:
@@ -180,6 +187,7 @@ namespace cl { namespace routines {
 						break;
 
 					case MemorySpace::Test:
+					case MemorySpace::OpenBlas: // TODO
 					{
 						auto **ptr = GetRefPointer<MathDomain::Double>(buf);
 						delete[] *ptr;
@@ -199,6 +207,7 @@ namespace cl { namespace routines {
 						break;
 
 					case MemorySpace::Test:
+					case MemorySpace::OpenBlas: // TODO
 					{
 						auto *ptr = GetRefPointer<MathDomain::Int>(buf);
 						delete[] *ptr;

@@ -22,6 +22,7 @@ namespace cl { namespace routines {
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
+					case MemorySpace::OpenBlas:  // TODO
 					{
 						auto *vPtr = GetPointer<MathDomain::Float>(v);
 
@@ -39,6 +40,7 @@ namespace cl { namespace routines {
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
+					case MemorySpace::OpenBlas:  // TODO
 					{
 						auto *vPtr = GetPointer<MathDomain::Double>(v);
 
@@ -56,6 +58,7 @@ namespace cl { namespace routines {
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
+					case MemorySpace::OpenBlas:  // TODO
 					{
 						auto *vPtr = GetPointer<MathDomain::Int>(v);
 
@@ -82,6 +85,7 @@ namespace cl { namespace routines {
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
+					case MemorySpace::OpenBlas:  // TODO
 					{
 						auto *xPtr = GetPointer<MathDomain::Float>(x);
 						min = static_cast<double>(*std::min_element(xPtr, xPtr + x.size));
@@ -98,6 +102,7 @@ namespace cl { namespace routines {
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
+					case MemorySpace::OpenBlas:  // TODO
 					{
 						auto *xPtr = GetPointer<MathDomain::Double>(x);
 						min = *std::min_element(xPtr, xPtr + x.size);
@@ -114,6 +119,7 @@ namespace cl { namespace routines {
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
+					case MemorySpace::OpenBlas:  // TODO
 					{
 						auto *xPtr = GetPointer<MathDomain::Int>(x);
 						min = static_cast<double>(*std::min_element(xPtr, xPtr + x.size));
@@ -140,6 +146,7 @@ namespace cl { namespace routines {
 					{
 						case MemorySpace::Test:
 						case MemorySpace::Mkl:  // TODO
+						case MemorySpace::OpenBlas:  // TODO
 						{
 							auto *xPtr = GetPointer<MathDomain::Float>(x);
 							max = static_cast<double>(*std::max_element(xPtr, xPtr + x.size));
@@ -156,6 +163,7 @@ namespace cl { namespace routines {
 					{
 						case MemorySpace::Test:
 						case MemorySpace::Mkl:  // TODO
+						case MemorySpace::OpenBlas:  // TODO
 						{
 							auto *xPtr = GetPointer<MathDomain::Double>(x);
 							max = *std::max_element(xPtr, xPtr + x.size);
@@ -172,6 +180,7 @@ namespace cl { namespace routines {
 					{
 						case MemorySpace::Test:
 						case MemorySpace::Mkl:  // TODO
+						case MemorySpace::OpenBlas:  // TODO
 						{
 							auto *xPtr = GetPointer<MathDomain::Int>(x);
 							max = static_cast<double>(*std::max_element(xPtr, xPtr + x.size));
@@ -198,6 +207,7 @@ namespace cl { namespace routines {
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
+					case MemorySpace::OpenBlas:  // TODO
 					{
 						auto *xPtr = GetPointer<MathDomain::Float>(x);
 
@@ -217,6 +227,7 @@ namespace cl { namespace routines {
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
+					case MemorySpace::OpenBlas:  // TODO
 					{
 						auto *xPtr = GetPointer<MathDomain::Double>(x);
 
@@ -236,6 +247,7 @@ namespace cl { namespace routines {
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
+					case MemorySpace::OpenBlas:  // TODO
 					{
 						auto *xPtr = GetPointer<MathDomain::Int>(x);
 
@@ -264,6 +276,7 @@ namespace cl { namespace routines {
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
+					case MemorySpace::OpenBlas:  // TODO
 					{
 						auto *xPtr = GetPointer<MathDomain::Float>(x);
 
@@ -283,6 +296,7 @@ namespace cl { namespace routines {
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
+					case MemorySpace::OpenBlas:  // TODO
 					{
 						auto *xPtr = GetPointer<MathDomain::Double>(x);
 
@@ -302,6 +316,7 @@ namespace cl { namespace routines {
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:  // TODO
+					case MemorySpace::OpenBlas:  // TODO
 					{
 						auto *xPtr = GetPointer<MathDomain::Int>(x);
 

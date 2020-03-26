@@ -29,6 +29,7 @@ namespace cl { namespace routines {
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:
+					case MemorySpace::OpenBlas:
 					{
 						auto *xPtr = GetPointer<MathDomain::Float>(x);
 						auto *yPtr = GetPointer<MathDomain::Float>(y);
@@ -48,6 +49,7 @@ namespace cl { namespace routines {
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:
+					case MemorySpace::OpenBlas:
 					{
 						auto *xPtr = GetPointer<MathDomain::Double>(x);
 						auto *yPtr = GetPointer<MathDomain::Double>(y);
@@ -67,6 +69,7 @@ namespace cl { namespace routines {
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:
+					case MemorySpace::OpenBlas:
 					{
 						auto *xPtr = GetPointer<MathDomain::Int>(x);
 						auto *yPtr = GetPointer<MathDomain::Int>(y);
@@ -115,6 +118,7 @@ namespace cl { namespace routines {
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:
+					case MemorySpace::OpenBlas:
 					{
 						auto *xPtr = GetPointer<MathDomain::Float>(x);
 						auto *yPtr = GetPointer<MathDomain::Float>(y);
@@ -134,6 +138,7 @@ namespace cl { namespace routines {
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:
+					case MemorySpace::OpenBlas:
 					{
 						auto *xPtr = GetPointer<MathDomain::Double>(x);
 						auto *yPtr = GetPointer<MathDomain::Double>(y);
@@ -153,6 +158,7 @@ namespace cl { namespace routines {
 				{
 					case MemorySpace::Test:
 					case MemorySpace::Mkl:
+					case MemorySpace::OpenBlas:
 					{
 						auto *xPtr = GetPointer<MathDomain::Int>(x);
 						auto *yPtr = GetPointer<MathDomain::Int>(y);

@@ -52,12 +52,9 @@ namespace cl
 		case MemorySpace::Host:
 			dm::detail::AllocHost(buffer);
 			break;
-		case MemorySpace::Test:
-		case MemorySpace::Mkl:
+		default:
 			routines::Alloc(buffer);
 			break;
-		default:
-			throw NotSupportedException();
 		}
 	}
 
@@ -208,12 +205,9 @@ namespace cl
 		case MemorySpace::Host:
 			dm::detail::FreeHost(buffer);
 			break;
-		case MemorySpace::Test:
-		case MemorySpace::Mkl:
+		default:
 			routines::Free(buffer);
 			break;
-		default:
-			throw NotSupportedException();
 		}
 	}
 

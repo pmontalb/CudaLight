@@ -1,6 +1,6 @@
 
 #include <SparseWrappers.h>
-#include <MklWrappers.h>
+#include <MklAllWrappers.h>
 #include "Common.h"
 
 namespace cl { namespace routines {

@@ -283,6 +283,11 @@ namespace cl
 	using MklFloatMatrix = MklSingleMatrix;
 	using MklDoubleMatrix = ColumnWiseMatrix<MemorySpace::Mkl, MathDomain::Double>;
 
+	using OpenBlasIntegerMatrix = ColumnWiseMatrix<MemorySpace::OpenBlas, MathDomain::Int>;
+	using OpenBlasSingleMatrix = ColumnWiseMatrix<MemorySpace::OpenBlas, MathDomain::Float>;
+	using OpenBlasFloatMatrix = OpenBlasSingleMatrix;
+	using OpenBlasDoubleMatrix = ColumnWiseMatrix<MemorySpace::OpenBlas, MathDomain::Double>;
+	
 	namespace gpu
 	{
 		using mat = cl::GpuSingleMatrix;
@@ -309,6 +314,13 @@ namespace cl
 		using imat = cl::MklIntegerMatrix;
 	}
 
+	namespace oblas
+	{
+		using mat = cl::OpenBlasSingleMatrix;
+		using dmat = cl::OpenBlasDoubleMatrix;
+		using imat = cl::OpenBlasIntegerMatrix;
+	}
+
 	namespace test
 	{
 		using mat = cl::TestSingleMatrix;
@@ -325,6 +337,13 @@ namespace mkl
 	using mat = cl::mkl::mat;
 	using dmat = cl::mkl::dmat;
 	using imat = cl::mkl::imat;
+}
+
+namespace oblas
+{
+	using mat = cl::oblas::mat;
+	using dmat = cl::oblas::dmat;
+	using imat = cl::oblas::imat;
 }
 
 namespace test
