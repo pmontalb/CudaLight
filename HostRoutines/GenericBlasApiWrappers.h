@@ -2,13 +2,25 @@
 
 #include <Types.h>
 #include <BufferInitializer.h>
-#include <OpenBlasBufferInitializer.h>
+#include <MemoryManager.h>
 
 #include <vector>
 #include <array>
 
-#ifndef USE_OPEN_BLAS
+#ifndef GENERIC_API_NAMESPACE
+	#error "Wrong usage of this header"
+#endif
 
+#ifndef GENERIC_API_ROUTINES_NAMESPACE
+	#error "Wrong usage of this header"
+#endif
+
+#define ROUTINES_NAMESPACE namespace GENERIC_API_ROUTINES_NAMESPACE
+#define BLAS_NAMESPACE namespace GENERIC_API_NAMESPACE
+
+#ifndef GENERIC_API_DEFINE
+
+namespace cl { namespace routines { ROUTINES_NAMESPACE {
 	template<MathDomain md>
 	static void Add(MemoryBuffer&, const MemoryBuffer&, const MemoryBuffer&, const double)
 	{
@@ -105,20 +117,21 @@
 	{
 		throw NotImplementedException();
 	}
+}}
 
 #else
 
 	#include <cmath>
-	#include <complex.h>  // NB: do not remove this! This is a hack for the hack that includes library headers inside namespaces (lapacke.h includes complex.h inside oblas namespace otherwise!)
-	namespace oblas
+	#include <complex.h>  // NB: do not remove this! This is a hack for the hack that includes library headers inside namespaces (lapacke.h includes complex.h inside GENERIC_API_NAMESPACE namespace otherwise!)
+	BLAS_NAMESPACE
 	{
 		#include <cblas.h>
 		#include <lapacke.h>
 	}
 
-namespace cl { namespace routines { namespace obr {
-	static constexpr oblas::CBLAS_ORDER columnMajorLayout = { oblas::CBLAS_ORDER::CblasColMajor };
-	static constexpr std::array<oblas::CBLAS_TRANSPOSE, 2> oblasOperationsEnum = { oblas::CBLAS_TRANSPOSE::CblasNoTrans, oblas::CBLAS_TRANSPOSE::CblasTrans };
+namespace cl { namespace routines { ROUTINES_NAMESPACE {
+	static constexpr GENERIC_API_NAMESPACE::CBLAS_ORDER columnMajorLayout = { GENERIC_API_NAMESPACE::CBLAS_ORDER::CblasColMajor };
+	static constexpr std::array<GENERIC_API_NAMESPACE::CBLAS_TRANSPOSE, 2> GENERIC_API_NAMESPACEOperationsEnum = { GENERIC_API_NAMESPACE::CBLAS_TRANSPOSE::CblasNoTrans, GENERIC_API_NAMESPACE::CBLAS_TRANSPOSE::CblasTrans };
 
 	template<MathDomain md>
 	static void Add(MemoryBuffer& z, const MemoryBuffer& x, const MemoryBuffer& y, const double alpha);
@@ -127,13 +140,13 @@ namespace cl { namespace routines { namespace obr {
 	inline void Add<MathDomain::Float>(MemoryBuffer& z, const MemoryBuffer& x, const MemoryBuffer& y, const double alpha)
 	{
 		Copy<MathDomain::Float>(z, y);
-		oblas::cblas_saxpy(static_cast<int>(z.size), static_cast<float>(alpha), reinterpret_cast<float*>(x.pointer), 1, reinterpret_cast<float*>(z.pointer), 1);
+		GENERIC_API_NAMESPACE::cblas_saxpy(static_cast<int>(z.size), static_cast<float>(alpha), reinterpret_cast<float*>(x.pointer), 1, reinterpret_cast<float*>(z.pointer), 1);
 	}
 	template<>
 	inline void Add<MathDomain::Double>(MemoryBuffer& z, const MemoryBuffer& x, const MemoryBuffer& y, const double alpha)
 	{
 		Copy<MathDomain::Double>(z, y);
-		oblas::cblas_daxpy(static_cast<int>(z.size), alpha, reinterpret_cast<double*>(x.pointer), 1, reinterpret_cast<double*>(z.pointer), 1);
+		GENERIC_API_NAMESPACE::cblas_daxpy(static_cast<int>(z.size), alpha, reinterpret_cast<double*>(x.pointer), 1, reinterpret_cast<double*>(z.pointer), 1);
 	}
 
 	template<MathDomain md>
@@ -142,12 +155,12 @@ namespace cl { namespace routines { namespace obr {
 	template<>
 	inline void AddEqual<MathDomain::Float>(MemoryBuffer& z, const MemoryBuffer& x, const double alpha)
 	{
-		oblas::cblas_saxpy(static_cast<int>(z.size), static_cast<float>(alpha), reinterpret_cast<float*>(x.pointer), 1, reinterpret_cast<float*>(z.pointer), 1);
+		GENERIC_API_NAMESPACE::cblas_saxpy(static_cast<int>(z.size), static_cast<float>(alpha), reinterpret_cast<float*>(x.pointer), 1, reinterpret_cast<float*>(z.pointer), 1);
 	}
 	template<>
 	inline void AddEqual<MathDomain::Double>(MemoryBuffer& z, const MemoryBuffer& x, const double alpha)
 	{
-		oblas::cblas_daxpy(static_cast<int>(z.size), alpha, reinterpret_cast<double*>(x.pointer), 1, reinterpret_cast<double*>(z.pointer), 1);
+		GENERIC_API_NAMESPACE::cblas_daxpy(static_cast<int>(z.size), alpha, reinterpret_cast<double*>(x.pointer), 1, reinterpret_cast<double*>(z.pointer), 1);
 	}
 
 	template<MathDomain md>
@@ -161,7 +174,7 @@ namespace cl { namespace routines { namespace obr {
 		if (bOperation != MatrixOperation::None)
 			throw NotImplementedException();
 
-		oblas::cblas_sgeadd(columnMajorLayout,
+		GENERIC_API_NAMESPACE::cblas_sgeadd(columnMajorLayout,
 							static_cast<int>(A.nRows), static_cast<int>(A.nCols),
 							static_cast<float>(beta),
 							reinterpret_cast<float*>(B.pointer), static_cast<int>(B.leadingDimension),
@@ -176,7 +189,7 @@ namespace cl { namespace routines { namespace obr {
 		if (bOperation != MatrixOperation::None)
 			throw NotImplementedException();
 
-		oblas::cblas_dgeadd(columnMajorLayout,
+		GENERIC_API_NAMESPACE::cblas_dgeadd(columnMajorLayout,
 							static_cast<int>(A.nRows), static_cast<int>(A.nCols),
 							beta,
 							reinterpret_cast<double*>(B.pointer), static_cast<int>(B.leadingDimension),
@@ -190,12 +203,12 @@ namespace cl { namespace routines { namespace obr {
 	template<>
 	inline void Scale<MathDomain::Float>(MemoryBuffer& z, const double alpha)
 	{
-		oblas::cblas_sscal(static_cast<int>(z.size), static_cast<float>(alpha), reinterpret_cast<float*>(z.pointer), 1);
+		GENERIC_API_NAMESPACE::cblas_sscal(static_cast<int>(z.size), static_cast<float>(alpha), reinterpret_cast<float*>(z.pointer), 1);
 	}
 	template<>
 	inline void Scale<MathDomain::Double>(MemoryBuffer& z, const double alpha)
 	{
-		oblas::cblas_dscal(static_cast<int>(z.size), alpha, reinterpret_cast<double*>(z.pointer), 1);
+		GENERIC_API_NAMESPACE::cblas_dscal(static_cast<int>(z.size), alpha, reinterpret_cast<double*>(z.pointer), 1);
 	}
 
 	template<MathDomain md>
@@ -205,13 +218,13 @@ namespace cl { namespace routines { namespace obr {
 	inline void ScaleColumns<MathDomain::Float>(MemoryTile& z, const MemoryBuffer& alpha)
 	{
 		for (size_t i = 0; i < z.nCols; ++i)
-			oblas::cblas_sscal(static_cast<int>(z.nRows), *reinterpret_cast<float*>(alpha.pointer + i * alpha.ElementarySize()), reinterpret_cast<float*>(z.pointer + i * z.nRows * z.ElementarySize()), 1);
+			GENERIC_API_NAMESPACE::cblas_sscal(static_cast<int>(z.nRows), *reinterpret_cast<float*>(alpha.pointer + i * alpha.ElementarySize()), reinterpret_cast<float*>(z.pointer + i * z.nRows * z.ElementarySize()), 1);
 	}
 	template<>
 	inline void ScaleColumns<MathDomain::Double>(MemoryTile& z, const MemoryBuffer& alpha)
 	{
 		for (size_t i = 0; i < z.nCols; ++i)
-			oblas::cblas_dscal(static_cast<int>(z.nRows), *reinterpret_cast<double*>(alpha.pointer + i * alpha.ElementarySize()), reinterpret_cast<double*>(z.pointer + i * z.nRows * z.ElementarySize()), 1);
+			GENERIC_API_NAMESPACE::cblas_dscal(static_cast<int>(z.nRows), *reinterpret_cast<double*>(alpha.pointer + i * alpha.ElementarySize()), reinterpret_cast<double*>(z.pointer + i * z.nRows * z.ElementarySize()), 1);
 	}
 
 	template<MathDomain md>
@@ -220,7 +233,7 @@ namespace cl { namespace routines { namespace obr {
 	template<>
 	inline void SubMultiply<MathDomain::Float>(MemoryTile& A, const MemoryTile& B, const MemoryTile& C, const unsigned nRowsB, const unsigned nColsB, const unsigned nColsC, const MatrixOperation bOperation, const MatrixOperation cOperation, const double alpha, const double beta)
 	{
-		oblas::cblas_sgemm(columnMajorLayout, oblasOperationsEnum[static_cast<unsigned>(bOperation)], oblasOperationsEnum[static_cast<unsigned>(cOperation)],
+		GENERIC_API_NAMESPACE::cblas_sgemm(columnMajorLayout, GENERIC_API_NAMESPACEOperationsEnum[static_cast<unsigned>(bOperation)], GENERIC_API_NAMESPACEOperationsEnum[static_cast<unsigned>(cOperation)],
 						 static_cast<int>(nRowsB), static_cast<int>(nColsC), static_cast<int>(nColsB),
 						 static_cast<float>(alpha),
 						 reinterpret_cast<float*>(B.pointer), static_cast<int>(B.leadingDimension),
@@ -232,7 +245,7 @@ namespace cl { namespace routines { namespace obr {
 	template<>
 	inline void SubMultiply<MathDomain::Double>(MemoryTile& A, const MemoryTile& B, const MemoryTile& C, const unsigned nRowsB, const unsigned nColsB, const unsigned nColsC, const MatrixOperation bOperation, const MatrixOperation cOperation, const double alpha, const double beta)
 	{
-		oblas::cblas_dgemm(columnMajorLayout, oblasOperationsEnum[static_cast<unsigned>(bOperation)], oblasOperationsEnum[static_cast<unsigned>(cOperation)],
+		GENERIC_API_NAMESPACE::cblas_dgemm(columnMajorLayout, GENERIC_API_NAMESPACEOperationsEnum[static_cast<unsigned>(bOperation)], GENERIC_API_NAMESPACEOperationsEnum[static_cast<unsigned>(cOperation)],
 						 static_cast<int>(nRowsB), static_cast<int>(nColsC), static_cast<int>(nColsB),
 						 alpha,
 						 reinterpret_cast<double*>(B.pointer), static_cast<int>(B.leadingDimension),
@@ -247,7 +260,7 @@ namespace cl { namespace routines { namespace obr {
 	template<>
 	inline void Dot<MathDomain::Float>(MemoryBuffer& y, const MemoryTile& A, const MemoryBuffer& x, const MatrixOperation aOperation, const double alpha, const double beta)
 	{
-		oblas::cblas_sgemv(columnMajorLayout, oblasOperationsEnum[static_cast<unsigned>(aOperation)],
+		GENERIC_API_NAMESPACE::cblas_sgemv(columnMajorLayout, GENERIC_API_NAMESPACEOperationsEnum[static_cast<unsigned>(aOperation)],
 						 static_cast<int>(A.nRows), static_cast<int>(A.nCols),
 						 static_cast<float>(alpha),
 						 reinterpret_cast<float*>(A.pointer), static_cast<int>(A.leadingDimension),
@@ -258,7 +271,7 @@ namespace cl { namespace routines { namespace obr {
 	template<>
 	inline void Dot<MathDomain::Double>(MemoryBuffer& y, const MemoryTile& A, const MemoryBuffer& x, const MatrixOperation aOperation, const double alpha, const double beta)
 	{
-		oblas::cblas_dgemv(columnMajorLayout, oblasOperationsEnum[static_cast<unsigned>(aOperation)],
+		GENERIC_API_NAMESPACE::cblas_dgemv(columnMajorLayout, GENERIC_API_NAMESPACEOperationsEnum[static_cast<unsigned>(aOperation)],
 						 static_cast<int>(A.nRows), static_cast<int>(A.nCols),
 						 alpha,
 						 reinterpret_cast<double*>(A.pointer), static_cast<int>(A.leadingDimension),
@@ -273,7 +286,7 @@ namespace cl { namespace routines { namespace obr {
 	template<>
 	inline void KroneckerProduct<MathDomain::Float>(MemoryTile& A, const MemoryBuffer& x, const MemoryBuffer& y, const double alpha)
 	{
-		oblas::cblas_sger(columnMajorLayout, static_cast<int>(x.size), static_cast<int>(y.size),
+		GENERIC_API_NAMESPACE::cblas_sger(columnMajorLayout, static_cast<int>(x.size), static_cast<int>(y.size),
 						static_cast<float>(alpha),
 						reinterpret_cast<float*>(x.pointer), 1,
 						reinterpret_cast<float*>(y.pointer), 1,
@@ -282,7 +295,7 @@ namespace cl { namespace routines { namespace obr {
 	template<>
 	inline void KroneckerProduct<MathDomain::Double>(MemoryTile& A, const MemoryBuffer& x, const MemoryBuffer& y, const double alpha)
 	{
-		oblas::cblas_dger(columnMajorLayout, static_cast<int>(x.size), static_cast<int>(y.size),
+		GENERIC_API_NAMESPACE::cblas_dger(columnMajorLayout, static_cast<int>(x.size), static_cast<int>(y.size),
 						alpha,
 						reinterpret_cast<double*>(x.pointer), 1,
 						reinterpret_cast<double*>(y.pointer), 1,
@@ -317,12 +330,12 @@ namespace cl { namespace routines { namespace obr {
 				Alloc(pivot);
 
 				// Factorize A (and overwrite it with L)
-				info = oblas::LAPACKE_sgetrf(static_cast<int>(columnMajorLayout), nra, nra, reinterpret_cast<float*>(aCopy.pointer), lda, reinterpret_cast<int*>(pivot.pointer));
+				info = GENERIC_API_NAMESPACE::LAPACKE_sgetrf(static_cast<int>(columnMajorLayout), nra, nra, reinterpret_cast<float*>(aCopy.pointer), lda, reinterpret_cast<int*>(pivot.pointer));
 				if (info != 0)
 					throw OpenBlasException(__func__);
 
 				// Solve factorized system
-				info = oblas::LAPACKE_sgetrs(static_cast<int>(columnMajorLayout), openBlasOperation[static_cast<unsigned>(aOperation)], nra, ncb, reinterpret_cast<float*>(aCopy.pointer), lda, reinterpret_cast<int*>(pivot.pointer), reinterpret_cast<float*>(B.pointer), ldb);
+				info = GENERIC_API_NAMESPACE::LAPACKE_sgetrs(static_cast<int>(columnMajorLayout), openBlasOperation[static_cast<unsigned>(aOperation)], nra, ncb, reinterpret_cast<float*>(aCopy.pointer), lda, reinterpret_cast<int*>(pivot.pointer), reinterpret_cast<float*>(B.pointer), ldb);
 				if (info != 0)
 					throw OpenBlasException(__func__);
 
@@ -340,7 +353,7 @@ namespace cl { namespace routines { namespace obr {
 				// A = Q * R
 				/* int matrix_layout, lapack_int m, lapack_int n,
                            float* a, lapack_int lda, float* tau */
-				info = oblas::LAPACKE_sgeqrf(static_cast<int>(columnMajorLayout), nra, nra, reinterpret_cast<float*>(aCopy.pointer), lda, reinterpret_cast<float*>(tau.pointer));
+				info = GENERIC_API_NAMESPACE::LAPACKE_sgeqrf(static_cast<int>(columnMajorLayout), nra, nra, reinterpret_cast<float*>(aCopy.pointer), lda, reinterpret_cast<float*>(tau.pointer));
 				if (info != 0)
 					throw OpenBlasException(__func__);
 
@@ -350,14 +363,14 @@ namespace cl { namespace routines { namespace obr {
                            lapack_int m, lapack_int n, lapack_int k,
                            const float* a, lapack_int lda, const float* tau,
                            float* c, lapack_int ldc */
-				info = oblas::LAPACKE_sormqr(static_cast<int>(columnMajorLayout), 'L', 'T', 
+				info = GENERIC_API_NAMESPACE::LAPACKE_sormqr(static_cast<int>(columnMajorLayout), 'L', 'T', 
 											nra, nra, ncb,
 											reinterpret_cast<float*>(aCopy.pointer), lda, reinterpret_cast<float*>(tau.pointer), reinterpret_cast<float*>(B.pointer), ldb);
 				if (info != 0)
 					throw OpenBlasException(__func__);
 
 				// Solve (x = R \ (Q^T * B))
-				oblas::cblas_strsm(columnMajorLayout, oblas::CBLAS_SIDE::CblasLeft, oblas::CBLAS_UPLO::CblasUpper, oblasOperationsEnum[static_cast<unsigned>(aOperation)], oblas::CBLAS_DIAG::CblasNonUnit,
+				GENERIC_API_NAMESPACE::cblas_strsm(columnMajorLayout, GENERIC_API_NAMESPACE::CBLAS_SIDE::CblasLeft, GENERIC_API_NAMESPACE::CBLAS_UPLO::CblasUpper, GENERIC_API_NAMESPACEOperationsEnum[static_cast<unsigned>(aOperation)], GENERIC_API_NAMESPACE::CBLAS_DIAG::CblasNonUnit,
 								 nra, nra, 1.0, reinterpret_cast<float*>(aCopy.pointer), lda, reinterpret_cast<float*>(B.pointer), ldb);
 
 				// free memory
@@ -397,12 +410,12 @@ namespace cl { namespace routines { namespace obr {
 				Alloc(pivot);
 
 				// Factorize A (and overwrite it with L)
-				info = oblas::LAPACKE_dgetrf(static_cast<int>(columnMajorLayout), nra, nra, reinterpret_cast<double*>(aCopy.pointer), lda, reinterpret_cast<int*>(pivot.pointer));
+				info = GENERIC_API_NAMESPACE::LAPACKE_dgetrf(static_cast<int>(columnMajorLayout), nra, nra, reinterpret_cast<double*>(aCopy.pointer), lda, reinterpret_cast<int*>(pivot.pointer));
 				if (info != 0)
 					throw OpenBlasException(__func__);
 
 				// Solve factorized system
-				info = oblas::LAPACKE_dgetrs(static_cast<int>(columnMajorLayout), openBlasOperation[static_cast<unsigned>(aOperation)], nra, ncb, reinterpret_cast<double*>(aCopy.pointer), lda, reinterpret_cast<int*>(pivot.pointer), reinterpret_cast<double*>(B.pointer), ldb);
+				info = GENERIC_API_NAMESPACE::LAPACKE_dgetrs(static_cast<int>(columnMajorLayout), openBlasOperation[static_cast<unsigned>(aOperation)], nra, ncb, reinterpret_cast<double*>(aCopy.pointer), lda, reinterpret_cast<int*>(pivot.pointer), reinterpret_cast<double*>(B.pointer), ldb);
 				if (info != 0)
 					throw OpenBlasException(__func__);
 
@@ -420,7 +433,7 @@ namespace cl { namespace routines { namespace obr {
 				// A = Q * R
 				/* int matrix_layout, lapack_int m, lapack_int n,
                            double* a, lapack_int lda, double* tau */
-				info = oblas::LAPACKE_dgeqrf(static_cast<int>(columnMajorLayout), nra, nra, reinterpret_cast<double*>(aCopy.pointer), lda, reinterpret_cast<double*>(tau.pointer));
+				info = GENERIC_API_NAMESPACE::LAPACKE_dgeqrf(static_cast<int>(columnMajorLayout), nra, nra, reinterpret_cast<double*>(aCopy.pointer), lda, reinterpret_cast<double*>(tau.pointer));
 				if (info != 0)
 					throw OpenBlasException(__func__);
 
@@ -430,14 +443,14 @@ namespace cl { namespace routines { namespace obr {
                            lapack_int m, lapack_int n, lapack_int k,
                            const double* a, lapack_int lda, const double* tau,
                            double* c, lapack_int ldc */
-				info = oblas::LAPACKE_dormqr(static_cast<int>(columnMajorLayout), 'L', 'T',
+				info = GENERIC_API_NAMESPACE::LAPACKE_dormqr(static_cast<int>(columnMajorLayout), 'L', 'T',
 											 nra, nra, ncb,
 											 reinterpret_cast<double*>(aCopy.pointer), lda, reinterpret_cast<double*>(tau.pointer), reinterpret_cast<double*>(B.pointer), ldb);
 				if (info != 0)
 					throw OpenBlasException(__func__);
 
 				// Solve (x = R \ (Q^T * B))
-				oblas::cblas_dtrsm(columnMajorLayout, oblas::CBLAS_SIDE::CblasLeft, oblas::CBLAS_UPLO::CblasUpper, oblasOperationsEnum[static_cast<unsigned>(aOperation)], oblas::CBLAS_DIAG::CblasNonUnit,
+				GENERIC_API_NAMESPACE::cblas_dtrsm(columnMajorLayout, GENERIC_API_NAMESPACE::CBLAS_SIDE::CblasLeft, GENERIC_API_NAMESPACE::CBLAS_UPLO::CblasUpper, GENERIC_API_NAMESPACEOperationsEnum[static_cast<unsigned>(aOperation)], GENERIC_API_NAMESPACE::CBLAS_DIAG::CblasNonUnit,
 										  nra, nra, 1.0, reinterpret_cast<double*>(aCopy.pointer), lda, reinterpret_cast<double*>(B.pointer), ldb);
 
 				// free memory
@@ -459,13 +472,13 @@ namespace cl { namespace routines { namespace obr {
 	inline void ArgAbsMin<MathDomain::Float>(int&, const MemoryBuffer& )
 	{
 		// TODO: apparently there's isamax but not isamin??
-		//argMin = static_cast<int>(oblas::cblas_isamin(static_cast<int>(x.size), reinterpret_cast<float*>(x.pointer), 1));
+		//argMin = static_cast<int>(GENERIC_API_NAMESPACE::cblas_isamin(static_cast<int>(x.size), reinterpret_cast<float*>(x.pointer), 1));
 	}
 	template<>
 	inline void ArgAbsMin<MathDomain::Double>(int&, const MemoryBuffer& )
 	{
 		// TODO: apparently there's isamax but not isamin??
-		//argMin = static_cast<int>(oblas::cblas_idamin(static_cast<int>(x.size), reinterpret_cast<double*>(x.pointer), 1));
+		//argMin = static_cast<int>(GENERIC_API_NAMESPACE::cblas_idamin(static_cast<int>(x.size), reinterpret_cast<double*>(x.pointer), 1));
 	}
 
 	template<MathDomain md>
@@ -478,7 +491,7 @@ namespace cl { namespace routines { namespace obr {
 //		auto* argMinPtr = reinterpret_cast<int*>(argMin.pointer);
 //		// 1 added for compatibility
 //		for (size_t j = 0; j < A.nCols; ++j)
-//			argMinPtr[j] = 1 + static_cast<int>(oblas::cblas_isamin(static_cast<int>(A.nRows), reinterpret_cast<float*>(A.pointer + j * A.nRows * A.ElementarySize()), 1));
+//			argMinPtr[j] = 1 + static_cast<int>(GENERIC_API_NAMESPACE::cblas_isamin(static_cast<int>(A.nRows), reinterpret_cast<float*>(A.pointer + j * A.nRows * A.ElementarySize()), 1));
 	}
 	template<>
 	inline void ColumnWiseArgAbsMin<MathDomain::Double>(MemoryBuffer&, const MemoryTile&)
@@ -487,7 +500,7 @@ namespace cl { namespace routines { namespace obr {
 //		// 1 added for compatibility
 //		auto* argMinPtr = reinterpret_cast<int*>(argMin.pointer);
 //		for (size_t j = 0; j < A.nCols; ++j)
-//			argMinPtr[j] = 1 + static_cast<int>(oblas::cblas_idamin(static_cast<int>(A.nRows), reinterpret_cast<double*>(A.pointer + j * A.nRows * A.ElementarySize()), 1));
+//			argMinPtr[j] = 1 + static_cast<int>(GENERIC_API_NAMESPACE::cblas_idamin(static_cast<int>(A.nRows), reinterpret_cast<double*>(A.pointer + j * A.nRows * A.ElementarySize()), 1));
 	}
 
 	template<MathDomain md>
@@ -496,12 +509,12 @@ namespace cl { namespace routines { namespace obr {
 	template<>
 	inline void ArgAbsMax<MathDomain::Float>(int& argMax, const MemoryBuffer& x)
 	{
-		argMax = static_cast<int>(oblas::cblas_isamax(static_cast<int>(x.size), reinterpret_cast<float*>(x.pointer), 1));
+		argMax = static_cast<int>(GENERIC_API_NAMESPACE::cblas_isamax(static_cast<int>(x.size), reinterpret_cast<float*>(x.pointer), 1));
 	}
 	template<>
 	inline void ArgAbsMax<MathDomain::Double>(int& argMax, const MemoryBuffer& x)
 	{
-		argMax = static_cast<int>(oblas::cblas_idamax(static_cast<int>(x.size), reinterpret_cast<double*>(x.pointer), 1));
+		argMax = static_cast<int>(GENERIC_API_NAMESPACE::cblas_idamax(static_cast<int>(x.size), reinterpret_cast<double*>(x.pointer), 1));
 	}
 
 	template<MathDomain md>
@@ -513,7 +526,7 @@ namespace cl { namespace routines { namespace obr {
 		// 1 added for compatibility
 		auto* argMaxPtr = reinterpret_cast<int*>(argMax.pointer);
 		for (size_t j = 0; j < A.nCols; ++j)
-			argMaxPtr[j] = 1 + static_cast<int>(oblas::cblas_isamax(static_cast<int>(A.nRows), reinterpret_cast<float*>(A.pointer + j * A.nRows * A.ElementarySize()), 1));
+			argMaxPtr[j] = 1 + static_cast<int>(GENERIC_API_NAMESPACE::cblas_isamax(static_cast<int>(A.nRows), reinterpret_cast<float*>(A.pointer + j * A.nRows * A.ElementarySize()), 1));
 	}
 	template<>
 	inline void ColumnWiseArgAbsMax<MathDomain::Double>(MemoryBuffer& argMax, const MemoryTile& A)
@@ -521,7 +534,7 @@ namespace cl { namespace routines { namespace obr {
 		// 1 added for compatibility
 		auto* argMaxPtr = reinterpret_cast<int*>(argMax.pointer);
 		for (size_t j = 0; j < A.nCols; ++j)
-			argMaxPtr[j] = 1 + static_cast<int>(oblas::cblas_idamax(static_cast<int>(A.nRows), reinterpret_cast<double*>(A.pointer + j * A.nRows * A.ElementarySize()), 1));
+			argMaxPtr[j] = 1 + static_cast<int>(GENERIC_API_NAMESPACE::cblas_idamax(static_cast<int>(A.nRows), reinterpret_cast<double*>(A.pointer + j * A.nRows * A.ElementarySize()), 1));
 	}
 
 	// norm = ||x||_2
@@ -531,13 +544,19 @@ namespace cl { namespace routines { namespace obr {
 	template<>
 	inline void EuclideanNorm<MathDomain::Float>(double& norm, const MemoryBuffer& z)
 	{
-		norm = static_cast<double>(oblas::cblas_snrm2(static_cast<int>(z.size), reinterpret_cast<float*>(z.pointer), 1));
+		norm = static_cast<double>(GENERIC_API_NAMESPACE::cblas_snrm2(static_cast<int>(z.size), reinterpret_cast<float*>(z.pointer), 1));
 	}
 	template<>
 	inline void EuclideanNorm<MathDomain::Double>(double& norm, const MemoryBuffer& z)
 	{
-		norm = oblas::cblas_dnrm2(static_cast<int>(z.size), reinterpret_cast<double*>(z.pointer), 1);
+		norm = GENERIC_API_NAMESPACE::cblas_dnrm2(static_cast<int>(z.size), reinterpret_cast<double*>(z.pointer), 1);
 	}
 }}}
 
 #endif
+
+#undef GENERIC_API_DEFINE
+#undef GENERIC_API_NAMESPACE
+#undef GENERIC_API_ROUTINES_NAMESPACE
+#undef ROUTINES_NAMESPACE
+#undef BLAS_NAMESPACE

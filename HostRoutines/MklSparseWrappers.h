@@ -8,6 +8,7 @@
 
 #ifndef USE_MKL
 
+	namespace cl { namespace routines { namespace mkr {
 		template<MathDomain md>
 		static void SparseAdd(MemoryBuffer&, const SparseMemoryBuffer&, const MemoryBuffer&, const double)
 		{

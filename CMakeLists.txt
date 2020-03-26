@@ -36,21 +36,15 @@ if (CONFIG_FOUND_CUDA_GPU)
 endif()
 
 # Mkl Wrappers
-set(MKL_WRAPPERS_SOURCES "")
 set(MKL_WRAPPERS_DEFINE "")
-set(MKL_WRAPPERS_INCLUDE "")
 set(MKL_WRAPPERS_DEPENDENCIES "")
 set(MKL_TEST_SOURCE "")
-mark_as_advanced(MKL_WRAPPERS_SOURCES)
 mark_as_advanced(MKL_WRAPPERS_DEFINE)
-mark_as_advanced(MKL_WRAPPERS_INCLUDE)
 mark_as_advanced(MKL_WRAPPERS_DEPENDENCIES "")
 mark_as_advanced(MKL_TEST_SOURCE "")
 if (MKL_FOUND)
-    set(MKL_WRAPPERS_SOURCES HostRoutines/MklAllWrappers.cpp)
     set(MKL_WRAPPERS_DEFINE USE_MKL)
-    set(MKL_WRAPPERS_INCLUDE ${MKL_INCLUDE_DIR})
-    set(MKL_WRAPPERS_DEPENDENCIES ${MKL_LIBRARIES})
+    set(MKL_WRAPPERS_DEPENDENCIES MklRoutines)
     set(MKL_TEST_SOURCE     UnitTests/MklVectorTests.cpp
                             UnitTests/MklMatrixTests.cpp
                             UnitTests/MklTensorTests.cpp
@@ -59,29 +53,80 @@ if (MKL_FOUND)
                             UnitTests/MklSparseMatrixTests.cpp
                             UnitTests/MklSparseTests.cpp
                             UnitTests/MklExtraRoutinesTests.cpp)
+	create_library(
+		NAME
+			MklRoutines
+		SOURCES
+			HostRoutines/MklAllWrappers.cpp
+		PUBLIC_INCLUDE_DIRECTORIES
+			. HostRoutines ${CUDA_KERNEL_INCLUDE}
+		PUBLIC_SYSTEM_INCLUDE_DIRECTORIES
+			${MKL_INCLUDE_DIR}
+		PUBLIC_COMPILE_DEFINITIONS
+			${MKL_WRAPPERS_DEFINE}
+		DEPENDENCIES
+			${MKL_LIBRARIES}
+	)
 endif()
 
 # OpenBLAS Wrappers
-set(OBLAS_WRAPPERS_SOURCES "")
 set(OBLAS_WRAPPERS_DEFINE "")
-set(OBLAS_WRAPPERS_INCLUDE "")
 set(OBLAS_WRAPPERS_DEPENDENCIES "")
 set(OBLAS_TEST_SOURCE "")
-mark_as_advanced(OBLAS_WRAPPERS_SOURCES)
 mark_as_advanced(OBLAS_WRAPPERS_DEFINE)
-mark_as_advanced(OBLAS_WRAPPERS_INCLUDE)
 mark_as_advanced(OBLAS_WRAPPERS_DEPENDENCIES "")
 mark_as_advanced(OBLAS_TEST_SOURCE "")
 if (OpenBLAS_FOUND)
-    #set(OBLAS_WRAPPERS_SOURCES HostRoutines/OpenBlasWrappers.cpp)
-    set(OBLAS_WRAPPERS_DEFINE USE_OPEN_BLAS)
-    set(OBLAS_WRAPPERS_INCLUDE ${OpenBLAS_INCLUDE_DIR})
-    set(OBLAS_WRAPPERS_DEPENDENCIES ${OpenBLAS_LIB})
+	set(OBLAS_WRAPPERS_DEFINE USE_OPEN_BLAS)
+	set(OBLAS_WRAPPERS_DEPENDENCIES OpenBlasRoutines)
 	set(OBLAS_TEST_SOURCE   UnitTests/OpenBlasVectorTests.cpp
 							UnitTests/OpenBlasMatrixTests.cpp
 							UnitTests/OpenBlasTensorTests.cpp
 							UnitTests/OpenBlasTests.cpp
 							UnitTests/OpenBlasExtraRoutinesTests.cpp)
+	create_library(
+		NAME
+			OpenBlasRoutines
+		SOURCES
+			HostRoutines/OpenBlasAllWrappers.cpp
+		PUBLIC_INCLUDE_DIRECTORIES
+			. HostRoutines ${CUDA_KERNEL_INCLUDE}
+		PUBLIC_SYSTEM_INCLUDE_DIRECTORIES
+			${OpenBLAS_INCLUDE_DIR}
+		PUBLIC_COMPILE_DEFINITIONS
+			${OBLAS_WRAPPERS_DEFINE}
+		DEPENDENCIES
+			${OpenBLAS_LIB}
+	)
+endif()
+
+# Generic BLAS Wrappers
+set(GBLAS_WRAPPERS_DEFINE "")
+set(GBLAS_WRAPPERS_DEPENDENCIES "")
+set(GBLAS_TEST_SOURCE "")
+mark_as_advanced(GBLAS_WRAPPERS_DEFINE)
+mark_as_advanced(GBLAS_WRAPPERS_DEPENDENCIES "")
+mark_as_advanced(GBLAS_TEST_SOURCE "")
+if (BLAS_FOUND)
+	set(GBLAS_WRAPPERS_DEFINE USE_BLAS)
+	set(GBLAS_WRAPPERS_DEPENDENCIES GenericBlasRoutines)
+	set(GBLAS_TEST_SOURCE   UnitTests/GenericBlasVectorTests.cpp
+							UnitTests/GenericBlasMatrixTests.cpp
+							UnitTests/GenericBlasTensorTests.cpp
+							UnitTests/GenericBlasTests.cpp
+							UnitTests/GenericBlasExtraRoutinesTests.cpp)
+	create_library(
+		NAME
+			GenericBlasRoutines
+		SOURCES
+			HostRoutines/GenericBlasAllWrappers.cpp
+		PUBLIC_INCLUDE_DIRECTORIES
+			. HostRoutines ${CUDA_KERNEL_INCLUDE}
+		PUBLIC_COMPILE_DEFINITIONS
+			${GBLAS_WRAPPERS_DEFINE}
+		DEPENDENCIES
+			${BLAS_LIBRARIES}
+	)
 endif()
 
 create_library(
@@ -90,25 +135,14 @@ create_library(
     SOURCES
         HostRoutines/BufferInitializer.cpp
         HostRoutines/MemoryManager.cpp
-
         HostRoutines/BlasWrappers.cpp
         HostRoutines/SparseWrappers.cpp
         HostRoutines/Extra.cpp
-
         HostRoutines/ForgeHelpers.cpp
-
-        ${MKL_WRAPPERS_SOURCES}
-
-		${OBLAS_WRAPPERS_SOURCES}
-
     PUBLIC_INCLUDE_DIRECTORIES
         . HostRoutines ${CUDA_KERNEL_INCLUDE}
-    PUBLIC_SYSTEM_INCLUDE_DIRECTORIES
-        ${MKL_WRAPPERS_INCLUDE} ${OBLAS_WRAPPERS_INCLUDE}
-    PUBLIC_COMPILE_DEFINITIONS
-        ${MKL_WRAPPERS_DEFINE} ${OBLAS_WRAPPERS_DEFINE}
     DEPENDENCIES
-        ${MKL_WRAPPERS_DEPENDENCIES} ${OBLAS_WRAPPERS_DEPENDENCIES}
+        ${MKL_WRAPPERS_DEPENDENCIES} ${OBLAS_WRAPPERS_DEPENDENCIES} ${GBLAS_WRAPPERS_DEPENDENCIES}
 )
 
 create_library(
@@ -134,8 +168,8 @@ create_test(
         ${CUDA_KERNEL_TEST_SOURCE}
 
         ${MKL_TEST_SOURCE}
-
 		${OBLAS_TEST_SOURCE}
+		${GBLAS_TEST_SOURCE}
 
         UnitTests/HostVectorTests.cpp
         UnitTests/HostMatrixTests.cpp

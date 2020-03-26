@@ -8,6 +8,7 @@
 
 #ifndef USE_MKL
 
+namespace cl { namespace routines { namespace mkr {
 	template<MathDomain md>
 	static void Add(MemoryBuffer&, const MemoryBuffer&, const MemoryBuffer&, const double)
 	{

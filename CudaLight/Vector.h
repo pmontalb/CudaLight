@@ -158,6 +158,11 @@ namespace cl
 	using OpenBlasSingleVector = Vector<MemorySpace::OpenBlas, MathDomain::Float>;
 	using OpenBlasFloatVector = OpenBlasSingleVector;
 	using OpenBlasDoubleVector = Vector<MemorySpace::OpenBlas, MathDomain::Double>;
+
+	using GenericBlasIntegerVector = Vector<MemorySpace::GenericBlas, MathDomain::Int>;
+	using GenericBlasSingleVector = Vector<MemorySpace::GenericBlas, MathDomain::Float>;
+	using GenericBlasFloatVector = GenericBlasSingleVector;
+	using GenericBlasDoubleVector = Vector<MemorySpace::GenericBlas, MathDomain::Double>;
 	
 	namespace gpu
 	{
@@ -192,6 +197,13 @@ namespace cl
 		using ivec = cl::OpenBlasIntegerVector;
 	}
 
+	namespace gblas
+	{
+		using vec = cl::GenericBlasSingleVector;
+		using dvec = cl::GenericBlasDoubleVector;
+		using ivec = cl::GenericBlasIntegerVector;
+	}
+	
 	namespace test
 	{
 		using vec = cl::TestSingleVector;
@@ -217,6 +229,12 @@ namespace oblas
 	using ivec = cl::oblas::ivec;
 }
 
+namespace gblas
+{
+	using vec = cl::gblas::vec;
+	using dvec = cl::gblas::dvec;
+	using ivec = cl::gblas::ivec;
+}
 
 namespace test
 {
