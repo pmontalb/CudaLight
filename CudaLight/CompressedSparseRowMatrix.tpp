@@ -194,9 +194,9 @@ template< MemorySpace ms, MathDomain md>
 
 		Vector<ms, md> ret(rhs.size());
 		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
-			dm::detail::SparseDot(ret._buffer, this->_buffer, rhs._buffer);
+			dm::detail::SparseDot(ret._buffer, const_cast<SparseMemoryTile&>(this->_buffer), rhs._buffer);
 		else
-			routines::SparseDot(ret._buffer, this->_buffer, rhs._buffer);
+			routines::SparseDot(ret._buffer, const_cast<SparseMemoryTile&>(this->_buffer), rhs._buffer);
 
 		return ret;
 	}
@@ -238,9 +238,9 @@ template< MemorySpace ms, MathDomain md>
 	{
 		assert(nRows() == rhs.size());
 		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
-			dm::detail::SparseDot(out._buffer, this->_buffer, rhs._buffer, lhsOperation, alpha);
+			dm::detail::SparseDot(out._buffer, const_cast<SparseMemoryTile&>(this->_buffer), rhs._buffer, lhsOperation, alpha);
 		else
-			routines::SparseDot(out._buffer, this->_buffer, rhs._buffer, lhsOperation, alpha);
+			routines::SparseDot(out._buffer, const_cast<SparseMemoryTile&>(this->_buffer), rhs._buffer, lhsOperation, alpha);
 	}
 
 	/**
@@ -251,9 +251,9 @@ template< MemorySpace ms, MathDomain md>
 	{
 		assert(nRows() == nCols());  // for now keep this assumption
 		if (ms == MemorySpace::Host || ms == MemorySpace::Device)
-			dm::detail::SparseSolve(const_cast<SparseMemoryTile&>(_buffer), rhs.GetTile(), solver);
+			dm::detail::SparseSolve(const_cast<SparseMemoryTile&>(this->_buffer), rhs.GetTile(), solver);
 		else
-			routines::SparseSolve(const_cast<SparseMemoryTile&>(_buffer),rhs.GetTile(), solver);
+			routines::SparseSolve(const_cast<SparseMemoryTile&>(this->_buffer),rhs.GetTile(), solver);
 	}
 
 	/**
