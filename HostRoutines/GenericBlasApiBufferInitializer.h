@@ -28,7 +28,15 @@
 
 #else
 
-	#include <cblas.h>
+
+	BLAS_NAMESPACE
+	{
+		#ifdef CBLAS_H
+			#undef CBLAS_H
+		#endif
+
+		#include <cblas.h>
+	}
 
 	namespace cl { namespace routines { ROUTINES_NAMESPACE {
 
@@ -38,12 +46,12 @@
 		template<>
 		inline void Copy<MathDomain::Float>(MemoryBuffer& dest, const MemoryBuffer& source)
 		{
-			cblas_scopy(static_cast<int>(dest.size), reinterpret_cast<const float*>(source.pointer), 1, reinterpret_cast<float*>(dest.pointer), 1);
+			GENERIC_API_NAMESPACE::cblas_scopy(static_cast<int>(dest.size), reinterpret_cast<const float*>(source.pointer), 1, reinterpret_cast<float*>(dest.pointer), 1);
 		}
 		template<>
 		inline void Copy<MathDomain::Double>(MemoryBuffer& dest, const MemoryBuffer& source)
 		{
-			cblas_dcopy(static_cast<int>(dest.size), reinterpret_cast<const double*>(source.pointer), 1, reinterpret_cast<double*>(dest.pointer), 1);
+			GENERIC_API_NAMESPACE::cblas_dcopy(static_cast<int>(dest.size), reinterpret_cast<const double*>(source.pointer), 1, reinterpret_cast<double*>(dest.pointer), 1);
 		}
 	}}}
 

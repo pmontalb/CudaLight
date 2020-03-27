@@ -8,6 +8,9 @@ if (CONFIG_FOUND_CUDA_GPU)
     set(LANGUAGES_USE_CUDA ON CACHE BOOL "" FORCE)
 endif()
 
+set(LINEAR_ALGEBRA_PROVIDER "MKL" CACHE STRING "Linear algebra provider")
+set_property(CACHE LINEAR_ALGEBRA_PROVIDER PROPERTY STRINGS MKL OpenBlas Blas)
+
 # Npy++
 add_subdirectory(../NpyCpp ${CMAKE_BINARY_DIR}/Npy++ EXCLUDE_FROM_ALL)
 
@@ -42,7 +45,25 @@ set(MKL_TEST_SOURCE "")
 mark_as_advanced(MKL_WRAPPERS_DEFINE)
 mark_as_advanced(MKL_WRAPPERS_DEPENDENCIES "")
 mark_as_advanced(MKL_TEST_SOURCE "")
-if (MKL_FOUND)
+
+# OpenBLAS Wrappers
+set(OBLAS_WRAPPERS_DEFINE "")
+set(OBLAS_WRAPPERS_DEPENDENCIES "")
+set(OBLAS_TEST_SOURCE "")
+mark_as_advanced(OBLAS_WRAPPERS_DEFINE)
+mark_as_advanced(OBLAS_WRAPPERS_DEPENDENCIES "")
+mark_as_advanced(OBLAS_TEST_SOURCE "")
+
+# Generic BLAS Wrappers
+set(GBLAS_WRAPPERS_DEFINE "")
+set(GBLAS_WRAPPERS_DEPENDENCIES "")
+set(GBLAS_TEST_SOURCE "")
+mark_as_advanced(GBLAS_WRAPPERS_DEFINE)
+mark_as_advanced(GBLAS_WRAPPERS_DEPENDENCIES "")
+mark_as_advanced(GBLAS_TEST_SOURCE "")
+
+if (LINEAR_ALGEBRA_PROVIDER STREQUAL "MKL" AND MKL_FOUND)
+	message(STATUS "Using MKL provider")
     set(MKL_WRAPPERS_DEFINE USE_MKL)
     set(MKL_WRAPPERS_DEPENDENCIES MklRoutines)
     set(MKL_TEST_SOURCE     UnitTests/MklVectorTests.cpp
@@ -67,16 +88,9 @@ if (MKL_FOUND)
 		DEPENDENCIES
 			${MKL_LIBRARIES}
 	)
-endif()
-#
-# OpenBLAS Wrappers
-set(OBLAS_WRAPPERS_DEFINE "")
-set(OBLAS_WRAPPERS_DEPENDENCIES "")
-set(OBLAS_TEST_SOURCE "")
-mark_as_advanced(OBLAS_WRAPPERS_DEFINE)
-mark_as_advanced(OBLAS_WRAPPERS_DEPENDENCIES "")
-mark_as_advanced(OBLAS_TEST_SOURCE "")
-if (OpenBLAS_FOUND)
+elseif (LINEAR_ALGEBRA_PROVIDER STREQUAL "OpenBlas" AND OpenBLAS_FOUND)
+	message(STATUS "Using OpenBlas provider")
+
 	set(OBLAS_WRAPPERS_DEFINE USE_OPEN_BLAS)
 	set(OBLAS_WRAPPERS_DEPENDENCIES OpenBlasRoutines)
 	set(OBLAS_TEST_SOURCE   UnitTests/OpenBlasVectorTests.cpp
@@ -96,18 +110,11 @@ if (OpenBLAS_FOUND)
 		PUBLIC_COMPILE_DEFINITIONS
 			${OBLAS_WRAPPERS_DEFINE}
 		DEPENDENCIES
-			${OpenBLAS_LIB}
+			${OpenBLAS_LIB} ${LAPACK_LIBRARIES}
 	)
-endif()
+elseif (LINEAR_ALGEBRA_PROVIDER STREQUAL "Blas" AND BLAS_FOUND AND LAPACK_FOUND)
+	message(STATUS "Using generic Blas provider")
 
-# Generic BLAS Wrappers
-set(GBLAS_WRAPPERS_DEFINE "")
-set(GBLAS_WRAPPERS_DEPENDENCIES "")
-set(GBLAS_TEST_SOURCE "")
-mark_as_advanced(GBLAS_WRAPPERS_DEFINE)
-mark_as_advanced(GBLAS_WRAPPERS_DEPENDENCIES "")
-mark_as_advanced(GBLAS_TEST_SOURCE "")
-if (BLAS_FOUND AND LAPACK_FOUND)
 	set(GBLAS_WRAPPERS_DEFINE USE_BLAS)
 	set(GBLAS_WRAPPERS_DEPENDENCIES GenericBlasRoutines)
 	set(GBLAS_TEST_SOURCE   UnitTests/GenericBlasVectorTests.cpp
