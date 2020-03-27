@@ -3,7 +3,7 @@ include_guard()
 cmake_minimum_required(VERSION 3.14)
 project(CudaLight)
 
-include(cmake/All.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/All.cmake)
 if (CONFIG_FOUND_CUDA_GPU)
     set(LANGUAGES_USE_CUDA ON CACHE BOOL "" FORCE)
 endif()
@@ -11,8 +11,11 @@ endif()
 set(LINEAR_ALGEBRA_PROVIDER "MKL" CACHE STRING "Linear algebra provider")
 set_property(CACHE LINEAR_ALGEBRA_PROVIDER PROPERTY STRINGS MKL OpenBlas Blas)
 
-# Npy++
-add_subdirectory(../NpyCpp ${CMAKE_BINARY_DIR}/Npy++ EXCLUDE_FROM_ALL)
+# Npy++ submodule
+add_subdirectory(NpyCpp ${CMAKE_BINARY_DIR}/Npy++ EXCLUDE_FROM_ALL)
+
+# CudaLightKernels submodule
+add_subdirectory(CudaLightKernels ${CMAKE_BINARY_DIR}/CudaLightKernels EXCLUDE_FROM_ALL)
 
 # Cuda Wrappers
 set(CUDA_KERNEL_INCLUDE "")
@@ -22,8 +25,6 @@ mark_as_advanced(CUDA_KERNEL_INCLUDE)
 mark_as_advanced(CUDA_KERNEL_DEPENDENCIES)
 mark_as_advanced(CUDA_KERNEL_TEST_SOURCE)
 if (CONFIG_FOUND_CUDA_GPU)
-    # CudaLightKernels
-    add_subdirectory(../CudaLightKernels ${CMAKE_BINARY_DIR}/CudaLightKernels EXCLUDE_FROM_ALL)
     set(CUDA_KERNEL_INCLUDE ../CudaLightKernels)
     set(CUDA_KERNEL_DEPENDENCY CudaLightKernels)
     set(CUDA_KERNEL_TEST_SOURCE     UnitTests/CuBlasTests.cpp
