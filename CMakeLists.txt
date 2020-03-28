@@ -12,10 +12,10 @@ set(LINEAR_ALGEBRA_PROVIDER "MKL" CACHE STRING "Linear algebra provider")
 set_property(CACHE LINEAR_ALGEBRA_PROVIDER PROPERTY STRINGS MKL OpenBlas Blas)
 
 # Npy++ submodule
-add_subdirectory(NpyCpp ${CMAKE_BINARY_DIR}/Npy++ EXCLUDE_FROM_ALL)
+add_subdirectory(NpyCpp ${CMAKE_BINARY_DIR}/CudaLight/Npy++ EXCLUDE_FROM_ALL)
 
 # CudaLightKernels submodule
-add_subdirectory(CudaLightKernels ${CMAKE_BINARY_DIR}/CudaLightKernels EXCLUDE_FROM_ALL)
+add_subdirectory(CudaLightKernels ${CMAKE_BINARY_DIR}/CudaLight/CudaLightKernels EXCLUDE_FROM_ALL)
 
 # Cuda Wrappers
 set(CUDA_KERNEL_INCLUDE "")
@@ -167,7 +167,7 @@ create_library(
 )
 
 # gtest
-add_subdirectory(gtest ${CMAKE_BINARY_DIR}/gtest EXCLUDE_FROM_ALL)
+add_subdirectory(gtest ${CMAKE_BINARY_DIR}/CudaLight/gtest EXCLUDE_FROM_ALL)
 create_test(
     NAME
         CLTests
