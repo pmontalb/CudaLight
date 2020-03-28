@@ -166,7 +166,8 @@ create_library(
         Npy++ ${CUDA_KERNEL_DEPENDENCY} HostRoutines
 )
 
-find_package(GTest REQUIRED)
+# gtest
+add_subdirectory(gtest ${CMAKE_BINARY_DIR}/gtest EXCLUDE_FROM_ALL)
 create_test(
     NAME
         CLTests

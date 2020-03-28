@@ -7,3 +7,6 @@
 [submodule "NpyCpp"]
 	path = NpyCpp
 	url = git@github.com:pmontalb/NpyCpp.git
+[submodule "gtest"]
+	path = gtest
+	url = git@github.com:google/googletest.git
