@@ -82,12 +82,41 @@ namespace clt
 		cl::smat sv(dv);
 
 		auto _dv = dv.Get();
-		auto _sv = dv.Get();
+		auto _sv = sv.Get();
 		ASSERT_EQ(_dv.size(), _sv.size());
 
 		for (size_t i = 0; i < _dv.size(); ++i)
 		{
 			ASSERT_TRUE(std::fabs(_dv[i] - _sv[i]) <= 1e-7f);
+		}
+	}
+
+	TEST_F(SparseMatrixTests, TriDiagonalReadFromDense)
+	{
+		unsigned dim = 4;
+		std::vector<double> tridiagonalDenseMatrix(dim * dim);
+		tridiagonalDenseMatrix[0 + 0 * dim] = 1.0;
+		for (size_t i = 1; i < dim - 1; ++i)
+		{
+			tridiagonalDenseMatrix[i + i * dim] = 0.8;
+			tridiagonalDenseMatrix[i + (i - 1) * dim] = 0.05;
+			tridiagonalDenseMatrix[i + (i + 1) * dim] = 0.15;
+		}
+		tridiagonalDenseMatrix[dim - 1 + (dim - 1) * dim] = 1.0;
+
+		cl::dmat dm(tridiagonalDenseMatrix, dim, dim);
+		dm.Print();
+
+		cl::dsmat sm(dm);
+		sm.Print();
+
+		auto _dm = dm.Get();
+		auto _sm = sm.Get();
+		ASSERT_EQ(_dm.size(), _sm.size());
+
+		for (size_t i = 0; i < _dm.size(); ++i)
+		{
+			ASSERT_TRUE(std::fabs(_dm[i] - _sm[i]) <= 1e-7) << i << " | " << _dm[i] << " | " << _sm[i];
 		}
 	}
 }

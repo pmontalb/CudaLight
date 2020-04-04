@@ -64,6 +64,8 @@ namespace cl
 		std::vector<typename Traits<md>::stdType> nonZeroValues {};
 		std::vector<int> _nonZeroColumnIndices {};
 		std::vector<int> _nNonZeroRows {};
+		_nNonZeroRows.push_back(0);
+
 		int nNonZeros = 0;
 		for (unsigned i = 0; i < nRows; i++)
 		{
