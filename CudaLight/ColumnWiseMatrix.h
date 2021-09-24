@@ -231,7 +231,7 @@ namespace cl
 		
 		static std::ostream& MatrixToOutputStream(const ColumnWiseMatrix& mat, std::ostream& os);
 
-		static void MatrixToBinaryFile(const ColumnWiseMatrix& vec, const std::string& fileName, const bool tranposed = true, const bool compressed = false, const std::string mode = "w");
+		static void MatrixToBinaryFile(const ColumnWiseMatrix& vect, const std::string& fileName, const bool tranposed = true, const bool compressed = false, const std::string mode = "w");
 
 		static ColumnWiseMatrix MatrixFromInputStream(std::istream& is);
 		

@@ -14,3 +14,4 @@ cmake_install.cmake
 *.a
 *.swp
 CMakePresets.json
+IgnoreWarning.h

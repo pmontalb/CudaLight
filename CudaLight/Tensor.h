@@ -98,7 +98,7 @@ namespace cl
 
 		static Tensor RandomGaussian(const unsigned nRows, const unsigned nCols, const unsigned nMatrices, const unsigned seed);
 
-		static void Print(const Tensor& vec, const std::string& label = "");
+		static void Print(const Tensor& vect, const std::string& label = "");
 
 		static Tensor Add(const Tensor& lhs, const Tensor& rhs, const double alpha = 1.0);
 

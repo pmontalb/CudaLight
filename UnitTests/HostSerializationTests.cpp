@@ -118,7 +118,7 @@ namespace clt
 		if (!f.is_open())
 			f = std::ifstream("vec.npy");
         if (!f.is_open())
-            f = std::ifstream(cwd + "/../UnitTests/vec.npy");
+            f = std::ifstream(cwd + "/../../UnitTests/vec.npy");
 		ASSERT_TRUE(f.is_open());
 		ASSERT_FALSE(f.fail());
 
@@ -145,7 +145,7 @@ namespace clt
 		if (!f.is_open())
 			f = std::ifstream("mat.npy");
         if (!f.is_open())
-            f = std::ifstream(cwd + "/../UnitTests/mat.npy");
+            f = std::ifstream(cwd + "/../../UnitTests/mat.npy");
 		ASSERT_TRUE(f.is_open());
 		ASSERT_FALSE(f.fail());
 

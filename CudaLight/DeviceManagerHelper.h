@@ -229,3 +229,4 @@ __CREATE_FUNCTION_4_ARG(MakeTriple, MemoryBuffer&, v, const MemoryBuffer&, x, co
 #undef __CREATE_FUNCTION_13_ARG
 
 #pragma endregion
+

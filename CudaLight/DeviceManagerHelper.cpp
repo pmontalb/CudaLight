@@ -1,6 +1,5 @@
 #include <DeviceManagerHelper.h>
 #include <CudaException.h>
-#include <vector>
 
 #pragma region Macro helpers
 
@@ -213,6 +212,7 @@
 			}\
 		}\
 	}
+
 #pragma endregion
 
 // Device
@@ -292,6 +292,18 @@ __CREATE_FUNCTION_2_ARG(Max, CuBlasKernelExceptionFactory, double&, max, const M
 // Forge Helpers
 __CREATE_FUNCTION_3_ARG(MakePair, CudaKernelExceptionFactory, MemoryBuffer&, z, const MemoryBuffer&, x, const MemoryBuffer&, y)
 __CREATE_FUNCTION_4_ARG(MakeTriple, CudaKernelExceptionFactory, MemoryBuffer&, v, const MemoryBuffer&, x, const MemoryBuffer&, y, const MemoryBuffer&, z)
+
+// these macros are unused, so we stop -Wunused-macros
+#ifdef __CREATE_FUNCTION_4_ARG
+#endif
+#ifdef __CREATE_FUNCTION_8_ARG
+#endif
+#ifdef __CREATE_FUNCTION_11_ARG
+#endif
+#ifdef __CREATE_FUNCTION_12_ARG
+#endif
+#ifdef __CREATE_FUNCTION_13_ARG
+#endif
 
 #pragma region Undef macros
 

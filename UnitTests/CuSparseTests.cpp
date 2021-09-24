@@ -78,7 +78,7 @@ namespace clt
 				double m1m2 = 0.0;
 				for (size_t k = 0; k < m1.nCols(); ++k)
 					m1m2 += static_cast<double>(_m1[i + k * m1.nRows()] * _m2[k + j * m2.nRows()]);
-				ASSERT_TRUE(std::fabs(m1m2 - static_cast<double>(_m3[i + j * m1.nRows()])) <= 5e-5);
+				ASSERT_LE(std::fabs(m1m2 - static_cast<double>(_m3[i + j * m1.nRows()])), 5e-5);
 			}
 		}
 	}
