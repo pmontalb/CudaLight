@@ -1079,7 +1079,15 @@ public:
     explicit CudaErrorStartupFailureException(const std::string& kernelName) : Exception(kernelName)
 	{
 	}
-}; 
+};
+
+class CudaOutOfBoundException: public Exception
+{
+public:
+  explicit CudaOutOfBoundException(const std::string& kernelName) : Exception(kernelName)
+  {
+  }
+};
 
 /**
 * Any unhandled CUDA driver error is added to this value and returned via
@@ -1442,6 +1450,8 @@ struct CudaKernelExceptionFactory
 				throw CudaErrorCooperativeLaunchTooLargeException(kernelName);
 			case 0x7f:
 				throw CudaErrorStartupFailureException(kernelName);
+                        case 700:
+                          throw CudaOutOfBoundException(kernelName);
 			case 10000:
 				throw CudaErrorApiFailureBaseException(kernelName);
 			default:
