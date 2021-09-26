@@ -9,7 +9,7 @@
 namespace cl
 {
 	template<MemorySpace memorySpace = MemorySpace::Device, MathDomain mathDomain = MathDomain::Float>
-	class SparseVector : public Buffer<SparseVector<memorySpace, mathDomain>, memorySpace, mathDomain>
+	class SparseVector: public Buffer<SparseVector<memorySpace, mathDomain>, memorySpace, mathDomain>
 	{
 	public:
 		using stdType = typename Traits<mathDomain>::stdType;
@@ -23,11 +23,11 @@ namespace cl
 		SparseVector(const SparseVector& rhs);
 		SparseVector(SparseVector&& rhs) noexcept;
 
-        inline ~SparseVector() override
-        {
-            this-> dtor(_buffer);
-            _buffer.pointer = 0;
-        }
+		inline ~SparseVector() override
+		{
+			this->dtor(_buffer);
+			_buffer.pointer = 0;
+		}
 
 		const MemoryBuffer& GetBuffer() const noexcept final { return values.GetBuffer(); }
 		MemoryBuffer& GetBuffer() noexcept final { return values.GetBuffer(); }
@@ -35,40 +35,40 @@ namespace cl
 		std::vector<stdType> Get() const final;
 		void Print(const std::string& label = "") const final;
 		std::ostream& ToOutputStream(std::ostream&) const final { throw std::logic_error("Not Implemented"); }
-		void ToBinaryFile(const std::string&, const bool, const std::string) const final	{ throw std::logic_error("Not Implemented"); }
+		void ToBinaryFile(const std::string&, const bool, const std::string) const final { throw std::logic_error("Not Implemented"); }
 
-		#pragma region Dense-Sparse Linear Algebra
+#pragma region Dense - Sparse Linear Algebra
 
-		Vector<memorySpace, mathDomain> operator +(const Vector<memorySpace, mathDomain>& rhs) const;
-		Vector<memorySpace, mathDomain> operator -(const Vector<memorySpace, mathDomain>& rhs) const;
+		Vector<memorySpace, mathDomain> operator+(const Vector<memorySpace, mathDomain>& rhs) const;
+		Vector<memorySpace, mathDomain> operator-(const Vector<memorySpace, mathDomain>& rhs) const;
 		Vector<memorySpace, mathDomain> Add(const Vector<memorySpace, mathDomain>& rhs, const double alpha = 1.0) const;
 
-		#pragma endregion
+#pragma endregion
 
-		#pragma region Linear Algebra
+#pragma region Linear Algebra
 
 		/**
 		 * WARNING: this assumes the same sparsity pattern between operands
 		 * NB: buffer.pointer is the same as values.pointer, so it doesn't require any additional care
 		 */
-		SparseVector operator +(const SparseVector& rhs) const;
-		SparseVector operator -(const SparseVector& rhs) const;
-		SparseVector operator %(const SparseVector& rhs) const;  // element-wise product
+		SparseVector operator+(const SparseVector& rhs) const;
+		SparseVector operator-(const SparseVector& rhs) const;
+		SparseVector operator%(const SparseVector& rhs) const;	  // element-wise product
 		SparseVector Add(const SparseVector& rhs, const double alpha = 1.0) const;
 
-		#pragma endregion
+#pragma endregion
 	protected:
 		SparseVector(const unsigned size, const unsigned nNonZeros);
 		SparseVector(const unsigned size, const unsigned nNonZeros, const stdType value);
-        using Buffer<SparseVector, memorySpace, mathDomain>::Alloc;
+		using Buffer<SparseVector, memorySpace, mathDomain>::Alloc;
 
 
-    public:
-        unsigned denseSize;  // used only when converting to dense
-    protected:
-        SparseMemoryBuffer _buffer {};
-        Vector<memorySpace, mathDomain> values {};
-        Vector<memorySpace, MathDomain::Int> nonZeroIndices {};
+	public:
+		unsigned denseSize;	   // used only when converting to dense
+	protected:
+		SparseMemoryBuffer _buffer {};
+		Vector<memorySpace, mathDomain> values {};
+		Vector<memorySpace, MathDomain::Int> nonZeroIndices {};
 
 	private:
 		/**
@@ -78,7 +78,7 @@ namespace cl
 		void SyncPointers();
 	};
 
-	#pragma region Type aliases
+#pragma region Type aliases
 
 	using GpuIntegerSparseVector = SparseVector<MemorySpace::Device, MathDomain::Int>;
 	using GpuSingleSparseVector = SparseVector<MemorySpace::Device, MathDomain::Float>;
@@ -92,7 +92,7 @@ namespace cl
 
 	using TestIntegerSparseVector = SparseVector<MemorySpace::Test, MathDomain::Int>;
 	using TestSingleSparseVector = SparseVector<MemorySpace::Test, MathDomain::Float>;
-	using TestFloatSparseVector =TestSingleSparseVector;
+	using TestFloatSparseVector = TestSingleSparseVector;
 	using TestDoubleSparseVector = SparseVector<MemorySpace::Test, MathDomain::Double>;
 
 	using MklIntegerSparseVector = SparseVector<MemorySpace::Mkl, MathDomain::Int>;
@@ -105,7 +105,7 @@ namespace cl
 		using svec = cl::GpuSingleSparseVector;
 		using dsvec = cl::GpuDoubleSparseVector;
 		using isvec = cl::GpuIntegerSparseVector;
-	}
+	}	 // namespace gpu
 
 	// by default we're gonna be using GPU
 	using svec = gpu::svec;
@@ -117,24 +117,24 @@ namespace cl
 		using svec = cl::CudaCpuSingleSparseVector;
 		using sdvec = cl::CudaCpuDoubleSparseVector;
 		using isvec = cl::CudaCpuIntegerSparseVector;
-	}
+	}	 // namespace cudaCpu
 
 	namespace mkl
 	{
 		using svec = cl::MklSingleSparseVector;
 		using dsvec = cl::MklDoubleSparseVector;
 		using isvec = cl::MklIntegerSparseVector;
-	}
+	}	 // namespace mkl
 
 	namespace test
 	{
 		using svec = cl::TestSingleSparseVector;
 		using dsvec = cl::TestDoubleSparseVector;
 		using isvec = cl::TestIntegerSparseVector;
-	}
+	}	 // namespace test
 
-	#pragma endregion
-}
+#pragma endregion
+}	 // namespace cl
 
 // give possibility of avoiding writing cl::
 namespace mkl
@@ -142,13 +142,13 @@ namespace mkl
 	using svec = cl::mkl::svec;
 	using dsvec = cl::mkl::dsvec;
 	using isvec = cl::mkl::isvec;
-}
+}	 // namespace mkl
 
 namespace test
 {
 	using svec = cl::test::svec;
 	using dsvec = cl::test::dsvec;
 	using isvec = cl::test::isvec;
-}
+}	 // namespace test
 
 #include <SparseVector.tpp>

@@ -2,7 +2,7 @@
 
 namespace dm
 {
-	class DeviceManager 
+	class DeviceManager
 	{
 	public:
 		static unsigned GetDeviceCount();
@@ -11,14 +11,12 @@ namespace dm
 		static void SetBestDevice();
 		static void CheckDeviceSanity();
 
-	private:
-		DeviceManager();
-		~DeviceManager() noexcept = default;
-
 		DeviceManager(const DeviceManager&) noexcept = delete;
 		DeviceManager(DeviceManager&&) noexcept = delete;
 		DeviceManager& operator=(const DeviceManager&) noexcept = delete;
 		DeviceManager& operator=(DeviceManager&&) noexcept = delete;
+	private:
+		DeviceManager();
+		~DeviceManager() noexcept = default;
 	};
-}
-
+}	 // namespace dm

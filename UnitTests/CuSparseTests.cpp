@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
 
-#include <SparseVector.h>
 #include <CompressedSparseRowMatrix.h>
+#include <SparseVector.h>
 
 namespace clt
 {
-	class CuSparseTests : public ::testing::Test
+	class CuSparseTests: public ::testing::Test
 	{
 	};
 
@@ -107,4 +107,4 @@ namespace clt
 			}
 		}
 	}
-}
+}	 // namespace clt

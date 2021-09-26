@@ -5,7 +5,7 @@
 
 namespace clt
 {
-	class GenericBlasExtraRoutinesTests : public ::testing::Test
+	class GenericBlasExtraRoutinesTests: public ::testing::Test
 	{
 	};
 
@@ -84,4 +84,4 @@ namespace clt
 		ASSERT_TRUE(std::fabs(_min - xMin) <= 1e-7f);
 		ASSERT_TRUE(std::fabs(_max - xMax) <= 1e-7f);
 	}
-}
+}	 // namespace clt

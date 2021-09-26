@@ -6,51 +6,51 @@ namespace cl
 {
 	// This is required for using types defined in children classes (which are incomplete types)
 
-	template <MathDomain mathDomain>
+	template<MathDomain mathDomain>
 	struct Traits
 	{
 		using stdType = void;
 	};
 
-	template <>
+	template<>
 	struct Traits<MathDomain::Double>
 	{
 		using stdType = double;
 	};
 
-	template <>
+	template<>
 	struct Traits<MathDomain::Float>
 	{
 		using stdType = float;
 	};
 
-	template <>
+	template<>
 	struct Traits<MathDomain::Int>
 	{
 		using stdType = int;
 	};
 
-	template <typename T>
+	template<typename T>
 	struct _Traits
 	{
 		static constexpr MathDomain clType = MathDomain::Null;
 	};
 
-	template <>
+	template<>
 	struct _Traits<double>
 	{
 		static constexpr MathDomain clType = MathDomain::Double;
 	};
 
-	template <>
+	template<>
 	struct _Traits<float>
 	{
 		static constexpr MathDomain clType = MathDomain::Float;
 	};
 
-	template <>
+	template<>
 	struct _Traits<int>
 	{
 		static constexpr MathDomain clType = MathDomain::Int;
 	};
-}
+}	 // namespace cl

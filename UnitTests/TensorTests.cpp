@@ -4,7 +4,7 @@
 
 namespace clt
 {
-	class TensorTests : public ::testing::Test
+	class TensorTests: public ::testing::Test
 	{
 	};
 
@@ -76,4 +76,4 @@ namespace clt
 		for (size_t i = 0; i < _v.size() / 2; ++i)
 			ASSERT_TRUE(std::fabs(_v[2 * i] + _v[2 * i + 1]) <= 1e-7f);
 	}
-}
+}	 // namespace clt

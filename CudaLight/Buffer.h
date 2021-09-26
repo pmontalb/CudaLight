@@ -1,14 +1,14 @@
 #pragma once
 
-#include <vector>
-#include <string>
 #include <iostream>
+#include <string>
+#include <vector>
 
 #include <DeviceManager.h>
 #include <DeviceManagerHelper.h>
 #include <Exception.h>
-#include <Types.h>
 #include <IBuffer.h>
+#include <Types.h>
 
 namespace cl
 {
@@ -21,7 +21,7 @@ namespace cl
 	public:
 		using stdType = typename Traits<mathDomain>::stdType;
 
-		virtual ~Buffer() override = default;
+		~Buffer() override = default;
 
 		// For avoiding unnecessary checks and overheads, it's not possible to use operator=
 		template<typename bi, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
@@ -35,7 +35,7 @@ namespace cl
 		void ReadFrom(const std::vector<T>& rhs);
 
 		void Set(const stdType value) final;
-		
+
 		void Reciprocal() final;
 
 		void LinSpace(const stdType x0, const stdType x1) final;
@@ -43,7 +43,7 @@ namespace cl
 		void RandomUniform(const unsigned seed = 1234) final;
 
 		void RandomGaussian(const unsigned seed = 1234) final;
-		
+
 		virtual std::vector<stdType> Get() const override;
 
 		template<typename bi, MemorySpace ms, MathDomain md>
@@ -52,15 +52,18 @@ namespace cl
 		template<typename bi, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 		bool operator==(const Buffer<bi, ms, md>& rhs) const;
 		template<typename bi, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
-		bool operator!=(const Buffer<bi, ms, md>& rhs) const { return !(*this == rhs); }
+		bool operator!=(const Buffer<bi, ms, md>& rhs) const
+		{
+			return !(*this == rhs);
+		}
 
 		unsigned size() const noexcept final { return this->GetBuffer().size; }
 
-		#pragma region Linear Algebra
+#pragma region Linear Algebra
 
-		IBuffer<memorySpace, mathDomain>& operator +=(const IBuffer<memorySpace, mathDomain>& rhs) final;
-		IBuffer<memorySpace, mathDomain>& operator -=(const IBuffer<memorySpace, mathDomain>& rhs) final;
-		IBuffer<memorySpace, mathDomain>& operator %=(const IBuffer<memorySpace, mathDomain>& rhs) final;  // element-wise product
+		IBuffer<memorySpace, mathDomain>& operator+=(const IBuffer<memorySpace, mathDomain>& rhs) final;
+		IBuffer<memorySpace, mathDomain>& operator-=(const IBuffer<memorySpace, mathDomain>& rhs) final;
+		IBuffer<memorySpace, mathDomain>& operator%=(const IBuffer<memorySpace, mathDomain>& rhs) final;	// element-wise product
 
 		IBuffer<memorySpace, mathDomain>& AddEqual(const IBuffer<memorySpace, mathDomain>& rhs, const double alpha = 1.0) final;
 		IBuffer<memorySpace, mathDomain>& Scale(const double alpha) final;
@@ -77,11 +80,11 @@ namespace cl
 		int CountEquals(const IBuffer<memorySpace, mathDomain>& rhs) const final;
 		int CountEquals(const IBuffer<memorySpace, mathDomain>& rhs, MemoryBuffer& cacheCount, MemoryBuffer& cacheSum, MemoryBuffer& oneElementCache) const final;
 
-		#pragma endregion
+#pragma endregion
 
 		inline bool OwnsMemory() const noexcept { return _isOwner; }
+
 	protected:
-		
 		explicit Buffer(const bool isOwner);
 		explicit Buffer(Buffer&& buffer) noexcept;
 
@@ -89,14 +92,14 @@ namespace cl
 		{
 			switch (mathDomain)
 			{
-			case MathDomain::Int:
-				return 0;
-			case MathDomain::Float:
-				return 1e-7;
-			case MathDomain::Double:
-				return 1e-15;
-			default:
-				return 0;
+				case MathDomain::Int:
+					return 0;
+				case MathDomain::Float:
+					return 1e-7;
+				case MathDomain::Double:
+					return 1e-15;
+				default:
+					return 0;
 			}
 		}
 
@@ -128,7 +131,7 @@ namespace cl
 				for (size_t i = 0; i < source.nRows; i++)
 					dest[i + source.nRows * j] = ptr[i + source.nRows * j];
 		}
-	}
+	}	 // namespace detail
 
 	template<typename BufferImpl, MemorySpace ms = MemorySpace::Device, MathDomain md = MathDomain::Float>
 	static void Scale(Buffer<BufferImpl, ms, md>& lhs, const double alpha);
@@ -142,7 +145,7 @@ namespace cl
 	template<typename T>
 	static void Print(const std::vector<T>& m, const unsigned nRows, const unsigned nCols, const std::string& label = "");
 
-    #pragma region Serialization
+#pragma region Serialization
 
 	template<typename T>
 	static std::ostream& VectorToOutputStream(const std::vector<T>& v, std::ostream& os);
@@ -166,16 +169,15 @@ namespace cl
 	static std::vector<T> VectorFromBinaryFile(const std::string& fileName, const bool compressed = false, const bool useMemoryMapping = false);
 
 	template<typename T>
-	static void MatrixToBinaryFile(const std::vector<T>& m, unsigned nRows, unsigned nCols, const std::string& fileName, const bool tranpose=true, const bool compressed = false, const std::string mode = "w");
+	static void MatrixToBinaryFile(const std::vector<T>& m, unsigned nRows, unsigned nCols, const std::string& fileName, const bool tranpose = true, const bool compressed = false, const std::string mode = "w");
 
 	template<typename T>
-	static void MatrixFromBinaryFile(std::vector<T>& m, unsigned& nRows, unsigned& nCols, const std::string& fileName, const bool transpose=true, const bool compressed = false, const bool useMemoryMapping = false);
+	static void MatrixFromBinaryFile(std::vector<T>& m, unsigned& nRows, unsigned& nCols, const std::string& fileName, const bool transpose = true, const bool compressed = false, const bool useMemoryMapping = false);
 
 	template<typename T>
 	static std::vector<T> MatrixFromBinaryFile(unsigned& nRows, unsigned& nCols, const std::string& fileName, const bool compressed = false, const bool useMemoryMapping = false);
-	
-    #pragma endregion
-}
+
+#pragma endregion
+}	 // namespace cl
 
 #include <Buffer.tpp>
-

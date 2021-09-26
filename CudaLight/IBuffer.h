@@ -1,15 +1,14 @@
 #pragma once
 
-#include <vector>
-#include <string>
 #include <iostream>
+#include <string>
+#include <vector>
 
-#include <Types.h>
 #include <Traits.h>
+#include <Types.h>
 
 namespace cl
 {
-
 	template<MemorySpace memorySpace = MemorySpace::Device, MathDomain mathDomain = MathDomain::Float>
 	class IBuffer
 	{
@@ -43,9 +42,9 @@ namespace cl
 
 		virtual ~IBuffer() = default;
 
-		virtual IBuffer& operator +=(const IBuffer& rhs) = 0;
-		virtual IBuffer& operator -=(const IBuffer& rhs) = 0;
-		virtual IBuffer& operator %=(const IBuffer& rhs) = 0;  // element-wise product
+		virtual IBuffer& operator+=(const IBuffer& rhs) = 0;
+		virtual IBuffer& operator-=(const IBuffer& rhs) = 0;
+		virtual IBuffer& operator%=(const IBuffer& rhs) = 0;	// element-wise product
 
 		virtual IBuffer& AddEqual(const IBuffer& rhs, const double alpha = 1.0) = 0;
 		virtual IBuffer& Scale(const double alpha) = 0;
@@ -65,6 +64,4 @@ namespace cl
 		virtual MemoryBuffer& GetBuffer() noexcept = 0;
 		virtual const MemoryBuffer& GetBuffer() const noexcept = 0;
 	};
-}
-
-
+}	 // namespace cl

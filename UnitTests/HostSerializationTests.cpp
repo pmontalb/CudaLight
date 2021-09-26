@@ -1,21 +1,21 @@
 #include <gtest/gtest.h>
 
-#include <Vector.h>
 #include <ColumnWiseMatrix.h>
-#include <sstream>
+#include <Vector.h>
 #include <fstream>
-#include <stdio.h>
+#include <sstream>
+#include <cstdio>
 
 namespace clt
 {
-	class HostSerializationTests : public ::testing::Test
+	class HostSerializationTests: public ::testing::Test
 	{
 	};
 
 	/*
-	*	If serialization is denoted as f(vec), and deserialization g(vec)
-	*	 ==> f(g(vec)) = vec
-	*/
+	 *	If serialization is denoted as f(vec), and deserialization g(vec)
+	 *	 ==> f(g(vec)) = vec
+	 */
 	TEST_F(HostSerializationTests, VectorSerializationInversion)
 	{
 		std::stringstream s;
@@ -36,21 +36,21 @@ namespace clt
 
 		ASSERT_TRUE(u == v);
 	}
-	
+
 	TEST_F(HostSerializationTests, VectorSerializationToBinaryFileInversionCompressed)
 	{
 		cl::test::vec v(18u, 0.12345f);
 		v.ToBinaryFile("v1.npz", true);
-		
+
 		cl::test::vec u = cl::test::vec::VectorFromBinaryFile("v1.npz", true);
-		
+
 		ASSERT_TRUE(u == v);
 	}
 
 	/*
-	*	If serialization is denoted as f(vec), and deserialization g(vec)
-	*	 ==> f(g(vec)) = vec
-	*/
+	 *	If serialization is denoted as f(vec), and deserialization g(vec)
+	 *	 ==> f(g(vec)) = vec
+	 */
 	TEST_F(HostSerializationTests, MatrixSerializationInversion)
 	{
 		std::stringstream s;
@@ -108,8 +108,8 @@ namespace clt
 	}
 
 	/*
-	*	Open file serialized with numpy.savetxt
-	*/
+	 *	Open file serialized with numpy.savetxt
+	 */
 	TEST_F(HostSerializationTests, VectorSerializationReadFromNumpy)
 	{
 		char temp[4096];
@@ -117,8 +117,8 @@ namespace clt
 		std::ifstream f("..\\..\\UnitTests\\vec.npy");
 		if (!f.is_open())
 			f = std::ifstream("vec.npy");
-        if (!f.is_open())
-            f = std::ifstream(cwd + "/../../UnitTests/vec.npy");
+		if (!f.is_open())
+			f = std::ifstream(cwd + "/../../UnitTests/vec.npy");
 		ASSERT_TRUE(f.is_open());
 		ASSERT_FALSE(f.fail());
 
@@ -131,12 +131,12 @@ namespace clt
 		catch (...)
 		{
 			ASSERT_FALSE(true);
-		}		
+		}
 	}
 
 	/*
-	*	Open file serialized with numpy.savetxt
-	*/
+	 *	Open file serialized with numpy.savetxt
+	 */
 	TEST_F(HostSerializationTests, MatrixSerializationReadFromNumpy)
 	{
 		char temp[4096];
@@ -144,8 +144,8 @@ namespace clt
 		std::ifstream f("..\\..\\UnitTests\\mat.npy");
 		if (!f.is_open())
 			f = std::ifstream("mat.npy");
-        if (!f.is_open())
-            f = std::ifstream(cwd + "/../../UnitTests/mat.npy");
+		if (!f.is_open())
+			f = std::ifstream(cwd + "/../../UnitTests/mat.npy");
 		ASSERT_TRUE(f.is_open());
 		ASSERT_FALSE(f.fail());
 
@@ -182,4 +182,4 @@ namespace clt
 
 		std::remove("m.cl");
 	}
-}
+}	 // namespace clt

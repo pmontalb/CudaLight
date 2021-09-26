@@ -4,7 +4,7 @@
 
 namespace clt
 {
-	class SparseMatrixTests : public ::testing::Test
+	class SparseMatrixTests: public ::testing::Test
 	{
 	};
 
@@ -119,4 +119,4 @@ namespace clt
 			ASSERT_TRUE(std::fabs(_dm[i] - _sm[i]) <= 1e-7) << i << " | " << _dm[i] << " | " << _sm[i];
 		}
 	}
-}
+}	 // namespace clt

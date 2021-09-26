@@ -1,11 +1,11 @@
-#include <gtest/gtest.h>
 #include <DeviceManager.h>
+#include <gtest/gtest.h>
 
 namespace clt
-{		
-	class DeviceManagerTests : public ::testing::Test
+{
+	class DeviceManagerTests: public ::testing::Test
 	{
-	};		
+	};
 
 	TEST_F(DeviceManagerTests, DeviceInitialization)
 	{
@@ -18,4 +18,4 @@ namespace clt
 		dm::DeviceManager::SetBestDevice();
 		dm::DeviceManager::CheckDeviceSanity();
 	}
-}
+}	 // namespace clt

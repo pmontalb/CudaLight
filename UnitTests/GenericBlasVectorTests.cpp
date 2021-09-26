@@ -6,31 +6,31 @@
 
 namespace clt
 {
-	class GenericBlasVectorTests : public ::testing::Test
+	class GenericBlasVectorTests: public ::testing::Test
 	{
 	};
-	
+
 	TEST_F(GenericBlasVectorTests, Allocation)
 	{
 		cl::gblas::vec v1(10, 1.2345f);
 		cl::gblas::dvec v2(10, 1.2345);
 	}
-	
+
 	TEST_F(GenericBlasVectorTests, Copy)
 	{
 		cl::gblas::vec v1(10, 1.2345f);
 		cl::gblas::vec v2(v1);
 		ASSERT_TRUE(v1 == v2);
-		
+
 		cl::gblas::dvec v3(10, 1.2345);
 		cl::gblas::dvec v4(v3);
 		ASSERT_TRUE(v3 == v4);
-		
+
 		cl::gblas::ivec v5(10, 10);
 		cl::gblas::ivec v6(v5);
 		ASSERT_TRUE(v5 == v6);
 	}
-	
+
 	TEST_F(GenericBlasVectorTests, Linspace)
 	{
 		cl::gblas::vec v = cl::gblas::vec::LinSpace(0.0, 1.0, 10);
@@ -45,7 +45,7 @@ namespace clt
 		cl::gblas::vec v = cl::gblas::vec::RandomUniform(10, 1234);
 
 		auto _v = v.Get();
-		for (const auto& iter: _v)
+		for (const auto& iter : _v)
 			ASSERT_TRUE(iter >= 0.0f && iter <= 1.0f);
 	}
 
@@ -135,8 +135,8 @@ namespace clt
 
 		auto norm = u.EuclideanNorm();
 		float normCpu = 0.0;
-		for (auto& x: _u)
+		for (auto& x : _u)
 			normCpu += x * x;
 		ASSERT_NEAR(normCpu, norm * norm, 1e-6);
 	}
-}
+}	 // namespace clt

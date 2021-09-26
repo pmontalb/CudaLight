@@ -6,10 +6,10 @@
 
 namespace clt
 {
-	class VectorTests : public ::testing::Test
+	class VectorTests: public ::testing::Test
 	{
 	};
-	
+
 	TEST_F(VectorTests, Allocation)
 	{
 		cl::GpuSingleVector v1(10, 1.2345f);
@@ -66,7 +66,7 @@ namespace clt
 		cl::vec v = cl::vec::RandomUniform(10, 1234);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v = v.Get();
-		for (const auto& iter: _v)
+		for (const auto& iter : _v)
 			ASSERT_TRUE(iter >= 0.0f && iter <= 1.0f);
 	}
 
@@ -156,11 +156,11 @@ namespace clt
 		cl::vec u = cl::vec::RandomGaussian(10, 1234);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _u = u.Get();
-		
+
 		auto norm = u.EuclideanNorm();
 		float normCpu = 0.0;
-		for (auto& x: _u)
+		for (auto& x : _u)
 			normCpu += x * x;
 		ASSERT_NEAR(normCpu, norm * norm, 1e-6);
 	}
-}
+}	 // namespace clt

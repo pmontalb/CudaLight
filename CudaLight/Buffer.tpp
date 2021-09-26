@@ -636,6 +636,7 @@ namespace cl
 				matTranspose.push_back(value);
 			++nRows;
 		}
+		assert(nRows > 0);
 		nCols = static_cast<unsigned>(matTranspose.size()) / nRows;
 
 		// transpose matrix

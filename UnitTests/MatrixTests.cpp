@@ -4,7 +4,7 @@
 
 namespace clt
 {
-	class MatrixTests : public ::testing::Test
+	class MatrixTests: public ::testing::Test
 	{
 	};
 
@@ -95,12 +95,11 @@ namespace clt
 		{
 			auto col = m1.Get(j);
 			dm::DeviceManager::CheckDeviceSanity();
-				
+
 			ASSERT_EQ(static_cast<unsigned>(col.size()), m1.nRows());
 			for (size_t i = 0; i < col.size(); ++i)
 				ASSERT_TRUE(std::fabs(col[i] - 1.2345f) <= 1e-7f);
 		}
-
 	}
 
 	TEST_F(MatrixTests, SetColumn)
@@ -133,16 +132,16 @@ namespace clt
 			}
 		}
 	}
-	
+
 	TEST_F(MatrixTests, RandomShuffle)
 	{
 		cl::mat m = cl::mat::RandomGaussian(10, 20, 1234);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _m1 = m.Get();
-		
+
 		m.RandomShuffleColumns(2345);
 		auto _m2 = m.Get();
-		
+
 		// check columns have been permuted, not changing rows
 		for (size_t j = 0; j < m.nCols(); ++j)
 		{
@@ -157,12 +156,12 @@ namespace clt
 				}
 			}
 			ASSERT_TRUE(found);
-			
+
 			for (size_t i = 0; i < m.nRows(); ++i)
 				ASSERT_DOUBLE_EQ(_m2[i + j2 * m.nRows()], _m1[i + j * m.nRows()]);
 		}
 	}
-	
+
 	TEST_F(MatrixTests, RandomShufflePair)
 	{
 		cl::mat m = cl::mat::RandomGaussian(10, 20, 1234);
@@ -170,11 +169,11 @@ namespace clt
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _m1 = m.Get();
 		auto _n1 = n.Get();
-		
+
 		cl::mat::RandomShuffleColumnsPair(m, n, 2345);
 		auto _m2 = m.Get();
 		auto _n2 = n.Get();
-		
+
 		// check columns have been permuted, not changing rows
 		for (size_t j = 0; j < m.nCols(); ++j)
 		{
@@ -189,7 +188,7 @@ namespace clt
 				}
 			}
 			ASSERT_TRUE(found);
-			
+
 			size_t k2 = 0;
 			found = false;
 			for (; k2 < m.nCols(); ++k2)
@@ -202,7 +201,7 @@ namespace clt
 			}
 			ASSERT_TRUE(found);
 			ASSERT_EQ(k2, j2);
-			
+
 			for (size_t i = 0; i < m.nRows(); ++i)
 			{
 				ASSERT_DOUBLE_EQ(_m2[i + j2 * m.nRows()], _m1[i + j * m.nRows()]);
@@ -210,21 +209,21 @@ namespace clt
 			}
 		}
 	}
-	
+
 	TEST_F(MatrixTests, SubMatrix)
 	{
 		cl::mat m = cl::mat::RandomGaussian(10, 20, 1234);
-		
+
 		const size_t nStart = 4;
 		const size_t nEnd = 17;
 		cl::mat n(m, nStart, nEnd);
-		
+
 		ASSERT_EQ(n.nRows(), m.nRows());
 		ASSERT_EQ(n.nCols(), nEnd - nStart);
-		
+
 		auto _m = m.Get();
 		auto _n = n.Get();
-		
+
 		for (size_t i = 0; i < m.nRows(); ++i)
 		{
 			for (size_t j = nStart; j < nEnd; ++j)
@@ -233,4 +232,4 @@ namespace clt
 			}
 		}
 	}
-}
+}	 // namespace clt

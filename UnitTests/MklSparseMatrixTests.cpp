@@ -4,7 +4,7 @@
 
 namespace clt
 {
-	class MklSparseMatrixTests : public ::testing::Test
+	class MklSparseMatrixTests: public ::testing::Test
 	{
 	};
 
@@ -62,4 +62,4 @@ namespace clt
 			ASSERT_TRUE(std::fabs(_dv[i] - _sv[i]) <= 1e-7f);
 		}
 	}
-}
+}	 // namespace clt

@@ -1,13 +1,13 @@
 
 #include <gtest/gtest.h>
 
-#include <Vector.h>
 #include <ColumnWiseMatrix.h>
 #include <Tensor.h>
+#include <Vector.h>
 
 namespace clt
 {
-	class CuBlasTests : public ::testing::Test
+	class CuBlasTests: public ::testing::Test
 	{
 	};
 
@@ -101,30 +101,30 @@ namespace clt
 		for (size_t i = 0; i < m1.size(); ++i)
 			ASSERT_LT(std::fabs(static_cast<double>(_m4[i]) / (2.0 * static_cast<double>(_m1[i]) + 3.0 * static_cast<double>(_m2[i])) - 1.0), 1e-7) << i << "; " << _m4[i] << "; " << 2.0f * _m1[i] - 3.0f * _m2[i];
 	}
-	
+
 	TEST_F(CuBlasTests, BroadcastAdd)
 	{
 		cl::mat m1 = cl::mat::LinSpace(-1.0f, 1.0f, 64, 128);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _m1 = m1.Get();
 		auto m1Copy = m1;
-		
+
 		cl::vec v1 = cl::vec::RandomUniform(m1.nRows(), 1234);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v1 = v1.Get();
-		
+
 		cl::vec v2 = cl::vec::RandomUniform(m1.nCols(), 1234);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v2 = v2.Get();
-		
+
 		auto m2 = m1.AddEqualBroadcast(v1, false, 2.5);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _m2 = m2.Get();
-		
+
 		auto m3 = m1Copy.AddEqualBroadcast(v2, true, 5.2);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _m3 = m3.Get();
-		
+
 		for (size_t i = 0; i < m1.nRows(); ++i)
 		{
 			for (size_t j = 0; j < m1.nCols(); ++j)
@@ -134,20 +134,20 @@ namespace clt
 			}
 		}
 	}
-	
+
 	TEST_F(CuBlasTests, Reciprocal)
 	{
 		cl::vec v1 = cl::vec::LinSpace(1.0, 2.0, 100);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v1 = v1.Get();
-		
+
 		v1.Reciprocal();
 		auto _v2 = v1.Get();
-		
+
 		for (size_t i = 0; i < v1.size(); ++i)
 			ASSERT_NEAR(1.0f / _v1[i], _v2[i], 1e-7);
 	}
-	
+
 	TEST_F(CuBlasTests, Scale)
 	{
 		cl::vec v1 = cl::vec::LinSpace(-1.0, 1.0, 100);
@@ -160,7 +160,7 @@ namespace clt
 		for (size_t i = 0; i < v1.size(); ++i)
 			ASSERT_TRUE(std::fabs(2.0f * _v1[i] - _v2[i]) <= 1e-7f);
 	}
-	
+
 	TEST_F(CuBlasTests, ScaleColumns)
 	{
 		cl::mat m = cl::mat::RandomUniform(10, 100, 1234);
@@ -168,17 +168,17 @@ namespace clt
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v = v.Get();
 		auto _m1 = m.Get();
-		
+
 		m.ScaleColumns(v);
 		auto _m2 = m.Get();
-		
+
 		for (size_t i = 0; i < m.nRows(); ++i)
 		{
 			for (size_t j = 0; j < m.nCols(); ++j)
-			ASSERT_NEAR(_m2[i + j * m.nRows()], _m1[i + j * m.nRows()] * _v[j], 1e-7);
+				ASSERT_NEAR(_m2[i + j * m.nRows()], _m1[i + j * m.nRows()] * _v[j], 1e-7);
 		}
 	}
-	
+
 	TEST_F(CuBlasTests, ElementWiseProduct)
 	{
 		cl::vec v1 = cl::vec::LinSpace(-1.0, 1.0, 100);
@@ -221,36 +221,36 @@ namespace clt
 			}
 		}
 	}
-	
+
 	TEST_F(CuBlasTests, SubMultiply)
 	{
 		cl::mat m1(10, 10, 1.2345f);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _m1 = m1.Get();
-		
+
 		cl::mat m2(10, 10, 9.8765f);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _m2 = m2.Get();
-		
+
 		cl::mat m3(m1.nRows(), m2.nCols(), -123456789.0f);
 		auto _initialM3 = m3.Get();
-		
+
 		cl::mat m4 = m1 * m2;
 		auto _m4 = m4.Get();
-		
+
 		const size_t rowStartM1 = 2;
 		const size_t nRowsM1 = 3;
-		
+
 		const size_t colStartM1 = 4;
 		const size_t nColsM1 = 4;
-		
+
 		const size_t rowStartM2 = 3;
 		const size_t colStartM2 = 3;
 		const size_t nColsM2 = 5;
 		m1.SubMultiply(m3, m2, rowStartM1, colStartM1, nRowsM1, nColsM1, colStartM2, nColsM2);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _m3 = m3.Get();
-		
+
 		for (size_t i = rowStartM1; i < rowStartM1 + nRowsM1; ++i)
 		{
 			for (size_t j = colStartM2; j < colStartM2 + nColsM2; ++j)
@@ -262,7 +262,7 @@ namespace clt
 				ASSERT_NEAR(m1m2, _m3[i + j * m1.nRows()], 5e-5) << "i=" << i << "; j=" << j << "; idx=" << i + j * m1.nRows();
 			}
 		}
-		
+
 		for (size_t i = 0; i < rowStartM1; ++i)
 			for (size_t j = 0; j < colStartM2; ++j)
 				ASSERT_NEAR(_initialM3[i + j * m1.nRows()], _m3[i + j * m1.nRows()], 5e-5);
@@ -393,16 +393,16 @@ namespace clt
 			}
 		}
 	}
-	
+
 	TEST_F(CuBlasTests, RowWiseSum)
 	{
 		cl::mat A(128, 64);
 		A.RandomGaussian(1234);
-		
+
 		const auto rowSum = A.RowWiseSum();
 		const auto _A = A.Get();
 		const auto _rowSum = rowSum.Get();
-		
+
 		ASSERT_EQ(rowSum.size(), A.nRows());
 		for (size_t i = 0; i < A.nRows(); ++i)
 		{
@@ -412,16 +412,16 @@ namespace clt
 			ASSERT_NEAR(goldenRowSum, _rowSum[i], 5e-6);
 		}
 	}
-	
+
 	TEST_F(CuBlasTests, ColumnWiseSum)
 	{
 		cl::mat A(128, 64);
 		A.RandomGaussian(1234);
-		
+
 		const auto columnSum = A.ColumnWiseSum();
 		const auto _A = A.Get();
 		const auto _columnSum = columnSum.Get();
-		
+
 		ASSERT_EQ(columnSum.size(), A.nCols());
 		for (size_t j = 0; j < A.nCols(); ++j)
 		{
@@ -431,24 +431,24 @@ namespace clt
 			ASSERT_NEAR(goldenColSum, _columnSum[j], 5e-6);
 		}
 	}
-	
+
 	TEST_F(CuBlasTests, CubeWiseSum)
 	{
 		cl::ten T(64, 128, 32);
 		dm::DeviceManager::CheckDeviceSanity();
-		
+
 		double x = 0.0;
-		for (auto& matrix: T.matrices)
+		for (auto& matrix : T.matrices)
 			matrix->Set(static_cast<float>(++x));
-		
+
 		const auto _T = T.Get();
 		dm::DeviceManager::CheckDeviceSanity();
 		const auto cubeSum = T.CubeWiseSum();
 		dm::DeviceManager::CheckDeviceSanity();
-		
+
 		const auto _cubeSum = cubeSum.Get();
 		dm::DeviceManager::CheckDeviceSanity();
-		
+
 		ASSERT_EQ(cubeSum.nRows(), T.nRows());
 		ASSERT_EQ(cubeSum.nCols(), T.nCols());
 		for (size_t i = 0; i < T.nRows(); ++i)
@@ -458,17 +458,16 @@ namespace clt
 				double goldenCubeSum = 0.0;
 				for (size_t k = 0; k < T.nMatrices(); ++k)
 					goldenCubeSum += static_cast<double>(_T[i + j * T.nRows() + k * T.nRows() * T.nCols()]);
-				
-				ASSERT_NEAR(goldenCubeSum / static_cast<double>(_cubeSum[i + j * T.nRows()]) - 1.0, 0.0,5e-7)
-				   << "i=" << i << "; j=" << j << "; idx=" << i + j * T.nRows() << "; sum=" << _cubeSum[i + j * T.nRows()];
+
+				ASSERT_NEAR(goldenCubeSum / static_cast<double>(_cubeSum[i + j * T.nRows()]) - 1.0, 0.0, 5e-7) << "i=" << i << "; j=" << j << "; idx=" << i + j * T.nRows() << "; sum=" << _cubeSum[i + j * T.nRows()];
 			}
 		}
-		
+
 		const auto sz = T.nRows() * T.nCols();
 		cl::ivec nNonZeroRows(sz * T.nMatrices());
 		nNonZeroRows.LinSpace(0, static_cast<int>(sz * T.nMatrices() - 1));
 		nNonZeroRows.Scale(T.nMatrices());
-		
+
 		std::vector<int> nonZeroColumnIndicesCpu(nNonZeroRows.size());
 		for (size_t i = 0; i < sz; ++i)
 		{
@@ -484,7 +483,7 @@ namespace clt
 			T.CubeWiseSum(out, eye);
 			const auto _cubeSum1 = out.Get();
 			dm::DeviceManager::CheckDeviceSanity();
-			
+
 			ASSERT_EQ(out.nRows(), T.nRows());
 			ASSERT_EQ(out.nCols(), T.nCols());
 			for (size_t i = 0; i < T.nRows(); ++i)
@@ -494,36 +493,34 @@ namespace clt
 					double goldenCubeSum = 0.0;
 					for (size_t k = 0; k < T.nMatrices(); ++k)
 						goldenCubeSum += static_cast<double>(_T[i + j * T.nRows() + k * T.nRows() * T.nCols()]);
-					
-					ASSERT_NEAR(goldenCubeSum / static_cast<double>(_cubeSum1[i + j * T.nRows()]) - 1.0, 0.0,5e-7)
-												<< "i=" << i << "; j=" << j << "; idx=" << i + j * T.nRows() << "; sum=" << _cubeSum1[i + j * T.nRows()] << ";n=" << n;
+
+					ASSERT_NEAR(goldenCubeSum / static_cast<double>(_cubeSum1[i + j * T.nRows()]) - 1.0, 0.0, 5e-7) << "i=" << i << "; j=" << j << "; idx=" << i + j * T.nRows() << "; sum=" << _cubeSum1[i + j * T.nRows()] << ";n=" << n;
 				}
 			}
-			
 		}
 	}
-	
+
 	TEST_F(CuBlasTests, BatchedKroneckerProduct)
 	{
 		unsigned nCubes = 64;
-		
+
 		cl::mat u(128, nCubes, 1.0);
 		u.RandomUniform();
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _u = u.Get();
-		
+
 		cl::mat v(32, nCubes, 2.0);
 		v.RandomGaussian();
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _v = v.Get();
-		
+
 		cl::ten A = cl::ten::KroneckerProduct(u, v, 1.0);
 		dm::DeviceManager::CheckDeviceSanity();
 		auto _A = A.Get();
 		ASSERT_EQ(A.nRows(), u.nRows());
 		ASSERT_EQ(A.nCols(), v.nRows());
 		ASSERT_EQ(A.nMatrices(), nCubes);
-		
+
 		for (size_t k = 0; k < nCubes; ++k)
 		{
 			for (size_t i = 0; i < A.nRows(); ++i)
@@ -536,7 +533,7 @@ namespace clt
 			}
 		}
 	}
-	
+
 	TEST_F(CuBlasTests, ColumnWiseAbsoluteMinMax)
 	{
 		cl::mat A = cl::mat::LinSpace(-1.0f, 1.0f, 32, 128);
@@ -547,7 +544,7 @@ namespace clt
 		auto AMax = A.ColumnWiseArgAbsMaximum();
 		auto _AMax = AMax.Get();
 
-		std::vector<int> _min(A.nCols(), 0); 
+		std::vector<int> _min(A.nCols(), 0);
 		std::vector<int> _max(A.nCols(), 0);
 
 		for (size_t j = 0; j < A.nCols(); j++)
@@ -587,34 +584,34 @@ namespace clt
 		ASSERT_EQ(w.CountEquals(u), 0);
 		ASSERT_EQ(w.CountEquals(v), 0);
 	}
-	
+
 	TEST_F(CuBlasTests, TransposeMultiply)
 	{
 		cl::mat A(64, 128);
 		A.RandomUniform();
-		
-		cl::mat B(64, 32);  // for A^T * B
+
+		cl::mat B(64, 32);	  // for A^T * B
 		B.RandomUniform();
-		
-		cl::mat C(16, 128);  // for A * C^T
+
+		cl::mat C(16, 128);	   // for A * C^T
 		C.RandomUniform();
-		
-		cl::mat D(32, 64);  // for A^T * D^T
+
+		cl::mat D(32, 64);	  // for A^T * D^T
 		D.RandomUniform();
-		
-		auto ATB  = A.Multiply(B, MatrixOperation::Transpose, MatrixOperation::None);
-		auto ACT  = A.Multiply(C, MatrixOperation::None, MatrixOperation::Transpose);
+
+		auto ATB = A.Multiply(B, MatrixOperation::Transpose, MatrixOperation::None);
+		auto ACT = A.Multiply(C, MatrixOperation::None, MatrixOperation::Transpose);
 		auto ATDT = A.Multiply(D, MatrixOperation::Transpose, MatrixOperation::Transpose);
-		
+
 		auto _A = A.Get();
 		auto _B = B.Get();
 		auto _C = C.Get();
 		auto _D = D.Get();
-		
+
 		auto _ATB = ATB.Get();
 		auto _ACT = ACT.Get();
 		auto _ATDT = ATDT.Get();
-		
+
 		for (size_t i = 0; i < A.nRows(); ++i)
 		{
 			for (size_t j = 0; j < B.nCols(); ++j)
@@ -625,7 +622,7 @@ namespace clt
 				ASSERT_NEAR(goldenATB / static_cast<double>(_ATB[i + j * ATB.nRows()]), 1.0, 5e-7);
 			}
 		}
-		
+
 		for (size_t i = 0; i < A.nRows(); ++i)
 		{
 			for (size_t j = 0; j < C.nRows(); ++j)
@@ -636,7 +633,7 @@ namespace clt
 				ASSERT_NEAR(goldenACT / static_cast<double>(_ACT[i + j * ACT.nRows()]), 1.0, 5e-7);
 			}
 		}
-		
+
 		for (size_t i = 0; i < A.nCols(); ++i)
 		{
 			for (size_t j = 0; j < D.nRows(); ++j)
@@ -648,4 +645,4 @@ namespace clt
 			}
 		}
 	}
-}
+}	 // namespace clt

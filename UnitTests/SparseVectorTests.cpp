@@ -1,9 +1,9 @@
-#include <gtest/gtest.h>
 #include <SparseVector.h>
+#include <gtest/gtest.h>
 
 namespace clt
 {
-	class SparseVectorTests : public ::testing::Test
+	class SparseVectorTests: public ::testing::Test
 	{
 	};
 
@@ -28,7 +28,7 @@ namespace clt
 		dm::DeviceManager::CheckDeviceSanity();
 	}
 
-	TEST_F(SparseVectorTests,Copy)
+	TEST_F(SparseVectorTests, Copy)
 	{
 		std::vector<int> indices = { 0, 5 };
 		cl::ivec gpuIndices(static_cast<unsigned>(indices.size()));
@@ -59,7 +59,7 @@ namespace clt
 		ASSERT_TRUE(v5 == v6);
 	}
 
-	TEST_F(SparseVectorTests,ReadFromDense)
+	TEST_F(SparseVectorTests, ReadFromDense)
 	{
 		std::vector<float> denseVector(50);
 		denseVector[10] = 2.7182f;
@@ -78,4 +78,4 @@ namespace clt
 			ASSERT_TRUE(std::fabs(_dv[i] - _sv[i]) <= 1e-7f);
 		}
 	}
-}
+}	 // namespace clt

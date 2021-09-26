@@ -6,31 +6,31 @@
 
 namespace clt
 {
-	class MklVectorTests : public ::testing::Test
+	class MklVectorTests: public ::testing::Test
 	{
 	};
-	
+
 	TEST_F(MklVectorTests, Allocation)
 	{
 		cl::mkl::vec v1(10, 1.2345f);
 		cl::mkl::dvec v2(10, 1.2345);
 	}
-	
+
 	TEST_F(MklVectorTests, Copy)
 	{
 		cl::mkl::vec v1(10, 1.2345f);
 		cl::mkl::vec v2(v1);
 		ASSERT_TRUE(v1 == v2);
-		
+
 		cl::mkl::dvec v3(10, 1.2345);
 		cl::mkl::dvec v4(v3);
 		ASSERT_TRUE(v3 == v4);
-		
+
 		cl::mkl::ivec v5(10, 10);
 		cl::mkl::ivec v6(v5);
 		ASSERT_TRUE(v5 == v6);
 	}
-	
+
 	TEST_F(MklVectorTests, Linspace)
 	{
 		cl::mkl::vec v = cl::mkl::vec::LinSpace(0.0, 1.0, 10);
@@ -45,7 +45,7 @@ namespace clt
 		cl::mkl::vec v = cl::mkl::vec::RandomUniform(10, 1234);
 
 		auto _v = v.Get();
-		for (const auto& iter: _v)
+		for (const auto& iter : _v)
 			ASSERT_TRUE(iter >= 0.0f && iter <= 1.0f);
 	}
 
@@ -135,8 +135,8 @@ namespace clt
 
 		auto norm = u.EuclideanNorm();
 		float normCpu = 0.0;
-		for (auto& x: _u)
+		for (auto& x : _u)
 			normCpu += x * x;
 		ASSERT_NEAR(normCpu, norm * norm, 1e-6);
 	}
-}
+}	 // namespace clt

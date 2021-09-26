@@ -4,7 +4,7 @@
 
 namespace clt
 {
-	class HostMatrixTests : public ::testing::Test
+	class HostMatrixTests: public ::testing::Test
 	{
 	};
 
@@ -55,7 +55,7 @@ namespace clt
 		cl::test::mat v = cl::test::mat::RandomUniform(10, 10, 1234);
 
 		auto _v = v.Get();
-		for (const auto &iter : _v)
+		for (const auto& iter : _v)
 			ASSERT_TRUE(iter >= 0.0f && iter <= 1.0f);
 	}
 
@@ -74,10 +74,9 @@ namespace clt
 			auto col = m1.Get(j);
 
 			ASSERT_EQ(static_cast<unsigned>(col.size()), m1.nRows());
-			for (size_t i = 0; i < col.size(); ++i)
-				ASSERT_TRUE(std::fabs(col[i] - 1.2345f) <= 1e-7f);
+			for (const auto elem : col)
+				ASSERT_TRUE(std::fabs(elem - 1.2345f) <= 1e-7f);
 		}
-
 	}
 
 	TEST_F(HostMatrixTests, SetColumn)
@@ -210,4 +209,4 @@ namespace clt
 			}
 		}
 	}
-}
+}	 // namespace clt

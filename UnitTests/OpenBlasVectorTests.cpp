@@ -6,31 +6,31 @@
 
 namespace clt
 {
-	class OpenBlasVectorTests : public ::testing::Test
+	class OpenBlasVectorTests: public ::testing::Test
 	{
 	};
-	
+
 	TEST_F(OpenBlasVectorTests, Allocation)
 	{
 		cl::oblas::vec v1(10, 1.2345f);
 		cl::oblas::dvec v2(10, 1.2345);
 	}
-	
+
 	TEST_F(OpenBlasVectorTests, Copy)
 	{
 		cl::oblas::vec v1(10, 1.2345f);
 		cl::oblas::vec v2(v1);
 		ASSERT_TRUE(v1 == v2);
-		
+
 		cl::oblas::dvec v3(10, 1.2345);
 		cl::oblas::dvec v4(v3);
 		ASSERT_TRUE(v3 == v4);
-		
+
 		cl::oblas::ivec v5(10, 10);
 		cl::oblas::ivec v6(v5);
 		ASSERT_TRUE(v5 == v6);
 	}
-	
+
 	TEST_F(OpenBlasVectorTests, Linspace)
 	{
 		cl::oblas::vec v = cl::oblas::vec::LinSpace(0.0, 1.0, 10);
@@ -45,7 +45,7 @@ namespace clt
 		cl::oblas::vec v = cl::oblas::vec::RandomUniform(10, 1234);
 
 		auto _v = v.Get();
-		for (const auto& iter: _v)
+		for (const auto& iter : _v)
 			ASSERT_TRUE(iter >= 0.0f && iter <= 1.0f);
 	}
 
@@ -135,8 +135,8 @@ namespace clt
 
 		auto norm = u.EuclideanNorm();
 		float normCpu = 0.0;
-		for (auto& x: _u)
+		for (auto& x : _u)
 			normCpu += x * x;
 		ASSERT_NEAR(normCpu, norm * norm, 1e-6);
 	}
-}
+}	 // namespace clt

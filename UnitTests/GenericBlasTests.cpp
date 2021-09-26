@@ -1,13 +1,13 @@
 
 #include <gtest/gtest.h>
 
-#include <Vector.h>
 #include <ColumnWiseMatrix.h>
 #include <Tensor.h>
+#include <Vector.h>
 
 namespace clt
 {
-	class GenericBlasTests : public ::testing::Test
+	class GenericBlasTests: public ::testing::Test
 	{
 	};
 
@@ -26,51 +26,51 @@ namespace clt
 	TEST_F(GenericBlasTests, Add)
 	{
 		cl::gblas::vec v1 = cl::gblas::vec::LinSpace(-1.0, 1.0, 100);
-		
+
 		auto _v1 = v1.Get();
 
 		cl::gblas::vec v2 = cl::gblas::vec::RandomUniform(v1.size(), 1234);
-		
+
 		auto _v2 = v2.Get();
 
 		auto v3 = v1 + v2;
-		
+
 		auto _v3 = v3.Get();
 
 		for (size_t i = 0; i < v1.size(); ++i)
 			ASSERT_TRUE(std::fabs(_v3[i] - _v1[i] - _v2[i]) <= 1e-7f);
 
 		auto v4 = v1.Add(v2, 2.0);
-		
+
 		auto _v4 = v4.Get();
 
 		for (size_t i = 0; i < v1.size(); ++i)
 			ASSERT_TRUE(std::fabs(_v4[i] - _v1[i] - 2.0f * _v2[i]) <= 1.2e-7f);
 
 		cl::gblas::ivec v5(32, 5);
-		
+
 		auto _v5 = v5.Get();
 
 		cl::gblas::ivec v6(32, 7);
-		
+
 		auto _v6 = v6.Get();
 
 		auto v7 = v5.Add(v6, 3);
-		
+
 		auto _v7 = v7.Get();
 
 		for (size_t i = 0; i < v7.size(); ++i)
 			ASSERT_EQ(_v7[i], _v5[i] + 3 * _v6[i]);
 
 		auto v8 = v5.Add(v6, -2);
-		
+
 		auto _v8 = v8.Get();
 
 		for (size_t i = 0; i < v7.size(); ++i)
 			ASSERT_EQ(_v8[i], _v5[i] - 2 * _v6[i]);
 
 		v5.AddEqual(v6, +10);
-		
+
 		auto _v5New = v5.Get();
 
 		for (size_t i = 0; i < v7.size(); ++i)
@@ -138,20 +138,20 @@ namespace clt
 	TEST_F(GenericBlasTests, Reciprocal)
 	{
 		cl::gblas::vec v1 = cl::gblas::vec::LinSpace(1.0, 2.0, 100);
-		
+
 		auto _v1 = v1.Get();
-		
+
 		v1.Reciprocal();
 		auto _v2 = v1.Get();
-		
+
 		for (size_t i = 0; i < v1.size(); ++i)
 			ASSERT_NEAR(1.0f / _v1[i], _v2[i], 1e-7);
 	}
-	
+
 	TEST_F(GenericBlasTests, Scale)
 	{
 		cl::gblas::vec v1 = cl::gblas::vec::LinSpace(-1.0, 1.0, 100);
-		
+
 		auto _v1 = v1.Get();
 
 		v1.Scale(2.0);
@@ -175,7 +175,7 @@ namespace clt
 		for (size_t i = 0; i < m.nRows(); ++i)
 		{
 			for (size_t j = 0; j < m.nCols(); ++j)
-			ASSERT_NEAR(_m2[i + j * m.nRows()], _m1[i + j * m.nRows()] * _v[j], 1e-7);
+				ASSERT_NEAR(_m2[i + j * m.nRows()], _m1[i + j * m.nRows()] * _v[j], 1e-7);
 		}
 	}
 
@@ -220,7 +220,7 @@ namespace clt
 			}
 		}
 	}
-	
+
 	TEST_F(GenericBlasTests, SubMultiply)
 	{
 		cl::gblas::mat m1(10, 10, 1.2345f);
@@ -434,7 +434,7 @@ namespace clt
 		cl::gblas::ten T(64, 128, 32);
 
 		double x = 0.0;
-		for (auto& matrix: T.matrices)
+		for (auto& matrix : T.matrices)
 			matrix->Set(static_cast<float>(++x));
 
 		const auto _T = T.Get();
@@ -452,8 +452,7 @@ namespace clt
 				for (size_t k = 0; k < T.nMatrices(); ++k)
 					goldenCubeSum += static_cast<double>(_T[i + j * T.nRows() + k * T.nRows() * T.nCols()]);
 
-				ASSERT_NEAR(goldenCubeSum / static_cast<double>(_cubeSum[i + j * T.nRows()]) - 1.0, 0.0,5e-7)
-				   << "i=" << i << "; j=" << j << "; idx=" << i + j * T.nRows() << "; sum=" << _cubeSum[i + j * T.nRows()];
+				ASSERT_NEAR(goldenCubeSum / static_cast<double>(_cubeSum[i + j * T.nRows()]) - 1.0, 0.0, 5e-7) << "i=" << i << "; j=" << j << "; idx=" << i + j * T.nRows() << "; sum=" << _cubeSum[i + j * T.nRows()];
 			}
 		}
 
@@ -474,11 +473,9 @@ namespace clt
 					for (size_t k = 0; k < T.nMatrices(); ++k)
 						goldenCubeSum += static_cast<double>(_T[i + j * T.nRows() + k * T.nRows() * T.nCols()]);
 
-					ASSERT_NEAR(goldenCubeSum / static_cast<double>(_cubeSum1[i + j * T.nRows()]) - 1.0, 0.0,5e-7)
-												<< "i=" << i << "; j=" << j << "; idx=" << i + j * T.nRows() << "; sum=" << _cubeSum1[i + j * T.nRows()] << ";n=" << n;
+					ASSERT_NEAR(goldenCubeSum / static_cast<double>(_cubeSum1[i + j * T.nRows()]) - 1.0, 0.0, 5e-7) << "i=" << i << "; j=" << j << "; idx=" << i + j * T.nRows() << "; sum=" << _cubeSum1[i + j * T.nRows()] << ";n=" << n;
 				}
 			}
-
 		}
 	}
 
@@ -552,7 +549,7 @@ namespace clt
 	{
 		cl::gblas::vec u(64, 0.1f);
 		cl::gblas::vec v(u);
-		
+
 		auto _v = v.Get();
 
 		ASSERT_EQ(u.CountEquals(v), u.size());
@@ -569,23 +566,23 @@ namespace clt
 		ASSERT_EQ(w.CountEquals(u), 0);
 		ASSERT_EQ(w.CountEquals(v), 0);
 	}
-	
+
 	TEST_F(GenericBlasTests, TransposeMultiply)
 	{
 		cl::gblas::mat A(64, 128);
 		A.RandomUniform();
 
-		cl::gblas::mat B(64, 32);  // for A^T * B
+		cl::gblas::mat B(64, 32);	 // for A^T * B
 		B.RandomUniform();
 
-		cl::gblas::mat C(16, 128);  // for A * C^T
+		cl::gblas::mat C(16, 128);	  // for A * C^T
 		C.RandomUniform();
 
-		cl::gblas::mat D(32, 64);  // for A^T * D^T
+		cl::gblas::mat D(32, 64);	 // for A^T * D^T
 		D.RandomUniform();
 
-		auto ATB  = A.Multiply(B, MatrixOperation::Transpose, MatrixOperation::None);
-		auto ACT  = A.Multiply(C, MatrixOperation::None, MatrixOperation::Transpose);
+		auto ATB = A.Multiply(B, MatrixOperation::Transpose, MatrixOperation::None);
+		auto ACT = A.Multiply(C, MatrixOperation::None, MatrixOperation::Transpose);
 		auto ATDT = A.Multiply(D, MatrixOperation::Transpose, MatrixOperation::Transpose);
 
 		auto _A = A.Get();
@@ -630,4 +627,4 @@ namespace clt
 			}
 		}
 	}
-}
+}	 // namespace clt

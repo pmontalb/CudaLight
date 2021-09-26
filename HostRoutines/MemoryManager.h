@@ -3,11 +3,14 @@
 #include <Flags.h>
 #include <Types.h>
 
-namespace cl { namespace routines {
+namespace cl
+{
+	namespace routines
+	{
+		extern void Copy(MemoryBuffer& dest, const MemoryBuffer& source);
 
-	extern void Copy(MemoryBuffer& dest, const MemoryBuffer& source);
+		extern void Alloc(MemoryBuffer& buf);
 
-	extern void Alloc(MemoryBuffer& ptr);
-
-	extern void Free(MemoryBuffer& ptr);
-}}
+		extern void Free(MemoryBuffer& buf);
+	}	 // namespace routines
+}	 // namespace cl

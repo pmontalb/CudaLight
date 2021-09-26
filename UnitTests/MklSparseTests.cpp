@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
 
-#include <SparseVector.h>
 #include <CompressedSparseRowMatrix.h>
+#include <SparseVector.h>
 
 namespace clt
 {
-	class MklSparseTests : public ::testing::Test
+	class MklSparseTests: public ::testing::Test
 	{
 	};
 
@@ -17,11 +17,11 @@ namespace clt
 		for (size_t i = 0; i < nRows; ++i)
 		{
 			_A[i + nRows * i] = 1.0;
-//			_A[i + nRows * i] += 2.0f;
-//			if (i < nRows - 1)
-//				_A[i + nRows * (i + 1)] += 0.001f;
-//			if (i > 0)
-//				_A[i + nRows * (i - 1)] += 0.001f;
+			//			_A[i + nRows * i] += 2.0f;
+			//			if (i < nRows - 1)
+			//				_A[i + nRows * (i + 1)] += 0.001f;
+			//			if (i > 0)
+			//				_A[i + nRows * (i - 1)] += 0.001f;
 		}
 
 		A.ReadFrom(_A);
@@ -38,7 +38,7 @@ namespace clt
 		auto _v1 = v1.Get();
 
 		mkl::vec v2 = mkl::vec::RandomUniform(v1.denseSize, 1234);
-		
+
 		auto _v2 = v2.Get();
 
 		auto v3 = v1 + v2;
@@ -104,4 +104,4 @@ namespace clt
 			}
 		}
 	}
-}
+}	 // namespace clt

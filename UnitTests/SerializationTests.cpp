@@ -1,21 +1,21 @@
 #include <gtest/gtest.h>
 
-#include <Vector.h>
 #include <ColumnWiseMatrix.h>
-#include <sstream>
+#include <Vector.h>
 #include <fstream>
-#include <stdio.h>
+#include <sstream>
+#include <cstdio>
 
 namespace clt
 {
-	class SerializationTests : public ::testing::Test
+	class SerializationTests: public ::testing::Test
 	{
 	};
 
 	/*
-	*	If serialization is denoted as f(vec), and deserialization g(vec)
-	*	 ==> f(g(vec)) = vec
-	*/
+	 *	If serialization is denoted as f(vec), and deserialization g(vec)
+	 *	 ==> f(g(vec)) = vec
+	 */
 	TEST_F(SerializationTests, VectorSerializationInversion)
 	{
 		std::stringstream s;
@@ -36,21 +36,21 @@ namespace clt
 
 		ASSERT_TRUE(u == v);
 	}
-	
+
 	TEST_F(SerializationTests, VectorSerializationToBinaryFileInversionCompressed)
 	{
 		cl::vec v(18u, 0.12345f);
 		v.ToBinaryFile("v1.npz", true);
-		
+
 		cl::vec u = cl::vec::VectorFromBinaryFile("v1.npz", true);
-		
+
 		ASSERT_TRUE(u == v);
 	}
 
 	/*
-	*	If serialization is denoted as f(vec), and deserialization g(vec)
-	*	 ==> f(g(vec)) = vec
-	*/
+	 *	If serialization is denoted as f(vec), and deserialization g(vec)
+	 *	 ==> f(g(vec)) = vec
+	 */
 	TEST_F(SerializationTests, MatrixSerializationInversion)
 	{
 		std::stringstream s;
@@ -87,17 +87,17 @@ namespace clt
 				ASSERT_TRUE(std::fabs(_m1[i + m1.nRows() * j] - _m2[i + m1.nRows() * j]) < 1e-6f);
 		}
 	}
-	
+
 	TEST_F(SerializationTests, MatrixSerializationToBinaryFileInversionCompressed)
 	{
 		cl::mat m1(18u, 12u);
 		m1.LinSpace(0.0f, 1.0f);
 		m1.ToBinaryFile("m1.npz", true);
-		
+
 		cl::mat m2 = cl::mat::MatrixFromBinaryFile("m1.npz", false, true);
 		m1.Print("m1=");
 		m2.Print("m2=");
-		
+
 		auto _m1 = m1.Get();
 		auto _m2 = m2.Get();
 		for (size_t i = 0; i < m1.nRows(); i++)
@@ -108,8 +108,8 @@ namespace clt
 	}
 
 	/*
-	*	Open file serialized with numpy.savetxt
-	*/
+	 *	Open file serialized with numpy.savetxt
+	 */
 	TEST_F(SerializationTests, VectorSerializationReadFromNumpy)
 	{
 		char temp[4096];
@@ -117,8 +117,8 @@ namespace clt
 		std::ifstream f("..\\..\\UnitTests\\vec.npy");
 		if (!f.is_open())
 			f = std::ifstream("vec.npy");
-        if (!f.is_open())
-            f = std::ifstream(cwd + "/../../UnitTests/vec.npy");
+		if (!f.is_open())
+			f = std::ifstream(cwd + "/../../UnitTests/vec.npy");
 		ASSERT_TRUE(f.is_open());
 		ASSERT_FALSE(f.fail());
 
@@ -131,12 +131,12 @@ namespace clt
 		catch (...)
 		{
 			ASSERT_FALSE(true);
-		}		
+		}
 	}
 
 	/*
-	*	Open file serialized with numpy.savetxt
-	*/
+	 *	Open file serialized with numpy.savetxt
+	 */
 	TEST_F(SerializationTests, MatrixSerializationReadFromNumpy)
 	{
 		char temp[4096];
@@ -144,8 +144,8 @@ namespace clt
 		std::ifstream f("..\\..\\UnitTests\\mat.npy");
 		if (!f.is_open())
 			f = std::ifstream("mat.npy");
-        if (!f.is_open())
-            f = std::ifstream(cwd + "/../../UnitTests/mat.npy");
+		if (!f.is_open())
+			f = std::ifstream(cwd + "/../../UnitTests/mat.npy");
 		ASSERT_TRUE(f.is_open());
 		ASSERT_FALSE(f.fail());
 
@@ -182,4 +182,4 @@ namespace clt
 
 		std::remove("m.cl");
 	}
-}
+}	 // namespace clt
