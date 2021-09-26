@@ -174,7 +174,7 @@ namespace cl
 						case MemorySpace::Test:
 						case MemorySpace::Mkl:	  // TODO
 						{
-							const auto* iPtr = reinterpret_cast<const int*>(x.indices);  // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast,performance-no-int-to-ptr)
+							const auto* iPtr = reinterpret_cast<const int*>(x.indices);	   // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast,performance-no-int-to-ptr)
 							auto* zPtr = GetPointer<MathDomain::Int>(z);
 							auto* xPtr = GetPointer<MathDomain::Int>(x);
 							auto* yPtr = GetPointer<MathDomain::Int>(y);

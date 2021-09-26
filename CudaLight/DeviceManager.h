@@ -15,6 +15,7 @@ namespace dm
 		DeviceManager(DeviceManager&&) noexcept = delete;
 		DeviceManager& operator=(const DeviceManager&) noexcept = delete;
 		DeviceManager& operator=(DeviceManager&&) noexcept = delete;
+
 	private:
 		DeviceManager();
 		~DeviceManager() noexcept = default;

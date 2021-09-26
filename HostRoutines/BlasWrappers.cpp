@@ -1257,13 +1257,13 @@ namespace cl
 			switch (T.mathDomain)
 			{
 				case MathDomain::Float:
-					reshapeWorker(reinterpret_cast<float*>(cacheReshape.pointer), reinterpret_cast<float*>(T.pointer), T.nRows, T.nCols, T.nCubes); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+					reshapeWorker(reinterpret_cast<float*>(cacheReshape.pointer), reinterpret_cast<float*>(T.pointer), T.nRows, T.nCols, T.nCubes);	   // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 					break;
 				case MathDomain::Double:
-					reshapeWorker(reinterpret_cast<double*>(cacheReshape.pointer), reinterpret_cast<double*>(T.pointer), T.nRows, T.nCols, T.nCubes);  // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+					reshapeWorker(reinterpret_cast<double*>(cacheReshape.pointer), reinterpret_cast<double*>(T.pointer), T.nRows, T.nCols, T.nCubes);	 // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 					break;
 				case MathDomain::Int:
-					reshapeWorker(reinterpret_cast<int*>(cacheReshape.pointer), reinterpret_cast<int*>(T.pointer), T.nRows, T.nCols, T.nCubes);  // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+					reshapeWorker(reinterpret_cast<int*>(cacheReshape.pointer), reinterpret_cast<int*>(T.pointer), T.nRows, T.nCols, T.nCubes);	   // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 					break;
 				default:
 					throw NotImplementedException();

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <BufferInitializer.h>
-#include <Types.h>
 #include <Exceptions.h>
+#include <Types.h>
 
 #include <array>
 #include <vector>

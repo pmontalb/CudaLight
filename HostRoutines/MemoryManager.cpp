@@ -121,7 +121,7 @@ namespace cl
 							auto** ptr = GetRefPointer<MathDomain::Float>(buf);
 
 							static constexpr size_t alignmentBits = { 64 };
-							auto err = posix_memalign(reinterpret_cast<void**>(ptr), alignmentBits, buf.TotalSize()); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+							auto err = posix_memalign(reinterpret_cast<void**>(ptr), alignmentBits, buf.TotalSize());	 // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 							assert(err == 0);
 							assert(*ptr != nullptr);
 
@@ -147,7 +147,7 @@ namespace cl
 							auto* ptr = GetRefPointer<MathDomain::Double>(buf);
 
 							static constexpr size_t alignmentBits = { 64 };
-							auto err = posix_memalign(reinterpret_cast<void**>(ptr), alignmentBits, buf.TotalSize()); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+							auto err = posix_memalign(reinterpret_cast<void**>(ptr), alignmentBits, buf.TotalSize());	 // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 							assert(err == 0);
 							assert(*ptr != nullptr);
 							break;
@@ -173,7 +173,7 @@ namespace cl
 							auto* ptr = GetRefPointer<MathDomain::Int>(buf);
 
 							static constexpr size_t alignmentBits = { 64 };
-							auto err = posix_memalign(reinterpret_cast<void**>(ptr), alignmentBits, buf.TotalSize()); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+							auto err = posix_memalign(reinterpret_cast<void**>(ptr), alignmentBits, buf.TotalSize());	 // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 							assert(err == 0);
 							assert(*ptr != nullptr);
 							break;
@@ -205,7 +205,7 @@ namespace cl
 						case MemorySpace::GenericBlas:
 						{
 							auto** ptr = GetRefPointer<MathDomain::Float>(buf);
-							std::free(*ptr);  // NOLINT
+							std::free(*ptr);	// NOLINT
 							break;
 						}
 						default:
@@ -226,7 +226,7 @@ namespace cl
 						case MemorySpace::GenericBlas:
 						{
 							auto** ptr = GetRefPointer<MathDomain::Double>(buf);
-							std::free(*ptr);  // NOLINT
+							std::free(*ptr);	// NOLINT
 							break;
 						}
 						default:
@@ -247,7 +247,7 @@ namespace cl
 						case MemorySpace::GenericBlas:
 						{
 							auto* ptr = GetRefPointer<MathDomain::Int>(buf);
-							std::free(*ptr);  // NOLINT
+							std::free(*ptr);	// NOLINT
 							break;
 						}
 						default:

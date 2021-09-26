@@ -2,9 +2,9 @@
 
 #include <ColumnWiseMatrix.h>
 #include <Vector.h>
+#include <cstdio>
 #include <fstream>
 #include <sstream>
-#include <cstdio>
 
 namespace clt
 {
